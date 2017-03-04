@@ -157,6 +157,14 @@ def visualExplorAnalysis():
 	plt.show()
 	plt.close()
 
+# Normalize data set
+breastCancerFloat = breastCancer.iloc[:, 1:]	
+
+for item in breastCancer:
+	if item in breastCancerFloat:
+		breastCancer[item] = ((breastCancer[item] - breastCancer[item].min()) / 
+		(breastCancer[item].max() - breastCancer[item].min()))
+
 # Here we do a 80-20 split for our training and test set
 train, test = train_test_split(breastCancer, 
                                test_size = 0.20, 
@@ -537,7 +545,7 @@ def neuralNetworks():
 	'''
 	fit_NN = MLPClassifier(solver='lbfgs', 
 		hidden_layer_sizes=(5, ), 
-		random_state=42)
+		random_state=7)
 
 	fit_NN.fit(training_set, class_set['diagnosis'])
 
