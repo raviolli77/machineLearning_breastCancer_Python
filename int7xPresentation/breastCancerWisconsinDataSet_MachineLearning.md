@@ -1,4 +1,8 @@
 # Abstract
+
+For this project, I wanted to implement a few **Machine Learning** techniques on a data set containing descriptive attributes of digitized images of a process known as, fine needle aspirate (**FNA**) of breast mass. We have a total of 29 features that were computed for each cell nucleus with an ID Number and the Diagnosis (Later converted to binary representations: **Malignant** = 1, **Benign** = 0). 
+
+I used the same models as the other notebook, but this is the expanded data set, and goes more in-depth with the explanations for this project!
 <img src="https://www.researchgate.net/profile/Syed_Ali39/publication/41810238/figure/fig5/AS:281736006127621@1444182506838/Figure-2-Fine-needle-aspiration-of-a-malignant-solitary-fibrous-tumor-is-shown-A-A.png">
 
 
@@ -500,3 +504,490 @@ Here we calculate the *false positive rate* and *true positive rate* for our mod
 This function calculates the area under the curve which you will see the relevancy later in this project, but ideally we want it to be closest to 1 as possible. 
 
 	auc_knn = auc(fpr, tpr)
+
+
+# Decision Trees
+
+*Decision trees* have a hierarchical structure similar to asking a series of questions until we can deduce the classifications. Each leaf represents a class label while the branches represent the process the tree used to deduce the *leaf nodes* (class label). 
+
+The structure is described as such:
++ The very first node is called the *root node*
++ the nodes within the tree are called the *internal nodes*
++ the nodes at the end of t
+
+For this model we use an index known as the [Gini Impurity](https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity), its the default index, but I included in the model to drive the point home. 
+
+**Important to Note**: Some of the documentation with respect to models in *sklearn* are still confusing for me so I was not able to understand how to go about pruning my tree. Thus to prevent over-fitting I made the `max_depth` equal to 3. And left it as such. A more indepth analysis would utilize this information to reduce dimensions using methods like *Principal Component Analysis*.
+
+
+	dt = DecisionTreeClassifier(random_state = 42, 
+                            	criterion='gini', 
+                            	max_depth=3)
+	
+	fit = dt.fit(training_set, class_set)
+
+
+Decision trees are important classification models, because often follow decision making similar to that of human decision making. Although it is important to state that they will often perform very poor compared to other predictive modeling. 
+
+The next step we export the image representation of our *Decision Tree* path using `export_graphviz` as a *dot* file (Graph Description language) where we add the `feature_names` or else we get the outputs as follows (which isn't very helpful):
+
+    X[N] where N is the index of the feature space
+    
+Since I don't have graphviz downloaded on my machine, I use this following online interpretter that will take the plain text from the *dot* file (which I opened with **Sublime Text** and copy pasted) and create the visual graph for free! (Source: https://github.com/dreampuf/GraphvizOnline)
+
+	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
+	
+	with open('breastCancerWD.dot', 'w') as f:
+    	f = export_graphviz(fit, out_file = f,
+                        	feature_names=namesInd,
+                        	rounded = True)
+
+Image produced by **.dot** file:
+
+<img src="images/dtWD.png" style="width: 100px;"/>
+
+## Variable Importance
+
+A useful feature within what are known as *CART* (Classification And Regression Trees) is extracting which features are important when using the *Gini Impurity*. For this next process we will be grabbing the index of these features, then using a `for loop` to state which were the most important. 
+
+	importances = fit.feature_importances_
+	indices = np.argsort(importances)[::-1]
+
+Here's the implementation of the `for loop`:
+
+	# Print the feature ranking
+	print("Feature ranking:")
+	
+	for f in range(30):
+    	i = f
+    	print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+                                                                	namesInd[indices[i]], 
+                                                                	importances[indices[f]]))
+
+## Terminal Output
+
+	Feature ranking:
+	1. The feature 'concave_points_mean' has a Gini Importance of 0.752304
+	2. The feature 'concave_points_worst' has a Gini Importance of 0.071432
+	3. The feature 'radius_worst' has a Gini Importance of 0.056905
+	4. The feature 'perimeter_worst' has a Gini Importance of 0.056028
+	5. The feature 'texture_mean' has a Gini Importance of 0.030106
+	6. The feature 'fractal_dimension_se' has a Gini Importance of 0.020188
+	7. The feature 'area_se' has a Gini Importance of 0.013038
+	8. The feature 'concavity_mean' has a Gini Importance of 0.000000
+	9. The feature 'radius_se' has a Gini Importance of 0.000000
+	10. The feature 'fractal_dimension_mean' has a Gini Importance of 0.000000
+	11. The feature 'symmetry_mean' has a Gini Importance of 0.000000
+	12. The feature 'fractal_dimension_worst' has a Gini Importance of 0.000000
+	13. The feature 'texture_se' has a Gini Importance of 0.000000
+	14. The feature 'smoothness_mean' has a Gini Importance of 0.000000
+	15. The feature 'area_mean' has a Gini Importance of 0.000000
+	16. The feature 'perimeter_mean' has a Gini Importance of 0.000000
+	17. The feature 'compactness_mean' has a Gini Importance of 0.000000
+	18. The feature 'smoothness_se' has a Gini Importance of 0.000000
+	19. The feature 'perimeter_se' has a Gini Importance of 0.000000
+	20. The feature 'symmetry_worst' has a Gini Importance of 0.000000
+	21. The feature 'compactness_se' has a Gini Importance of 0.000000
+	22. The feature 'concavity_se' has a Gini Importance of 0.000000
+	23. The feature 'concave_points_se' has a Gini Importance of 0.000000
+	24. The feature 'symmetry_se' has a Gini Importance of 0.000000
+	25. The feature 'texture_worst' has a Gini Importance of 0.000000
+	26. The feature 'area_worst' has a Gini Importance of 0.000000
+	27. The feature 'smoothness_worst' has a Gini Importance of 0.000000
+	28. The feature 'compactness_worst' has a Gini Importance of 0.000000
+	29. The feature 'concavity_worst' has a Gini Importance of 0.000000
+	30. The feature 'radius_mean' has a Gini Importance of 0.000000
+
+As you can see here after the 7th feature which is `area_se`, the *Gini Importance* becomes 0 for all remaining variables. 
+
+We cannot make statistical conclusions as to its significance because from prior knowledge I know that *Random Forest* will perform significantly better and give us more insight into the data set. But for now we will continue to do the calculations and receive the test error rates for this model. 
+
+
+## Test Set Evaluations
+The **test set evaluations** follow more or less the same processes as described earlier when using **Kth Nearest Neighbor** so I won't go into too much detail with explanations.
+
+	accuracy_dt = fit.score(test_set, test_class_set['diagnosis'])
+	
+	print("Here is our mean accuracy on the test set:\n",
+     	'%.2f' % (accuracy_dt * 100), '%')
+
+## Terminal Output
+
+	Here is our mean accuracy on the test set:
+	94.74 %
+
+Now let's compare the Actual Values against the Predicted Values
+
+	predictions_dt = fit.predict(test_set)
+	
+	print("Table comparing actual vs. predicted values for our test set:\n",
+     	pd.crosstab(predictions_dt, test_class_set['diagnosis'], 
+                  	rownames=['Predicted Values'], 
+                  	colnames=['Actual Values']))
+
+## Terminal Output
+
+	Table comparing actual vs. predicted values for our test set:
+	Actual Values      0   1
+	Predicted Values        
+	0                 69   4
+	1                  2  39
+
+
+	# Here we calculate the test error rate!
+	test_error_rate_dt = 1 - accuracy_dt
+	print("The test error rate for our model is:\n",
+		'%.3f' % (test_error_rate_dt * 100) , '%')
+
+## Terminal Output
+
+	The test error rate for our model is:
+	5.263 %
+
+### Calculating for later use in ROC Curves
+
+	fpr1, tpr1, _ = roc_curve(predictions_dt, test_class_set)
+
+### Calculations for Area under Curve 
+
+	auc_dt = auc(fpr1, tpr1)
+
+## Conclusions for Decision Trees
+As we can see there is still a lot to be desired in performing a succinct analysis using *Decision Trees*. Obviously *Cross-Validation* would be helpful in understanding what appropriate depth and other significant parameters should be done to optimize our model. For this iteration this will not be included, but I do plan on expanding on this in later iterations. A lot of my confusion when doing this project is the documentation leaves a lot to be desired, but with every iteration I'm learning more and more about the functions and their capabilies.
+
+# Random Forest
+Also known as *Random Decision Forest* is just that an entire forest of random decision trees. This is an extension of *Decision Trees* that will perform significantly better than a single tree because it corrects over-fitting. Here is a brief overview of the evolution of *CART* analysis, but the process of better evaluations goes as follows:
++ Single Decision Tree (Single tree)
++ Bagging Trees (Multiple trees) [Model with all features, M, considered at splits, where M = all features]
++ Random Forest (Multiple trees) [Model with m features considered at splits, where m < M]
+
+### Bagging Trees
+*Decision Trees* tend to have *low bias and high variance*, a process known as *Bagging Trees* (*Bagging* = *Bootstrap Aggregating*) was an extension that does random sampling with replacement where after creating N trees it classifies on majority votes. This process reduces the variance while at the same time keeping the bias low. However, a downside to this process is if certain features are strongly predictors then too many trees will employ these features causing correlation between the trees. 
+
+Thus *Random Forest* aims to reduce this correlation by choosing only a subsample of the feature space at each split. Essentially aiming to make the trees more independent thereby reducing the variance.   
+
+Generally, we aim to create 500 trees and use our m to be sqrt(M) rounded down. So since we have 30 features I will use 5 for my `max_features` parameter. Recall I will be using the *Gini Importance* metric, although it is the default I will always include it in this project to give context. 
+
+
+	fit_RF = RandomForestClassifier(random_state = 42, 
+                                	criterion='gini',
+                                	n_estimators = 500,
+                                	max_features = 5)
+
+
+	fit_RF.fit(training_set, class_set['diagnosis'])
+
+## Terminal Output
+
+	RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            	max_depth=None, max_features=5, max_leaf_nodes=None,
+            	min_impurity_split=1e-07, min_samples_leaf=1,
+            	min_samples_split=2, min_weight_fraction_leaf=0.0,
+            	n_estimators=500, n_jobs=1, oob_score=False, random_state=42,
+            	verbose=0, warm_start=False)
+
+
+## Variable Importance
+
+Essentially the same process as the *Decision Trees*, but we gather this instance from **500** trees! 
+
+	importancesRF = fit_RF.feature_importances_
+	indicesRF = np.argsort(importancesRF)[::-1]
+
+Basically same process as **Decision tree** section
+
+	# Print the feature ranking
+	print("Feature ranking:")
+	
+	for f in range(30):
+    	i = f
+    	print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+                                                                	namesInd[indicesRF[i]], 
+                                                                	importancesRF[indicesRF[f]]))
+
+
+## Terminal Output
+
+	Feature ranking:
+	1. The feature 'concave_points_worst' has a Gini Importance of 0.139713
+	2. The feature 'area_worst' has a Gini Importance of 0.122448
+	3. The feature 'concave_points_mean' has a Gini Importance of 0.115332
+	4. The feature 'perimeter_worst' has a Gini Importance of 0.114410
+	5. The feature 'radius_worst' has a Gini Importance of 0.082506
+	6. The feature 'concavity_mean' has a Gini Importance of 0.051091
+	7. The feature 'radius_mean' has a Gini Importance of 0.047065
+	8. The feature 'perimeter_mean' has a Gini Importance of 0.041769
+	9. The feature 'area_mean' has a Gini Importance of 0.040207
+	10. The feature 'concavity_worst' has a Gini Importance of 0.038435
+	11. The feature 'area_se' has a Gini Importance of 0.029797
+	12. The feature 'texture_worst' has a Gini Importance of 0.021006
+	13. The feature 'radius_se' has a Gini Importance of 0.016963
+	14. The feature 'texture_mean' has a Gini Importance of 0.016359
+	15. The feature 'compactness_worst' has a Gini Importance of 0.015939
+	16. The feature 'symmetry_worst' has a Gini Importance of 0.013319
+	17. The feature 'smoothness_worst' has a Gini Importance of 0.013109
+	18. The feature 'compactness_mean' has a Gini Importance of 0.012102
+	19. The feature 'perimeter_se' has a Gini Importance of 0.010395
+	20. The feature 'concavity_se' has a Gini Importance of 0.007546
+	21. The feature 'smoothness_mean' has a Gini Importance of 0.007518
+	22. The feature 'fractal_dimension_se' has a Gini Importance of 0.006149
+	23. The feature 'fractal_dimension_worst' has a Gini Importance of 0.005899
+	24. The feature 'compactness_se' has a Gini Importance of 0.005324
+	25. The feature 'symmetry_se' has a Gini Importance of 0.004980
+	26. The feature 'fractal_dimension_mean' has a Gini Importance of 0.004723
+	27. The feature 'concave_points_se' has a Gini Importance of 0.004516
+	28. The feature 'texture_se' has a Gini Importance of 0.004405
+	29. The feature 'symmetry_mean' has a Gini Importance of 0.003570
+	30. The feature 'smoothness_se' has a Gini Importance of 0.003402
+
+We don't run into the same issue as *Decision Trees* when looking at the *Variable Importance*, and we can be more sure that our *Random Forest* model gives us significant results for our analysis. Let's create a barplot showcasing the *Variable Importance* against the *Gini Importance*.
+
+### Feature Importance Visual
+
+Here I use the `sorted` function to sort the *Gini Importance* criterion from least to greatest which was a work around in order to create a horizontal barplot, as well as creating an index using the `arange` function in `numpy`
+
+
+	indRf = sorted(importancesRF) # Sort by Decreasing order
+	index = np.arange(30)
+
+Now let's plot it. 
+
+	f, ax = plt.subplots(figsize=(11, 11))
+	
+	ax.set_axis_bgcolor('#fafafa')
+	plt.title('Feature importances for Random Forest Model')
+	plt.barh(index, indRf,
+        	align="center", 
+        	color = '#875FDB')
+	plt.yticks(index, ('smoothness_se', 'symmetry_mean', 'texture_se', 
+                   	'concave_points_se', 'fractal_dimension_mean', 
+                   	'symmetry_se', 'compactness_se', 'fractal_dimension_worst', 
+                   	'fractal_dimension_se', 'smoothness_mean', 'concavity_se', 
+                   	'perimeter_se', 'compactness_mean', 'smoothness_worst', 'symmetry_worst', 
+                   	'compactness_worst', 'texture_mean', 'radius_se', 'texture_worst', 'area_se', 
+                   	'concavity_worst', 'area_mean', 'perimeter_mean', 'radius_mean', 'concavity_mean', 
+                   	'radius_worst', 'perimeter_worst', 'concave_points_mean', 
+                   	'area_worst', 'concave_points_worst'))
+	plt.ylim(-1, 30)
+	plt.xlim(0, 0.15)
+	plt.xlabel('Gini Importance')
+	plt.ylabel('Feature')
+	
+	plt.show()
+
+<img src="images/varImpRF.png" style="width: 100px;"/>
+
+## Test Set Evaluations
+
+	predictions_RF = fit_RF.predict(test_set)
+	print(pd.crosstab(predictions_RF, test_class_set['diagnosis'], 
+                  rownames=['Predicted Values'], 
+                  colnames=['Actual Values']))
+
+## Terminal Output
+
+	Actual Values      0   1
+	Predicted Values        
+	0                 70   3
+	1                  1  40
+
+Let's get accuracy measurements like before
+
+	accuracy_RF = fit_RF.score(test_set, test_class_set['diagnosis'])
+	
+	print("Here is our mean accuracy on the test set:\n",
+     	'%.3f' % (accuracy_RF * 100), '%')
+
+## Terminal Output
+
+	Here is our mean accuracy on the test set:
+	96.491 %
+
+Test error rate!
+
+	# Here we calculate the test error rate!
+	test_error_rate_RF = 1 - accuracy_RF
+	print("The test error rate for our model is:\n",
+		'%.3f' % (test_error_rate_RF * 100), '%')
+
+## Terminal Output
+
+	The test error rate for our model is:
+	3.509 %
+
+### Calculating for later use in ROC Curves
+
+	fpr2, tpr2, _ = roc_curve(predictions_RF, test_class_set)
+
+### Calculations for  Area under Curve
+
+	auc_rf = auc(fpr2, tpr2)
+
+
+## Conclusions for Random Forest
+Our *Random Forest* model performed significantly better than our *Decision Tree* as expected. Surprisingly *Kth Nearest Neighbor* had a lower test error rate, but overall the *Random Forest* model performed better and gave us more insight, especially when considering the amount of test subjects that were predicted *Begnin*, but were actually *Malignant*. This will be a strong factor when considering what model is the most appropriate for my analysis. 
+
+
+# Neural Network
+
+More on this method later. 
+
+	fit_NN = MLPClassifier(solver='lbfgs', 
+                       	hidden_layer_sizes=(5, ), 
+                       	random_state=7)
+
+Train the model
+
+	fit_NN.fit(training_set, class_set['diagnosis'])
+
+## Terminal Output
+
+	MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
+       	beta_2=0.999, early_stopping=False, epsilon=1e-08,
+       	hidden_layer_sizes=(5,), learning_rate='constant',
+       	learning_rate_init=0.001, max_iter=200, momentum=0.9,
+       	nesterovs_momentum=True, power_t=0.5, random_state=7, shuffle=True,
+       	solver='lbfgs', tol=0.0001, validation_fraction=0.1, verbose=False,
+       	warm_start=False)
+
+### Test Set Evaluations
+
+	predictions_NN = fit_NN.predict(test_set)
+	
+	print(pd.crosstab(predictions_NN, test_class_set['diagnosis'], 
+                  	rownames=['Predicted Values'], 
+                  	colnames=['Actual Values']))
+
+## Terminal Output
+
+	Actual Values      0   1
+	Predicted Values        
+	0                 69   1
+	1                  2  42
+
+Same as before
+
+	accuracy_NN = fit_NN.score(test_set, test_class_set['diagnosis'])
+	
+	print("Here is our mean accuracy on the test set:\n",
+		'%.2f' % (accuracy_NN * 100), '%')
+
+## Terminal Output
+
+	Here is our mean accuracy on the test set:
+	97.37 %
+
+Yup 
+
+	# Here we calculate the test error rate!
+	test_error_rate_NN = 1 - accuracy_NN
+	print("The test error rate for our model is:\n",
+		'%.3f' % (test_error_rate_NN * 100), '%')
+
+## Terminal Output
+
+	The test error rate for our model is:
+	2.632 %
+
+### Calculating for later use in ROC Curves
+
+	fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set)
+
+### Calculations for Area under Curve 
+
+	auc_nn = auc(fpr3, tpr3)
+
+# ROC Curves
+
+*Receiver Operating Characteristc* Curve calculations we did using the function `roc_curve` were calculating the **False Positive Rates** and **True Positive Rates** for each model. We will now graph these calculations, and being located the top left corner of the plot indicates a really ideal model, i.e. a **False Positive Rate** of 0 and **True Positive Rate** of 1, so we plot the *ROC Curves* for all our models in the same axis and see how they compare!
+
+We also calculated the **Area under the Curve**, so our curve in this case are the *ROC Curves*, we then place these calculations in the legend with their respective models. 
+
+
+	fig, ax = plt.subplots(figsize=(10, 10))
+	
+	plt.plot(fpr, tpr, label='Kth-NN ROC Curve (area = %.4f)' % auc_knn, 
+         	color = 'deeppink', 
+         	linewidth=1)
+	plt.plot(fpr1, tpr1,label='Decision Trees ROC Curve (area = %.4f)' % auc_dt, 
+         	color = 'navy', 
+         	linewidth=2)
+	plt.plot(fpr2, tpr2,label='Random Forest ROC Curve (area = %.4f)' % auc_rf, 
+         	color = 'red', 
+         	linestyle=':', 
+         	linewidth=2)
+	plt.plot(fpr3, tpr3,label='Neural Networks ROC Curve (area = %.4f)' % auc_nn, 
+         	color = 'aqua', 
+         	linestyle=':', 
+         	linewidth=3)
+	
+	ax.set_axis_bgcolor('#fafafa')
+	plt.plot([0, 1], [0, 1], 'k--', lw=2)
+	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
+	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
+	plt.xlim([-0.01, 1.0])
+	plt.ylim([0.0, 1.05])
+	plt.xlabel('False Positive Rate')
+	plt.ylabel('True Positive Rate')
+	plt.title('ROC Curve Comparison For All Models')
+	plt.legend(loc="lower right")
+	
+	plt.show()
+
+<img src="images/rocNotebook.png" style="width: 100px;"/>
+
+Let's zoom in to get a better picture!
+
+### ROC Curves Plot Zoomed in
+
+	fig, ax = plt.subplots(figsize=(10, 10))
+	plt.plot(fpr, tpr, label='Kth-NN ROC Curve  (area = %.4f)' % auc_knn, 
+         	color = 'deeppink', 
+         	linewidth=1)
+	plt.plot(fpr1, tpr1,label='Decision Trees ROC Curve  (area = %.4f)' % auc_dt, 
+         	color = 'navy', 
+         	linewidth=2)
+	plt.plot(fpr2, tpr2,label='Random Forest ROC Curve  (area = %.4f)' % auc_rf, 
+         	color = 'red', 
+         	linestyle=':', 
+         	linewidth=3)
+	plt.plot(fpr3, tpr3,label='Neural Networks ROC Curve  (area = %.4f)' % auc_nn, 
+         	color = 'aqua', 
+         	linestyle=':', 
+         	linewidth=3)
+	
+	
+	ax.set_axis_bgcolor('#fafafa')
+	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
+	
+	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
+	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
+	plt.xlim([-0.001, 0.2])
+	plt.ylim([0.7, 1.05])
+	plt.xlabel('False Positive Rate')
+	plt.ylabel('True Positive Rate')
+	plt.title('ROC Curve Comparison For All Models (Zoomed)')
+	plt.legend(loc="lower right")
+	
+	plt.show()
+
+<img src="images/rocClose.png" style="width: 100px;"/>
+
+From the `auc` calculations we can see that both *Random Forest* and *Neural Networks* performed better than *Kth Nearest Neighbor* and *Decision Trees* which is pretty intuitive. 
+
+Also visually examining the plot, *Random Forest* is noticeable more elevated than the other models which is indicative of a good prediction tool, using this form of diagnositcs. I will go into more detail later on, but for now this will do. 
+
+# Conclusions
+
+As you can see for this project, **Kth Nearest Neighbor** performed significantly better with respect to the *test error rate*. But did the worst with respect to **False Negatives** (9 total, that's a lot!). **Kth Nearest Neighbor** also doesn't really give us much insight as to what variables were able to indicate which specimen's were *Malignant* or *Benign*, which is something that might be useful for the people in the field of Cancer research, and/or if this were real world application the people who hired you to do this analysis.  
+
+So when drawing conclusions although a model could perform better than another, often we look to see which can tell us more of our data and ultimately **Random Forest**, was the model that was able to tell us more about the variable interaction while at the same time providing us with the smallest **Test Error Rate** and **False Negative**.
+
+| Model/Algorithm | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC |
+|-----------------|-----------------|--------------------------------------------|----------------|
+| Kth Nearest Neighbor | 3.509% | 2| 0.9627 | 
+| Decision Trees | 5.263% | 4 | 0.9482 | 
+| Random Forest | 3.509% | 3 | 0.9673 | 
+| Neural Networks | 2.632% | 1 | 0.9701 | 
+
+Fin :)
