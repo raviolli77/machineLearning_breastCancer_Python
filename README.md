@@ -72,7 +72,7 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 #### ROC Curves zoomed in
 <img src="images/rocClose.png" style="width: 100px;"/>
 
-If you can figure out why values are different for script and notebook please let me know!
+The ROC Curves are more telling of **Random Forest** being a better model for predicting. 
 
 Any feedback is welcomed!
 
