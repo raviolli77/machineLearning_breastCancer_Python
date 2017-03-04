@@ -323,9 +323,9 @@ def decisionTree():
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-																	namesInd[indices[i]], 
-																	importances[indices[f]]))
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1,
+									    namesInd[indices[i]],
+									    importances[indices[f]]))
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
