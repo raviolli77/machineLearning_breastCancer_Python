@@ -142,7 +142,9 @@ def visualExplorAnalysis():
 	
 	for item in breastCancer:
 		if item in breastCancerFloat:
-			breastCancer[item] = (breastCancer[item] - breastCancer[item].min()) / (breastCancer[item].max() - breastCancer[item].min())
+			breastCancer[item] = ((breastCancer[item] - breastCancer[item].min()) / 
+			(breastCancer[item].max() - breastCancer[item].min()))
+			
 	print("Here's our newly transformed data: \n", breastCancer.head())
 	print("Describe function with transformed data: \n", breastCancer.describe())
 
