@@ -248,7 +248,7 @@ For this visual I cheated by referencing some variables that were indicators of 
 	
 	plt.show()
 
-![]('images/breastCancerWisconsinDataSet_MachineLearning_19_0.png')
+<img src="images/breastCancerWisconsinDataSet_MachineLearning_19_0.png" style="width: 100px;"/>
 
 You see a matrix of the visual representation of the relationship between 6 variables:
 + `concave_points_worst`
@@ -283,7 +283,7 @@ When two features (or more) are almost perfectly correlated in a *Machine Learni
             	xticklabels=True, yticklabels=True,
             	linewidths=.5, cbar_kws={"shrink": .5}, ax=ax)
 
-![]('images/breastCancerWisconsinDataSet_MachineLearning_22_1.png')
+<img src="images/breastCancerWisconsinDataSet_MachineLearning_22_1.png" style="width: 100px;"/>
 
 We can see that our data set contains mostly positive correlation, as well as re-iterating to us that the 5 dependent variables we featured in the *Scatterplot Matrix* have strong *correlation*. Our variables don't have too much correlation so I won't go about doing feature extraction processes like **PCA**, but you are more welcomed to do so (you will probably get better prediction estimates).   
 
@@ -306,7 +306,7 @@ So I had to set a limit on the x-axis to give a better picture of some of the va
 	plt.title("Box Plot of Pre-Processed Data Set")
 	ax = sns.boxplot(data = breastCancer, orient = 'h', palette = 'Set2')
 
-![]('images/breastCancerWisconsinDataSet_MachineLearning_25_0.png')
+<img src="images/breastCancerWisconsinDataSet_MachineLearning_25_0.png" style="width: 100px;"/>
 
 Not the best picture but this is a good segue into the next step in our *Machine learning* process.
 
@@ -352,7 +352,7 @@ Now to further illustrate the transformation let's create a *boxplot* of the sca
 	ax = sns.boxplot(data = breastCancer[1:29], orient = 'h', palette = 'Set2')
 
 
-![]('images/breastCancerWisconsinDataSet_MachineLearning_34_0.png')
+<img src="images/breastCancerWisconsinDataSet_MachineLearning_34_0.png" style="width: 100px;"/>
 
 From this visual we can see many variables have outliers as well some variables having very spread out data points like `compactness_worst` and `fractal_dimension_mean`. This can be important later on when diagnosising if outliers had a significant effect on our models. But for this iteration, that will not be included. 
 
