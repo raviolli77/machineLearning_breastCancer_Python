@@ -64,7 +64,7 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Neural Networks | 1.754% | 2 | 0.986 |
 
 #### ROC Curve for Script
-![](images/rocScript.png)
+![](images/rocScript.png =250x)
 
 ### Diagnostics for Jupyter Notebook
 
@@ -76,7 +76,7 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Neural Networks 	| 2.632% 	| 1 	| 0.9701 | 
 
 #### ROC Curve for Script
-![](images/rocNotebook.png)
+![](images/rocNotebook.png =250x)
 
 If you can figure out why values are different for script and notebook please let me know!
 
