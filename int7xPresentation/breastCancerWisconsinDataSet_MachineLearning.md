@@ -39,15 +39,7 @@ For now to illustrate and show the module versions in a simple way I will name t
 <!-- BODY -->
 <!-- LOAD MODULES -->
 # Load Modules
-We load our modules into our python environment. In my case I am employing a **Jupyter Notebook** while running inside an **|conda** environment. 
-
-For now to illustrate and show the module versions in a simple way I will name the ones I used and show the version I used as follows:
-
-+ numpy==1.11.2
-+ pandas==0.18.1
-+ matplotlib==1.5.3
-+ sklearn==0.18.1
-+ seaborn=0.7.1
+We load our modules into our python environment. In my case I am employing a **Jupyter Notebook** while running inside an **conda** environment. 
 
 Should include the *shebang*:
 
