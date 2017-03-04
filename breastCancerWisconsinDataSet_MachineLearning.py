@@ -135,7 +135,7 @@ def visualExplorAnalysis():
 	
 	plt.show()
 	plt.close()
-	
+
 	# Normalize data set
 	breastCancerFloat = breastCancer.iloc[:, 1:]
 	
@@ -189,6 +189,7 @@ def kthNearestNeighbor():
 	breastCancerKnn = KNeighborsClassifier(n_neighbors=9)
 	breastCancerKnn.fit(training_set, class_set['diagnosis'])
 	print(breastCancerKnn)
+	
 	print('''
 	###############################
 	## TRAINING SET CALCULATIONS ##
@@ -279,6 +280,7 @@ def kthNearestNeighbor():
 	
 	plt.show()
 	plt.close()
+	#return fpr, tpr, predictions, auc_knn
 
 def decisionTree():
 	'''
@@ -307,7 +309,7 @@ def decisionTree():
 	)
 	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
 	
-	with open('breastCancerWD.dot', 'w') as f:
+	with open('dotFiles/breastCancerWD.dot', 'w') as f:
 		f = export_graphviz(fit, out_file = f,
 							feature_names=namesInd,
 							rounded = True)
@@ -322,9 +324,9 @@ def decisionTree():
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1,
-									    namesInd[indices[i]],
-									    importances[indices[f]]))
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+																	namesInd[indices[i]], 
+																	importances[indices[f]]))
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -337,10 +339,10 @@ def decisionTree():
 	print("Here is our mean accuracy on the test set:\n",
 		'%.2f' % (accuracy_dt * 100), '%')
 
-	predictions_dt = fit.predict(test_set)
+	predictions_DT = fit.predict(test_set)
 	
 	print("Table comparing actual vs. predicted values for our test set:")
-	print(pd.crosstab(predictions_dt, test_class_set['diagnosis'], 
+	print(pd.crosstab(predictions_DT, test_class_set['diagnosis'], 
 					rownames=['Predicted Values'], 
 					colnames=['Actual Values']))
 
@@ -349,7 +351,7 @@ def decisionTree():
 	print("The test error rate for our model is:\n",
 		'%.3f' % (test_error_rate_dt * 100) , '%')
 	# ROC Curve stuff
-	fpr1, tpr1, _ = roc_curve(predictions_dt, test_class_set)
+	fpr1, tpr1, _ = roc_curve(predictions_DT, test_class_set)
 
 	auc_dt = auc(fpr1, tpr1)
 
@@ -390,6 +392,7 @@ def decisionTree():
 	
 	plt.show()
 	plt.close()
+	#return fpr1, tpr1, predictions_DT, auc_dt
 
 def randomForest():
 	'''
@@ -524,6 +527,7 @@ def randomForest():
 
 	plt.show()
 	plt.close()
+	#return fpr2, tpr2, predictions_RF, auc_rf
 
 def neuralNetworks():
 	'''
@@ -614,6 +618,7 @@ def neuralNetworks():
 
 	plt.show()
 	plt.close()
+	#return fpr3, tpr3, predictions_NN, auc_nn
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
