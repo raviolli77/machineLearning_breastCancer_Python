@@ -45,6 +45,11 @@ You would do the same for all other functions with the respective initial!
 
 	$ chmod +x breastCancerWisconsinDataSet_MachineLearning.py
 
+
+**Remember**: You must have a *shebang* for this to run i.e. this must be at the very beginning of your script:
+
+	#!/usr/bin/env python3
+
 then you would simply just run it (I'll use **Random Forest** as an example)
 
 	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
@@ -61,8 +66,11 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Random Forest 	| 3.509% 	| 3 	| 0.9673 | 
 | Neural Networks 	| 2.632% 	| 1 	| 0.9701 | 
 
-#### ROC Curve for Script
+#### ROC Curves for Data Set
 <img src="images/rocNotebook.png" style="width: 100px;"/>
+
+#### ROC Curves zoomed in
+<img src="images/rocClose.png" style="width: 100px;"/>
 
 If you can figure out why values are different for script and notebook please let me know!
 
