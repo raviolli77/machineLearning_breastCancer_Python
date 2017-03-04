@@ -11,7 +11,7 @@ I employed four **Machine Learning** techniques:
 + **Random Forest**
 + **Neural Networks**
 
-If you would like to see a walk through of the analysis the jupyter notebook includes running code as well as explanations for algorithms and processes. 
+If you would like to see a walk through of the analysis the **Jupyter Notebook** includes running code as well as explanations for algorithms and processes. 
 
 For the script I employed a technique I learned from [Nathan Fritter](https://github.com/Njfritter) (thanks homie). It is outlined as such:
 
@@ -67,6 +67,7 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Neural Networks 	| 2.632% 	| 1 	| 0.9701 | 
 
 #### ROC Curves for Data Set
+**NOTE**: Created on the **Jupyter Notebook** iteration. Not found in **Python** script. 
 <img src="images/rocNotebook.png" style="width: 100px;"/>
 
 #### ROC Curves zoomed in
