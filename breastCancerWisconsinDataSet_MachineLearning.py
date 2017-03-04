@@ -135,8 +135,7 @@ def visualExplorAnalysis():
 	
 	plt.show()
 	plt.close()
-
-
+	
 	# Normalize data set
 	breastCancerFloat = breastCancer.iloc[:, 1:]
 	
