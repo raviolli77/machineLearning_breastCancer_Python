@@ -23,7 +23,7 @@ The **.py** script is broken into 5 sections (done by creating a function for ea
 + **Random Forest**
 + **Neural Networks**
 
-## To Run .py Script
+## Running .py Script
 
 To run the script successfully, within the terminal you would employ this technique (Outlined starting at line 618):
 
@@ -53,11 +53,11 @@ To run **Neural Networks** section
 
 **NOTE**: You can also run it by making script executable as such:
 
-	chmod +x breastCancerWisconsinDataSet_MachineLearning.py
+	$ chmod +x breastCancerWisconsinDataSet_MachineLearning.py
 
 then you would simply just run it (I'll use **Random Forest as an example)
 
-	./breastCancerWisconsinDataSet_MachineLearning.py RF
+	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
 
 ## Conclusions
 Once I employed all these methods I deduced that **Neural Networks** performed the best in terms of all diagnostics. But when choosing the best model since **Neural Networks** are *black box* models, we don't gain a lot of insight into our data. So in conclusion **Random Forest** was the best model in terms of performance and insight to our data. 
