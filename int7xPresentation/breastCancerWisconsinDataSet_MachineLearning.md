@@ -20,8 +20,7 @@ I employ critical data analysis modules in this project, emphasizing on:
 + matplotlib (for visuals)
 + seaborn (easier to make statistical plots)
 
-## 1. Load Modules
-We load our modules into our python environment. In my case I am employing a **Jupyter Notebook** while running inside an **|conda** environment. 
+We load our modules into our python environment. In my case I am employing a **Jupyter Notebook** while running inside an **conda** environment. 
 
 For now to illustrate and show the module versions in a simple way I will name the ones I used and show the version I used as follows:
 
