@@ -55,7 +55,7 @@ To run **Neural Networks** section
 
 	$ chmod +x breastCancerWisconsinDataSet_MachineLearning.py
 
-then you would simply just run it (I'll use **Random Forest as an example)
+then you would simply just run it (I'll use **Random Forest** as an example)
 
 	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
 
