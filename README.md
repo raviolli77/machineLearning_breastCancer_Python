@@ -73,6 +73,9 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Random Forest | 3.509% | 3 | 0.967 |
 | Neural Networks | 1.754% | 2 | 0.986 |
 
+#### ROC Curve for Script
+![](images/rocScript.png)
+
 ### Diagnostics for Jupyter Notebook
 
 | Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | 
@@ -81,6 +84,9 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Decision Trees 	| 5.263% 	| 4 |	0.9482 | 
 | Random Forest 	| 3.509% 	| 3 	| 0.9673 | 
 | Neural Networks 	| 2.632% 	| 1 	| 0.9701 | 
+
+#### ROC Curve for Script
+![](images/rocNotebook.png)
 
 If you can figure out why values are different for script and notebook please let me know!
 
