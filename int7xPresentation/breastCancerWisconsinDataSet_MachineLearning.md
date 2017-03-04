@@ -44,8 +44,9 @@ For now to illustrate and show the module versions in a simple way I will name t
 + sklearn==0.18.1
 + seaborn=0.7.1
 
-## Load Modules
+Should include the *shebang*:
 
+	#!/usr/bin/env python3
 	import numpy as np
 	import pandas as pd # Data frames
 	import matplotlib.pyplot as plt # Visuals
