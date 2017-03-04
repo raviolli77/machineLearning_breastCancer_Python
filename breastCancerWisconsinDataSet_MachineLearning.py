@@ -49,12 +49,9 @@ breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 
 def exploratoryAnalysis():
 	'''
-	This function will give the user important exploratory statistics
-	Including:
-	- head of our data frame
-	- Row and Column lengths
-	- Dtypes of Columns
-	- Count of dependent variable (i.e. diagnoses)
+	Function shows various statistical calculations done as a preliminary exploratory analysis 
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py EA 
 	'''
 	print("Exploratory Analyis of Data!")
 	print("Here are the first 6 values of our data frame:\n", breastCancer.head())
@@ -90,10 +87,14 @@ def exploratoryAnalysis():
 	print("Some more statistics for our data frame: ", breastCancer.describe())
 
 def visualExplorAnalysis():
+	'''
+	Function shows various visual exploratory analysis plots
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py VEA 
+	'''
+
+	# Scatterplot Matrix
 	# Variables chosen from Random Forest modeling. 
-	'''
-	Scatterplot Matrix
-	'''
 	breastCancerSamp = breastCancer.loc[:, 
                                     	['concave_points_worst', 'concavity_mean', 
                                      	'perimeter_worst', 'radius_worst', 
@@ -105,9 +106,8 @@ def visualExplorAnalysis():
 	
 	plt.show()
 	plt.close()
-	'''
-	Pearson Correlation Matrix
-	'''
+
+	# Pearson Correlation Matrix
 	corr = breastCancer.corr(method = 'pearson') # Correlation Matrix
 	
 	f, ax = plt.subplots(figsize=(11, 9))
@@ -173,8 +173,9 @@ test_class_set = test.ix[:, test.columns == 'diagnosis']
 
 def kthNearestNeighbor():
 	'''
-	Function does Kth Nearest Neighbors. Outputs information relating 
-	to training and test set evaluations
+	Function Kth Nearest Neighbor using k=9
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py KNN 
 	'''
 
 	print('''
@@ -279,6 +280,11 @@ def kthNearestNeighbor():
 	plt.close()
 
 def decisionTree():
+	'''
+	Function performs a decision tree 
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py DT 
+	'''
 	print('''
 	####################################################
 	##       FITTING MODEL USING MAX DEPTH OF 3       ##
@@ -385,6 +391,11 @@ def decisionTree():
 	plt.close()
 
 def randomForest():
+	'''
+	Function performs a random forest 
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py RF 
+	'''
 	fit_RF = RandomForestClassifier(random_state = 42, 
 		criterion='gini',
 		n_estimators = 500,
@@ -514,6 +525,11 @@ def randomForest():
 	plt.close()
 
 def neuralNetworks():
+	'''
+	Function performs a neural network 
+	by running (on terminal):
+	$ python breastCancerWisconsinDataSet_MachineLearning.py NN 
+	'''
 	fit_NN = MLPClassifier(solver='lbfgs', 
 		hidden_layer_sizes=(5, ), 
 		random_state=42)
