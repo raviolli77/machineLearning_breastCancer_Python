@@ -24,8 +24,6 @@ pd.set_option('display.max_columns', 500) # Included to show all the columns
 plt.style.use('ggplot') # Using ggplot2 style visuals because that's how I learned my visuals 
 # and I'm sticking to it!
 
-
-
 UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data'
 
 names = ['id_number', 'diagnosis', 'radius_mean', 
@@ -90,8 +88,6 @@ def exploratoryAnalysis():
 	print(classImbalance('diagnosis'))
 
 	print("Some more statistics for our data frame: ", breastCancer.describe())
-
-
 
 def visualExplorAnalysis():
 	# Variables chosen from Random Forest modeling. 
@@ -295,6 +291,7 @@ def decisionTree():
 
 	fit = dt.fit(training_set, class_set)
 	print(fit)
+
 	print('''
 	###############################
 	##    VARIABLE IMPORTANCE    ##
@@ -332,6 +329,7 @@ def decisionTree():
 	
 	print("Here is our mean accuracy on the test set:\n",
 		'%.2f' % (accuracy_dt * 100), '%')
+
 	predictions_dt = fit.predict(test_set)
 	
 	print("Table comparing actual vs. predicted values for our test set:")
@@ -514,8 +512,6 @@ def randomForest():
 
 	plt.show()
 	plt.close()
-
-
 
 def neuralNetworks():
 	fit_NN = MLPClassifier(solver='lbfgs', 
