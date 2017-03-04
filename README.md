@@ -27,29 +27,19 @@ The **.py** script is broken into 5 sections (done by creating a function for ea
 
 To run the script successfully, within the terminal you would employ this technique (Outlined starting at line 618):
 
-To run **Exploratory Analysis** section
+I have 6 functions which are called up using these initials:
++ **Exploratory Analysis** - `EA`
++ **Visual Exploratory Analysis** - `VEA`
++ **Kth Nearest Neighbors** - `KNN`
++ **Decision Tree** - `DT`
++ **Random Forest** - `RF`
++ **Neural Networks** - `NN`
+
+So for example you wanted to run **Exploratory Analysis** section you type this into the terminal:
 
 	$ python breastCancerWisconsinDataSet_MachineLearning.py EA
 
-To run **Visual Exploratory Analysis** section
-
-	$ python breastCancerWisconsinDataSet_MachineLearning.py VEA
-
-To run **Kth Nearest Neighbor** section
-
-	$ python breastCancerWisconsinDataSet_MachineLearning.py KNN
-
-To run **Decision Tree** section
-
-	$ python breastCancerWisconsinDataSet_MachineLearning.py DT
-
-To run **Random Forest** section
-
-	$ python breastCancerWisconsinDataSet_MachineLearning.py RF
-
-To run **Neural Networks** section
-
-	$ python breastCancerWisconsinDataSet_MachineLearning.py NN
+You would do the same for all other functions with the respective initial!
 
 **NOTE**: You can also run it by making script executable as such:
 
