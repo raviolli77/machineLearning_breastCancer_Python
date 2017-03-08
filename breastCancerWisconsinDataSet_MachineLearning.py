@@ -89,14 +89,13 @@ def classImbalance(item):
 			n += 1
 	perMal = (i/len(breastCancer)) * 100
 	perBeg = (n/len(breastCancer)) * 100
-	print("Distribution of Diagnoses:")
-	print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
-	print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
+	print("Distribution of Diagnoses:\n", 
+		"The percentage of Malignant Dx is: {0:.2f}%\n".format(perMal), 
+		"The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
 
 	#################################
 	##    EXPLORATORY ANALYSIS     ##
 	#################################
-
 
 def exploratoryAnalysis():
 	'''
@@ -197,7 +196,6 @@ def visualExplorAnalysis():
 	plt.show()
 	plt.close()
 
-
 	############################################
 	##    CREATING TRAINING AND TEST SETS     ##
 	############################################
@@ -220,7 +218,6 @@ class_set = train.ix[:, train.columns == 'diagnosis']
 # Next we create the test set doing the same process as the training set
 test_set = test.ix[:, test.columns != 'diagnosis']
 test_class_set = test.ix[:, test.columns == 'diagnosis']
-
 
 	############################################
 	##    RUNNING MACHINE LEARNING MODELS     ##
@@ -250,6 +247,7 @@ def kthNearestNeighbor():
 	###############################
 	'''
 	)
+
 	# We predict the class for our training set
 	predictionsTrain = breastCancerKnn.predict(training_set) 
 	
@@ -348,6 +346,7 @@ def decisionTree():
 	####################################################
 	'''
 	)
+
 	dt = DecisionTreeClassifier(random_state = 42, 
 							criterion='gini', 
 							max_depth=3)
@@ -361,6 +360,7 @@ def decisionTree():
 	###############################
 	'''
 	)
+
 	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
 	
 	with open('dotFiles/breastCancerWD.dot', 'w') as f:
@@ -465,6 +465,7 @@ def randomForest():
 	####################################################
 	'''
 	)
+
 	print(fit_RF)
 
 	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
@@ -477,6 +478,7 @@ def randomForest():
 	###############################
 	'''
 	)
+
 	# Print the feature ranking
 	print("Feature ranking:")
 
@@ -591,6 +593,7 @@ def neuralNetworks():
 	'''
 	fit_NN = MLPClassifier(solver='lbfgs', 
 		hidden_layer_sizes=(5, ), 
+		activation='logistic',
 		random_state=7)
 
 	fit_NN.fit(training_set, class_set['diagnosis'])
