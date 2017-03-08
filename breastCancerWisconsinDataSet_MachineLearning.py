@@ -378,9 +378,9 @@ def decisionTree():
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-																	namesInd[indices[i]], 
-																	importances[indices[f]]))
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1,
+									    namesInd[indices[i]],
+									    importances[indices[f]]))
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -485,8 +485,8 @@ def randomForest():
 	for f in range(30):
 		i = f
 		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-			namesInd[indicesRF[i]], 
-			importancesRF[indicesRF[f]]))
+									   namesInd[indicesRF[i]], 
+									   importancesRF[indicesRF[f]]))
 
 	indRf = sorted(importancesRF) # Sort by Decreasing order
 	index = np.arange(30)
