@@ -64,7 +64,7 @@ Once I employed all these methods I deduced that **Neural Networks** performed t
 | Kth Nearest Neighbor 	| 3.509% |	2 |	0.9627 | 
 | Decision Trees 	| 5.263% 	| 4 |	0.9482 | 
 | Random Forest 	| 3.509% 	| 3 	| 0.9673 | 
-| Neural Networks 	| 2.632% 	| 1 	| 0.9701 | 
+| Neural Networks 	| 1.754% 	| 1 	| 0.981 | 
 
 #### ROC Curves for Data Set
 **NOTE**: Created on the **Jupyter Notebook** iteration. Not found in **Python** script. 
@@ -78,6 +78,6 @@ The ROC Curves are more telling of **Random Forest** being a better model for pr
 Any feedback is welcomed!
 
 Things to do:
-+ drink beer  
++ Change **Jupter Notebook** to reflect changes made to **Neural Networks** since I got better predictions 
 
 Still a work in progress, but decided to leave both iterations to show different ways my work flow happens and emphasize that iterations make a project go from **okay** to **lit af** 
