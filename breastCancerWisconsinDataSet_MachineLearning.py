@@ -51,6 +51,10 @@ breastCancer.set_index(['id_number'], inplace = True) # Setting 'id_number' as o
 # Converted to binary to help later on with models and plots
 breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 
+	#############################
+	##    HELPER FUNCTIONS     ##
+	#############################
+
 def normalize_df(frame):
 	'''
 	Helper function to Normalize data set
@@ -88,6 +92,11 @@ def classImbalance(item):
 	print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
 	print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
 
+	#################################
+	##    EXPLORATORY ANALYSIS     ##
+	#################################
+
+
 def exploratoryAnalysis():
 	'''
 	Function shows various statistical calculations done as a preliminary exploratory analysis 
@@ -95,9 +104,9 @@ def exploratoryAnalysis():
 	$ python breastCancerWisconsinDataSet_MachineLearning.py EA 
 	'''
 	print('''
-	#################################
-	##    EXPLORATORY ANALYSIS     ##
-	#################################
+	#########################################
+	##    NUMERIC EXPLORATORY ANALYSIS     ##
+	#########################################
 	''')
 	
 	print('''
