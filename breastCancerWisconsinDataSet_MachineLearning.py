@@ -47,44 +47,75 @@ breastCancer.set_index(['id_number'], inplace = True) # Setting 'id_number' as o
 # Converted to binary to help later on with models and plots
 breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 
+def normalize_df(frame):
+	'''
+	Helper function to Normalize data set
+	Intializes an empty data frame which will normalize all floats types
+	and just append the non-float types so basically the class in our data frame
+	'''
+	breastCancerNorm = pd.DataFrame()
+	for item in frame:
+		if item in frame.select_dtypes(include=[np.float]):
+			breastCancerNorm[item] = ((frame[item] - frame[item].min()) / 
+			(frame[item].max() - frame[item].min()))
+		elif item not in frame.select_dtypes(include=[np.float]):
+			breastCancerNorm[item] = frame[item]
+	return breastCancerNorm
+
+
+def classImbalance(item):
+	'''
+    Goal of this function:
+    Loops through the Dx to print percentage of class distributions 
+    w.r.t. the length of the data set
+	'''
+	i = 0
+	n = 0
+	perMal = 0 
+	perBeg = 0
+	for item in breastCancer[item]:
+		if (item == 1):
+			i += 1
+		elif (item == 0):
+			n += 1
+	perMal = (i/len(breastCancer)) * 100
+	perBeg = (n/len(breastCancer)) * 100
+	print("Distribution of Diagnoses:")
+	print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
+	print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
+
 def exploratoryAnalysis():
 	'''
 	Function shows various statistical calculations done as a preliminary exploratory analysis 
 	by running (on terminal):
 	$ python breastCancerWisconsinDataSet_MachineLearning.py EA 
 	'''
-	print("Exploratory Analyis of Data!")
-	print("Here are the first 6 values of our data frame:\n", breastCancer.head())
-
+	print('''
+	#################################
+	##    EXPLORATORY ANALYSIS     ##
+	#################################
+	''')
+	
+	print('''
+	########################################
+	##    DATA FRAME SHAPE AND DTYPES     ##
+	########################################
+	''')
 	print("Here's the dimensions of our data frame:\n", breastCancer.shape)
 	print("Here's the data types of our columns:\n", breastCancer.dtypes)
-
-	# Let's look at the count of the new representations of our Dx's
-	print("Count of the Dx: \n", breastCancer['diagnosis'].value_counts())
-
-	def classImbalance(item):
-		'''
-    	Goal of this function:
-    	Loops through the Dx to print percentage of class distributions 
-    	w.r.t. the length of the data set
-		'''
-		i = 0
-		n = 0
-		perMal = 0 
-		perBeg = 0
-		for item in breastCancer[item]:
-			if (item == 1):
-				i += 1
-			elif (item == 0):
-				n += 1
-		perMal = (i/len(breastCancer)) * 100
-		perBeg = (n/len(breastCancer)) * 100
-		print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
-		print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
-
-	print(classImbalance('diagnosis'))
-
+	
 	print("Some more statistics for our data frame: ", breastCancer.describe())
+
+	print('''
+	##########################################
+	##      STATISTICS RELATING TO DX       ##
+	##########################################
+	''')
+	# Let's look at the count of the new representations of our Dx's
+	print("Count of the Dx:\n", breastCancer['diagnosis'].value_counts())
+
+	# Next let's use the helper function to show distribution of our data frame
+	classImbalance('diagnosis')
 
 def visualExplorAnalysis():
 	'''
@@ -136,37 +167,29 @@ def visualExplorAnalysis():
 	plt.show()
 	plt.close()
 
-	# Normalize data set
-	breastCancerFloat = breastCancer.iloc[:, 1:]
-	
-	for item in breastCancer:
-		if item in breastCancerFloat:
-			breastCancer[item] = ((breastCancer[item] - breastCancer[item].min()) / 
-			(breastCancer[item].max() - breastCancer[item].min()))
+	# Visuals relating to normalized data to show significant difference
+	normalize_df(breastCancer)
 			
-	print("Here's our newly transformed data: \n", breastCancer.head())
-	print("Describe function with transformed data: \n", breastCancer.describe())
+	print("Here's our newly transformed data: \n", breastCancerNorm.head())
+	print("Describe function with transformed data: \n", breastCancerNorm.describe())
 
 	f, ax = plt.subplots(figsize=(11, 15))
 
 	ax.set_axis_bgcolor('#fafafa')
 	plt.title("Box Plot of Transformed Data Set (Breast Cancer Wisconsin Data Set)")
 	ax.set(xlim=(-.05, 1.05))
-	ax = sns.boxplot(data = breastCancer[1:29], orient = 'h', palette = 'Set2')
+	ax = sns.boxplot(data = breastCancerNorm[1:29], orient = 'h', palette = 'Set2')
 
 	plt.show()
 	plt.close()
 
-# Normalize data set
-breastCancerFloat = breastCancer.iloc[:, 1:]	
 
-for item in breastCancer:
-	if item in breastCancerFloat:
-		breastCancer[item] = ((breastCancer[item] - breastCancer[item].min()) / 
-		(breastCancer[item].max() - breastCancer[item].min()))
+# Since the last frame was only within the local function 
+# We create the normalized data frame again
+breastCancerNorm = normalize_df(breastCancer)
 
 # Here we do a 80-20 split for our training and test set
-train, test = train_test_split(breastCancer, 
+train, test = train_test_split(breastCancerNorm, 
                                test_size = 0.20, 
                                random_state = 42)
 
