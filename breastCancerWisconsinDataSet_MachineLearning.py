@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-# WISCONSIN BREAST CANCER MACHINE LEARNING (PYTHON)
+	#####################################################
+	##    WISCONSIN BREAST CANCER MACHINE LEARNING     ##
+	#####################################################
 
 # Project by Raul Eulogio
 import sys
@@ -69,7 +71,6 @@ def normalize_df(frame):
 		elif item not in frame.select_dtypes(include=[np.float]):
 			breastCancerNorm[item] = frame[item]
 	return breastCancerNorm
-
 
 def classImbalance(item):
 	'''
