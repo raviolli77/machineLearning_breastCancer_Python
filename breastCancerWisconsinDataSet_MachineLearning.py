@@ -24,6 +24,10 @@ pd.set_option('display.max_columns', 500) # Included to show all the columns
 plt.style.use('ggplot') # Using ggplot2 style visuals because that's how I learned my visuals 
 # and I'm sticking to it!
 
+	#################################
+	##        LOADING DATA         ##
+	#################################
+
 UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data'
 
 names = ['id_number', 'diagnosis', 'radius_mean', 
@@ -184,6 +188,10 @@ def visualExplorAnalysis():
 	plt.close()
 
 
+	############################################
+	##    CREATING TRAINING AND TEST SETS     ##
+	############################################
+
 # Since the last frame was only within the local function 
 # We create the normalized data frame again
 breastCancerNorm = normalize_df(breastCancer)
@@ -202,6 +210,11 @@ class_set = train.ix[:, train.columns == 'diagnosis']
 # Next we create the test set doing the same process as the training set
 test_set = test.ix[:, test.columns != 'diagnosis']
 test_class_set = test.ix[:, test.columns == 'diagnosis']
+
+
+	############################################
+	##    RUNNING MACHINE LEARNING MODELS     ##
+	############################################
 
 def kthNearestNeighbor():
 	'''
