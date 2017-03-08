@@ -80,5 +80,7 @@ Any feedback is welcomed!
 Things to do:
 + Change **Jupter Notebook** to reflect changes made to **Neural Networks** since I got better predictions 
 + Change **ROC Curves** on this **README** since **Neural Networks** performed better than last iteration
++ Change conclusions since reading documentation of real life application showed that both **Neural Networks** and **Random Forest** are useful. Its not just about picking one model. Found here: https://research.googleblog.com/2017/03/assisting-pathologists-in-detecting.html
++ Too tired to do right now 
 
 Still a work in progress, but decided to leave both iterations to show different ways my work flow happens and emphasize that iterations make a project go from **okay** to **lit af** 
