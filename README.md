@@ -79,5 +79,6 @@ Any feedback is welcomed!
 
 Things to do:
 + Change **Jupter Notebook** to reflect changes made to **Neural Networks** since I got better predictions 
++ Change **ROC Curves** on this **README** since **Neural Networks** performed better than last iteration
 
 Still a work in progress, but decided to leave both iterations to show different ways my work flow happens and emphasize that iterations make a project go from **okay** to **lit af** 
