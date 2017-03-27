@@ -54,6 +54,31 @@ breastCancer.set_index(['id_number'], inplace = True) # Setting 'id_number' as o
 # Converted to binary to help later on with models and plots
 breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 
+# For later use in CART models
+namesInd = names[2:]
+
+# FUNCTION NOT WORKING WHEN PUT INSIDE 'helperfunctions.py'
+# NEED TO LEARN HOW TO FIX
+
+def classImbalance(item):
+    '''
+    Goal of this function:
+    Loops through the Dx to print percentage of class distributions 
+    w.r.t. the length of the data set
+    '''
+    i = 0
+    n = 0
+    perMal = 0 
+    perBeg = 0
+    for item in breastCancer[item]:
+        if (item == 1):
+            i += 1
+        elif (item == 0):
+            n += 1
+    perMal = (i/len(breastCancer)) * 100
+    perBeg = (n/len(breastCancer)) * 100
+    print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
+    print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
 
 	#################################
 	##    EXPLORATORY ANALYSIS     ##
@@ -79,7 +104,7 @@ def exploratoryAnalysis():
 	print("Here's the dimensions of our data frame:\n", breastCancer.shape)
 	print("Here's the data types of our columns:\n", breastCancer.dtypes)
 	
-	print("Some more statistics for our data frame: ", breastCancer.describe())
+	print("Some more statistics for our data frame: \n", breastCancer.describe())
 
 	print('''
 	##########################################
@@ -207,6 +232,7 @@ def kthNearestNeighbor():
 	train_error_rate = 1 - accuracyTrain  
 	print("The train error rate for our model is:\n",
 		'%.3f' % (train_error_rate * 100), '%')
+
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -244,7 +270,7 @@ def kthNearestNeighbor():
 	# refer to helper.py for additional information
 	plotROC(fpr, tpr, auc_knn, 0)
 
-	# Zoomed in
+	# Zoomed in ROC Curve
 	plotROCZoom(fpr, tpr, auc_knn, 0)
 
 def decisionTree():
@@ -267,6 +293,13 @@ def decisionTree():
 	fit = dt.fit(training_set, class_set)
 	print(fit)
 
+	# Outputting the visual decision tree into .dot file 
+	with open('dotFiles/breastCancerWD.dot', 'w') as f:
+		f = export_graphviz(fit, out_file = f,
+							feature_names=namesInd,
+							rounded = True)
+
+
 	print('''
 	###############################
 	##    VARIABLE IMPORTANCE    ##
@@ -274,26 +307,12 @@ def decisionTree():
 	'''
 	)
 
-	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
-	
-	with open('dotFiles/breastCancerWD.dot', 'w') as f:
-		f = export_graphviz(fit, out_file = f,
-							feature_names=namesInd,
-							rounded = True)
-
 	# Variable Importance for model
 	importances = fit.feature_importances_
 	indices = np.argsort(importances)[::-1]
 
+	varImport(namesInd, importances, indices)
 
-	# Print the feature ranking
-	print("Feature ranking:")
-	
-	for f in range(30):
-		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-																	namesInd[indices[i]], 
-																	importances[indices[f]]))
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -327,7 +346,6 @@ def decisionTree():
 
 	# Zoomed in ROC Curve
 	plotROCZoom(fpr1, tpr1, auc_dt, 1)
-	#return fpr1, tpr1, predictions_DT, auc_dt
 
 def randomForest():
 	'''
@@ -349,10 +367,6 @@ def randomForest():
 
 	print(fit_RF)
 
-	namesInd = names[2:] # Cus the name list has 'id_number' and 'diagnosis' so we exclude those
-	importancesRF = fit_RF.feature_importances_
-	indicesRF = np.argsort(importancesRF)[::-1]
-
 	print('''
 	###############################
 	##    VARIABLE IMPORTANCE    ##
@@ -360,14 +374,12 @@ def randomForest():
 	'''
 	)
 
-	# Print the feature ranking
-	print("Feature ranking:")
+	importancesRF = fit_RF.feature_importances_
+	indicesRF = np.argsort(importancesRF)[::-1]
 
-	for f in range(30):
-		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-			namesInd[indicesRF[i]], 
-			importancesRF[indicesRF[f]]))
+
+
+	varImport(namesInd, importancesRF, indicesRF)
 
 	indRf = sorted(importancesRF) # Sort by Decreasing order
 	index = np.arange(30)
@@ -477,10 +489,10 @@ def neuralNetworks():
 	fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set)
 
 	auc_nn = auc(fpr3, tpr3)
-	#ROC Curve
+	# ROC Curve
 	plotROC(fpr3, tpr3, auc_nn, 3)
 
-	# Zoomed in Plot
+	# Zoomed in ROC Curve
 	plotROCZoom(fpr3, tpr3, auc_nn, 3)
 
 if __name__ == '__main__':

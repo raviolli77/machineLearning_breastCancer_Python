@@ -24,28 +24,6 @@ def normalize_df(frame):
 			breastCancerNorm[item] = frame[item]
 	return breastCancerNorm
 
-def classImbalance(item):
-	'''
-    Goal of this function:
-    Loops through the Dx to print percentage of class distributions 
-    w.r.t. the length of the data set
-	'''
-	i = 0
-	n = 0
-	perMal = 0 
-	perBeg = 0
-	for item in breastCancer[item]:
-		if (item == 1):
-			i += 1
-		elif (item == 0):
-			n += 1
-	perMal = (i/len(breastCancer)) * 100
-	perBeg = (n/len(breastCancer)) * 100
-	print("Distribution of Diagnoses:\n", 
-		"The percentage of Malignant Dx is: {0:.2f}%\n".format(perMal), 
-		"The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
-
-
 	############################################
 	##    CREATING TRAINING AND TEST SETS     ##
 	############################################
@@ -75,6 +53,23 @@ def splitSets(breastCancer):
 	test_class_set = test.ix[:, test.columns == 'diagnosis']
 	return training_set, class_set, test_set, test_class_set
 
+
+def varImport(names, importance, indices):
+	'''
+	Helper function that returns the variable importance for CART models
+	'''
+	print("Feature ranking:")
+	
+	for f in range(30):
+		i = f
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+																	names[indices[i]], 
+																	importance[indices[f]]))
+
+	############################################
+	##        ROC Curve Helper Function       ##      
+	############################################
+
 def plotROC(fpr, tpr, auc, i):
 	'''
 	Generates the respective ROC Curve for each model
@@ -101,6 +96,10 @@ def plotROC(fpr, tpr, auc, i):
 	plt.title('ROC Curve For' + ' ' + method[i] + ' ' + '(AUC = {0: 0.3f})'.format(auc))		
 	plt.show()
 	plt.close()
+
+	######################################################
+	##        Zoomed in ROC Curve Helper Function       ##      
+	######################################################
 
 def plotROCZoom(fpr, tpr, auc, i):	
 	'''
