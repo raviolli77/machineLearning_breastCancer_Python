@@ -81,7 +81,7 @@ def plotROC(fpr, tpr, auc, i):
 
 	# ROC Curve
 	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr, tpr, label=method[i] + ' ' + 'ROC Curve  (area = %.4f)' % auc, 
+	plt.plot(fpr, tpr, 
 		color = colors[i], 
 		linewidth=1)	
 
@@ -93,7 +93,7 @@ def plotROC(fpr, tpr, auc, i):
 	plt.ylim([0.0, 1.05])
 	plt.xlabel('False Positive Rate')
 	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For' + ' ' + method[i] + ' ' + '(AUC = {0: 0.3f})'.format(auc))		
+	plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'.format(method[i], auc))		
 	plt.show()
 	plt.close()
 
@@ -105,13 +105,13 @@ def plotROCZoom(fpr, tpr, auc, i):
 	'''
 	Generates the respective ROC Curve for each model Zoomed in!
 	Where the legend is as such in dictionary form:
-	{0: 'KNN', 1: 'Decition Trees', 2: 'Random Forest', 3: 'Neural Networks'}
+	{0: 'KNN', 1: 'Decision Trees', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
 	colors = ['deeppink', 'navy', 'red', 'purple']
 	method = ['Kth Nearest Neighbor', 'Decision Trees', 'Random Forest', 'Neural Network']
 
 	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr, tpr, label=method[i] + ' ' + 'ROC Curve  (area = %.4f)' % auc, 
+	plt.plot(fpr, tpr, 
 		color = colors[i], 
 		linewidth=1)
 
@@ -123,7 +123,6 @@ def plotROCZoom(fpr, tpr, auc, i):
 	plt.ylim([0.7, 1.05])
 	plt.xlabel('False Positive Rate')
 	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For' + ' ' + method[i] + ' ' + '(AUC = {0: 0.3f})'.format(auc))
-	
+	plt.title('Zoomed in ROC Curve For {0} (AUC = {1: 0.3f})'.format(method[i], auc))		
 	plt.show()
 	plt.close()
