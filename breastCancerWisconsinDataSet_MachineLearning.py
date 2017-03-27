@@ -11,7 +11,6 @@ import pandas as pd # Data frames
 import matplotlib.pyplot as plt # Visuals
 import seaborn as sns # Danker visuals
 from helperFunctions import *
-from sklearn.model_selection import train_test_split # Create training and test sets
 from sklearn.model_selection import KFold, cross_val_score # Cross validation
 from sklearn.neighbors import KNeighborsClassifier # Kth Nearest Neighbor
 from sklearn.tree import DecisionTreeClassifier # Decision Trees
