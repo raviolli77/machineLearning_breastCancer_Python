@@ -74,7 +74,7 @@ def plotROC(fpr, tpr, auc, i):
 	'''
 	Generates the respective ROC Curve for each model
 	Where the legend is as such in dictionary form:
-	{0: 'KNN', 1: 'Decition Trees', 2: 'Random Forest', 3: 'Neural Networks'}
+	{0: 'KNN', 1: 'Decision Tree', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
 	colors = ['deeppink', 'navy', 'red', 'purple']
 	method = ['Kth Nearest Neighbor', 'Decision Trees', 'Random Forest', 'Neural Network']
