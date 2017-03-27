@@ -20,7 +20,7 @@ def normalize_df(frame):
 		if item in frame.select_dtypes(include=[np.float]):
 			breastCancerNorm[item] = ((frame[item] - frame[item].min()) / 
 			(frame[item].max() - frame[item].min()))
-		elif item not in frame.select_dtypes(include=[np.float]):
+		else: 
 			breastCancerNorm[item] = frame[item]
 	return breastCancerNorm
 
