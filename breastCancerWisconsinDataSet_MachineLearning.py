@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd # Data frames
 import matplotlib.pyplot as plt # Visuals
 import seaborn as sns # Danker visuals
+from helperFunctions import *
 from sklearn.model_selection import train_test_split # Create training and test sets
 from sklearn.model_selection import KFold, cross_val_score # Cross validation
 from sklearn.neighbors import KNeighborsClassifier # Kth Nearest Neighbor
@@ -53,45 +54,6 @@ breastCancer.set_index(['id_number'], inplace = True) # Setting 'id_number' as o
 # Converted to binary to help later on with models and plots
 breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 
-	#############################
-	##    HELPER FUNCTIONS     ##
-	#############################
-
-def normalize_df(frame):
-	'''
-	Helper function to Normalize data set
-	Intializes an empty data frame which will normalize all floats types
-	and just append the non-float types so basically the class in our data frame
-	'''
-	breastCancerNorm = pd.DataFrame()
-	for item in frame:
-		if item in frame.select_dtypes(include=[np.float]):
-			breastCancerNorm[item] = ((frame[item] - frame[item].min()) / 
-			(frame[item].max() - frame[item].min()))
-		elif item not in frame.select_dtypes(include=[np.float]):
-			breastCancerNorm[item] = frame[item]
-	return breastCancerNorm
-
-def classImbalance(item):
-	'''
-    Goal of this function:
-    Loops through the Dx to print percentage of class distributions 
-    w.r.t. the length of the data set
-	'''
-	i = 0
-	n = 0
-	perMal = 0 
-	perBeg = 0
-	for item in breastCancer[item]:
-		if (item == 1):
-			i += 1
-		elif (item == 0):
-			n += 1
-	perMal = (i/len(breastCancer)) * 100
-	perBeg = (n/len(breastCancer)) * 100
-	print("Distribution of Diagnoses:\n", 
-		"The percentage of Malignant Dx is: {0:.2f}%\n".format(perMal), 
-		"The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
 
 	#################################
 	##    EXPLORATORY ANALYSIS     ##
@@ -181,7 +143,7 @@ def visualExplorAnalysis():
 	plt.close()
 
 	# Visuals relating to normalized data to show significant difference
-	normalize_df(breastCancer)
+	breastCancerNorm = normalize_df(breastCancer)
 			
 	print("Here's our newly transformed data: \n", breastCancerNorm.head())
 	print("Describe function with transformed data: \n", breastCancerNorm.describe())
@@ -196,28 +158,9 @@ def visualExplorAnalysis():
 	plt.show()
 	plt.close()
 
-	############################################
-	##    CREATING TRAINING AND TEST SETS     ##
-	############################################
+# CREATE APPROPRIATE SETS FOR MODELING
 
-# Since the last frame was only within the local function 
-# We create the normalized data frame again
-breastCancerNorm = normalize_df(breastCancer)
-
-# Here we do a 80-20 split for our training and test set
-train, test = train_test_split(breastCancerNorm, 
-                               test_size = 0.20, 
-                               random_state = 42)
-
-# Create the training test omitting the diagnosis
-training_set = train.ix[:, train.columns != 'diagnosis']
-# Next we create the class set (Called target in Python Documentation)
-# Note: This was confusing af to figure out cus the documentation is low-key kind of shitty
-class_set = train.ix[:, train.columns == 'diagnosis']
-
-# Next we create the test set doing the same process as the training set
-test_set = test.ix[:, test.columns != 'diagnosis']
-test_class_set = test.ix[:, test.columns == 'diagnosis']
+training_set, class_set, test_set, test_class_set = splitSets(breastCancer)
 
 	############################################
 	##    RUNNING MACHINE LEARNING MODELS     ##
@@ -295,44 +238,14 @@ def kthNearestNeighbor():
 
 	auc_knn = auc(fpr, tpr)
 
-	# ROC Curve
-	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr, tpr, label='Kth-NN ROC Curve  (area = %.4f)' % auc_knn, 
-		color = 'deeppink', 
-		linewidth=1)
 
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.01, 1.0])
-	plt.ylim([0.0, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Kth Nearest Neighbor (AUC = {0: 0.3f})'.format(auc_knn))
-	
-	plt.show()
-	plt.close()
+	# ROC Curve
+	# NOTE: These functions were created in the helper.py script to reduce lines of code
+	# refer to helper.py for additional information
+	plotROC(fpr, tpr, auc_knn, 0)
 
 	# Zoomed in
-	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr, tpr, label='Kth-NN ROC Curve  (area = %.4f)' % auc_knn, 
-		color = 'deeppink', 
-		linewidth=1)
-
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.001, 0.2])
-	plt.ylim([0.7, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Kth Nearest Neighbor (AUC = {0: 0.3f})'.format(auc_knn))
-	
-	plt.show()
-	plt.close()
-	#return fpr, tpr, predictions, auc_knn
+	plotROCZoom(fpr, tpr, auc_knn, 0)
 
 def decisionTree():
 	'''
@@ -378,9 +291,9 @@ def decisionTree():
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1,
-									    namesInd[indices[i]],
-									    importances[indices[f]]))
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+																	namesInd[indices[i]], 
+																	importances[indices[f]]))
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -410,42 +323,10 @@ def decisionTree():
 	auc_dt = auc(fpr1, tpr1)
 
 	# ROC Curve
-	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr1, tpr1, label='Decision Tree ROC Curve  (area = %.4f)' % auc_dt, 
-		color = 'navy', 
-		linewidth=1)
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.01, 1.0])
-	plt.ylim([0.0, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Decision Tree (AUC = {0: 0.3f})'.format(auc_dt))
-	
-	plt.show()
-	plt.close()
+	plotROC(fpr1, tpr1, auc_dt, 1)
 
-	# Zoomed in Plots
-	fig, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr1, tpr1, label='Decision Tree ROC Curve  (area = %.4f)' % auc_dt, 
-		color = 'navy', 
-		linewidth=1)
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.001, 0.2])
-	plt.ylim([0.7, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Decision Tree (AUC = {0: 0.3f})'.format(auc_dt))
-	
-	plt.show()
-	plt.close()
+	# Zoomed in ROC Curve
+	plotROCZoom(fpr1, tpr1, auc_dt, 1)
 	#return fpr1, tpr1, predictions_DT, auc_dt
 
 def randomForest():
@@ -485,8 +366,8 @@ def randomForest():
 	for f in range(30):
 		i = f
 		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-									   namesInd[indicesRF[i]], 
-									   importancesRF[indicesRF[f]]))
+			namesInd[indicesRF[i]], 
+			importancesRF[indicesRF[f]]))
 
 	indRf = sorted(importancesRF) # Sort by Decreasing order
 	index = np.arange(30)
@@ -543,47 +424,9 @@ def randomForest():
 	
 	auc_rf = auc(fpr2, tpr2)
 	# ROC Curve
-	fig, ax = plt.subplots(figsize=(10, 10))
-
-	plt.plot(fpr2, tpr2, 
-		color = 'red', 
-		linestyle=':', 
-		linewidth=3)
-
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2)
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.01, 1.0])
-	plt.ylim([0.0, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Random Forest (AUC = {0: 0.3f})'.format(auc_rf))
-
-	plt.show()
-	plt.close()
-
-	# Zoomed in Plots
-	fig, ax = plt.subplots(figsize=(10, 10))
-
-	plt.plot(fpr2, tpr2, 
-		color = 'red', 
-		linestyle=':', 
-		linewidth=4)
-
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2)
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.001, 0.2])
-	plt.ylim([0.7, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Random Forest (AUC = {0: 0.3f})'.format(auc_rf))
-
-	plt.show()
-	plt.close()
-	#return fpr2, tpr2, predictions_RF, auc_rf
+	plotROC(fpr2, tpr2, auc_rf, 2)
+	# Zoomed in ROC Curve
+	plotROCZoom(fpr2, tpr2, auc_rf, 2)
 
 def neuralNetworks():
 	'''
@@ -635,47 +478,10 @@ def neuralNetworks():
 
 	auc_nn = auc(fpr3, tpr3)
 	#ROC Curve
-	fig, ax = plt.subplots(figsize=(10, 10))
-
-	plt.plot(fpr3, tpr3, 
-		color = 'purple', 
-		linestyle=':', 
-		linewidth=3)
-
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2)
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.01, 1.0])
-	plt.ylim([0.0, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Neural Network (AUC = {0: 0.3f})'.format(auc_nn))
-
-	plt.show()
-	plt.close()
+	plotROC(fpr3, tpr3, auc_nn, 3)
 
 	# Zoomed in Plot
-	fig, ax = plt.subplots(figsize=(10, 10))
-
-	plt.plot(fpr3, tpr3, 
-		color = 'purple', 
-		linestyle=':', 
-		linewidth=3)
-	ax.set_axis_bgcolor('#fafafa')
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	plt.xlim([-0.001, 0.2])
-	plt.ylim([0.7, 1.05])
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For Neural Network (AUC = {0: 0.3f})'.format(auc_nn))	
-
-	plt.show()
-	plt.close()
-	#return fpr3, tpr3, predictions_NN, auc_nn
+	plotROCZoom(fpr3, tpr3, auc_nn, 3)
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
