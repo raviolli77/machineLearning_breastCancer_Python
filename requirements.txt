@@ -1,0 +1,12 @@
+appdirs==1.4.3
+cycler==0.10.0
+matplotlib==1.5.3
+numpy==1.11.2
+packaging==16.8
+pandas==0.18.1
+pyparsing==2.1.4
+python-dateutil==2.5.3
+pytz==2016.6.1
+scikit-learn==0.18.1
+scipy==0.18.1
+seaborn==0.7.1
