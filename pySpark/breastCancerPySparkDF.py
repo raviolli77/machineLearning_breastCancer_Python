@@ -1,4 +1,4 @@
-from pyspark.sql
+# Load packages
 from pyspark.sql.functions import col
 from pyspark.ml.classification import RandomForestClassifier
 from pyspark.ml.classification import DecisionTreeClassifier

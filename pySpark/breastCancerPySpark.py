@@ -7,7 +7,7 @@ from pyspark.mllib.tree import RandomForest, RandomForestModel
 from pyspark.mllib.evaluation import BinaryClassificationMetrics
 
 sc = SparkContext.getOrCreate()
-data = MLUtils.loadLibSVMFile(sc, 'data.txt')
+data = MLUtils.loadLibSVMFile(sc, 'dataLibSVM.txt')
 print(data)
 # NEXT LET'S CREATE THE APPROPRIATE TRAINING AND TEST SETS
 # WE'LL BE SETTING THEM AS 70-30, ALONG WITH SETTING A
