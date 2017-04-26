@@ -55,16 +55,18 @@ then you would simply just run it (I'll use **Random Forest** as an example)
 	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
 
 ## Conclusions
-Once I employed all these methods I deduced that **Neural Networks** performed the best in terms of all diagnostics. But when choosing the best model since **Neural Networks** are *black box* models, we don't gain a lot of insight into our data. So in conclusion **Random Forest** was the best model in terms of performance and insight to our data. 
+Once I employed all these methods, we can that **Neural Networks** performed the best in terms of most diagnostics. *Kth Nearest Neighbor* performed better in terms of *cross validation*, but I have yet to perform *hyperparameter optimization* on other processes.  This project is an iterative process, so I will be working to reach a final consensus. In terms of most insight into the data, *random forest* model is able to tell us the most of our model. In terms of cross validated performance *kth nearest neighbor* performed the best.  
 
 ### Diagnostics for Data Set
 
-| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | 
-|-----------------|-----------------|-------------------------------|----------------------------|
-| Kth Nearest Neighbor 	| 3.509% |	2 |	0.9627 | 
-| Decision Trees 	| 5.263% 	| 4 |	0.9482 | 
-| Random Forest 	| 3.509% 	| 3 	| 0.9673 | 
-| Neural Networks 	| 1.754% 	| 1 	| 0.981 | 
+| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | 
+|-----------------|-----------------|-------------------------------|----------------------------|-----------|
+| Kth Nearest Neighbor* | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | 
+| Decision Trees 	| 0.053 	| 4 |	0.948 | 0.920 (+/-  0.024) | 
+| Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.030) |  
+| Neural Networks 	| 0.026 	| 1 	| 0.981 | 0.930 (+/-  0.034) |  
+
+*Only model with *Hyperparameter optimization* done
 
 #### ROC Curves for Data Set
 **NOTE**: Created on the **Jupyter Notebook** iteration. Not found in **Python** script. 
@@ -79,8 +81,4 @@ Any feedback is welcomed!
 
 Things to do:
 + Change **Jupter Notebook** to reflect changes made to **Neural Networks** since I got better predictions 
-+ Change **ROC Curves** on this **README** since **Neural Networks** performed better than last iteration
 + Change conclusions since reading documentation of real life application showed that both **Neural Networks** and **Random Forest** are useful. Its not just about picking one model. Found here: https://research.googleblog.com/2017/03/assisting-pathologists-in-detecting.html
-+ Too tired to do right now 
-
-Still a work in progress, but decided to leave both iterations to show different ways my work flow happens and emphasize that iterations make a project go from **okay** to **lit af** 

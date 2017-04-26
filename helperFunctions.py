@@ -2,12 +2,28 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split # Create training and test sets\
+from sklearn.model_selection import train_test_split # Create training and test sets
 import matplotlib.pyplot as plt # Visuals
+import seaborn as sns # Danker visuals
+from sklearn.model_selection import KFold, cross_val_score # Cross validation
 
 	###################################
 	##    HELPER FUNCTIONS SCRIPT    ##
 	###################################
+
+def pltBoxPlot(minxLim, maxXLim, dataFrame, dataSet):
+	f, ax = plt.subplots(figsize=(11, 15))
+	
+	ax.set_axis_bgcolor('#fafafa')
+	ax.set(xlim=(minxLim, maxXLim))
+	plt.ylabel('Dependent Variables')
+	plt.title("Box Plot of {0} Data Set".format(dataSet))
+	ax = sns.boxplot(data = dataFrame, orient = 'h', palette = 'Set2')
+	
+	plt.show()
+	plt.close()
+
+
 
 def normalize_df(frame):
 	'''
@@ -63,8 +79,8 @@ def varImport(names, importance, indices):
 	for f in range(30):
 		i = f
 		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
-									    names[indices[i]], 
-									    importance[indices[f]]))
+																	names[indices[i]], 
+																	importance[indices[f]]))
 
 	############################################
 	##        ROC Curve Helper Function       ##      
@@ -77,7 +93,8 @@ def plotROC(fpr, tpr, auc, i):
 	{0: 'KNN', 1: 'Decision Tree', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
 	colors = ['deeppink', 'navy', 'red', 'purple']
-	method = ['Kth Nearest Neighbor', 'Decision Trees', 'Random Forest', 'Neural Network']
+	method = ['Kth Nearest Neighbor', 'Decision Trees', 
+	'Random Forest', 'Neural Network']
 
 	# ROC Curve
 	fig, ax = plt.subplots(figsize=(10, 10))
@@ -108,7 +125,8 @@ def plotROCZoom(fpr, tpr, auc, i):
 	{0: 'KNN', 1: 'Decision Trees', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
 	colors = ['deeppink', 'navy', 'red', 'purple']
-	method = ['Kth Nearest Neighbor', 'Decision Trees', 'Random Forest', 'Neural Network']
+	method = ['Kth Nearest Neighbor', 'Decision Trees', 
+	'Random Forest', 'Neural Network']
 
 	fig, ax = plt.subplots(figsize=(10, 10))
 	plt.plot(fpr, tpr, 
@@ -123,6 +141,42 @@ def plotROCZoom(fpr, tpr, auc, i):
 	plt.ylim([0.7, 1.05])
 	plt.xlabel('False Positive Rate')
 	plt.ylabel('True Positive Rate')
-	plt.title('Zoomed in ROC Curve For {0} (AUC = {1: 0.3f})'.format(method[i], auc))		
+	plt.title('Zoomed in ROC Curve For {0} (AUC = {1: 0.3f})'\
+		.format(method[i], auc))		
 	plt.show()
 	plt.close()
+
+
+def crossVD(fit, test_set, test_class_set):
+	'''
+	Helper function helps automate cross validation processes
+	'''
+	n = KFold(n_splits=10)
+	scores = cross_val_score(fit, 
+                         test_set, 
+                         test_class_set, 
+                         cv = n)
+
+	print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+		.format(scores.mean(), scores.std() / 2))
+
+'''
+KNN Optimal K
+# Inspired by: https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/
+myKs = []
+for i in range(0, 50):
+	if (i % 2 != 0):
+		myKs.append(i)	
+cross_vals = []
+for k in myKs:
+	knn = KNeighborsClassifier(n_neighbors=k)
+	scores = cross_val_score(knn,
+	training_set, 
+	class_set['diagnosis'], 
+	cv = 10, 
+	scoring='accuracy')
+	cross_vals.append(scores.mean())
+MSE = [1 - x for x in cross_vals]
+optimal_k = myKs[MSE.index(min(MSE))]
+print("Optimal K is {0}".format(optimal_k))
+'''

@@ -5,7 +5,7 @@
 	#####################################################
 
 # Project by Raul Eulogio
-import sys
+import sys, os
 import numpy as np
 import pandas as pd # Data frames
 import matplotlib.pyplot as plt # Visuals
@@ -17,13 +17,15 @@ from sklearn.tree import DecisionTreeClassifier # Decision Trees
 from sklearn.tree import export_graphviz # Extract Decision Tree visual
 from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.neural_network import MLPClassifier # Neural Networks
+from sklearn.model_selection import KFold
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 from urllib.request import urlopen # Get data from UCI Machine Learning Repository
 
 pd.set_option('display.max_columns', 500) # Included to show all the columns 
 # since it is a fairly large data set
-plt.style.use('ggplot') # Using ggplot2 style visuals because that's how I learned my visuals 
+plt.style.use('ggplot') # Using ggplot2 style visuals 
+# because that's how I learned my visuals 
 # and I'm sticking to it!
 
 	#################################
@@ -76,8 +78,8 @@ def classImbalance(item):
             n += 1
     perMal = (i/len(breastCancer)) * 100
     perBeg = (n/len(breastCancer)) * 100
-    print("The percentage of Malignant Dx is: {0:.2f}%".format(perMal)) 
-    print("The percentage of Begnin Dx is: {0:.2f}%".format(perBeg))
+    print("The percentage of Malignant Dx is: {0:.3f}%".format(perMal)) 
+    print("The percentage of Begnin Dx is: {0:.3f}%".format(perBeg))
 
 	#################################
 	##    EXPLORATORY ANALYSIS     ##
@@ -85,7 +87,8 @@ def classImbalance(item):
 
 def exploratoryAnalysis():
 	'''
-	Function shows various statistical calculations done as a preliminary exploratory analysis 
+	Function shows various statistical calculations done 
+	as a preliminary exploratory analysis 
 	by running (on terminal):
 	$ python breastCancerWisconsinDataSet_MachineLearning.py EA 
 	'''
@@ -100,10 +103,14 @@ def exploratoryAnalysis():
 	##    DATA FRAME SHAPE AND DTYPES     ##
 	########################################
 	''')
-	print("Here's the dimensions of our data frame:\n", breastCancer.shape)
-	print("Here's the data types of our columns:\n", breastCancer.dtypes)
+
+	print("Here's the dimensions of our data frame:\n", 
+		breastCancer.shape)
+	print("Here's the data types of our columns:\n", 
+		breastCancer.dtypes)
 	
-	print("Some more statistics for our data frame: \n", breastCancer.describe())
+	print("Some more statistics for our data frame: \n", 
+		breastCancer.describe())
 
 	print('''
 	##########################################
@@ -111,7 +118,8 @@ def exploratoryAnalysis():
 	##########################################
 	''')
 	# Let's look at the count of the new representations of our Dx's
-	print("Count of the Dx:\n", breastCancer['diagnosis'].value_counts())
+	print("Count of the Dx:\n", breastCancer['diagnosis']\
+		.value_counts())
 
 	# Next let's use the helper function to show distribution of our data frame
 	classImbalance('diagnosis')
@@ -124,16 +132,21 @@ def visualExplorAnalysis():
 	'''
 
 	# Scatterplot Matrix
-	# Variables chosen from Random Forest modeling. 
-	breastCancerSamp = breastCancer.loc[:, 
-                                    	['concave_points_worst', 'concavity_mean', 
-                                     	'perimeter_worst', 'radius_worst', 
-                                     	'area_worst', 'diagnosis']]
+	# Variables chosen from Random Forest modeling.
 	
-	sns.set_palette(palette = ('Red', '#875FDB'))
-	pairPlots = sns.pairplot(breastCancerSamp, hue = 'diagnosis')
-	pairPlots.set(axis_bgcolor='#fafafa')
 	
+	cols = ['concave_points_worst', 'concavity_mean', 
+		'perimeter_worst', 'radius_worst', 
+		'area_worst', 'diagnosis']
+
+	sns.pairplot(breastCancer,
+		x_vars = cols,
+		y_vars = cols,
+		hue = 'diagnosis', 
+		palette = ('Red', '#875FDB'), 
+		markers=["o", "D"])
+	plt.title('Scatterplot Matrix')
+
 	plt.show()
 	plt.close()
 
@@ -145,9 +158,16 @@ def visualExplorAnalysis():
 	cmap = sns.diverging_palette(10, 275, as_cmap=True)
 	
 	# Draw the heatmap with the mask and correct aspect ratio
-	sns.heatmap(corr,  cmap=cmap,square=True, 
-            	xticklabels=True, yticklabels=True,
-            	linewidths=.5, cbar_kws={"shrink": .5}, ax=ax)
+	sns.heatmap(corr,
+		cmap=cmap,
+		square=True, 
+		xticklabels=True, 
+		yticklabels=True,
+		linewidths=.5, 
+		cbar_kws={"shrink": .5}, 
+		ax=ax)
+
+	plt.title("Pearson Correlation Matrix")
 	plt.yticks(rotation = 0)
 	plt.xticks(rotation = 270)
 	
@@ -155,36 +175,24 @@ def visualExplorAnalysis():
 	plt.close()
 
 	# BoxPlot
-	f, ax = plt.subplots(figsize=(11, 15))
-	
-	ax.set_axis_bgcolor('#fafafa')
-	ax.set(xlim=(-.05, 50))
-	plt.ylabel('Dependent Variables')
-	plt.title("Box Plot of Pre-Processed Data Set")
-	ax = sns.boxplot(data = breastCancer, orient = 'h', palette = 'Set2')
-	
-	plt.show()
-	plt.close()
+	pltBoxPlot(-.05, 50, breastCancer, 'Pre-Processed')
 
 	# Visuals relating to normalized data to show significant difference
 	breastCancerNorm = normalize_df(breastCancer)
 			
-	print("Here's our newly transformed data: \n", breastCancerNorm.head())
-	print("Describe function with transformed data: \n", breastCancerNorm.describe())
+	print("Here's our newly transformed data: \n", 
+		breastCancerNorm.head())
+	print("Describe function with transformed data: \n", 
+		breastCancerNorm.describe())
 
-	f, ax = plt.subplots(figsize=(11, 15))
-
-	ax.set_axis_bgcolor('#fafafa')
-	plt.title("Box Plot of Transformed Data Set (Breast Cancer Wisconsin Data Set)")
-	ax.set(xlim=(-.05, 1.05))
-	ax = sns.boxplot(data = breastCancerNorm[1:29], orient = 'h', palette = 'Set2')
-
-	plt.show()
-	plt.close()
+	pltBoxPlot(-.05, 1.05, breastCancerNorm, 'Transformed')
 
 # CREATE APPROPRIATE SETS FOR MODELING
 
 training_set, class_set, test_set, test_class_set = splitSets(breastCancer)
+
+breastCancerNorm = normalize_df(breastCancer)
+training_set_scaled, class_set_scaled, test_set_scaled, test_class_set_scaled = splitSets(breastCancerNorm)
 
 	############################################
 	##    RUNNING MACHINE LEARNING MODELS     ##
@@ -199,14 +207,16 @@ def kthNearestNeighbor():
 
 	print('''
 	#################################
-	## FITTING MODEL KNN USING k=9 ##
+	## FITTING MODEL KNN USING k=7 ##
 	#################################
 	'''
 	)
 
-	breastCancerKnn = KNeighborsClassifier(n_neighbors=9)
-	breastCancerKnn.fit(training_set, class_set['diagnosis'])
-	print(breastCancerKnn)
+	fit_KNN = KNeighborsClassifier(n_neighbors=7)
+	fit_KNN.fit(training_set, 
+		class_set['diagnosis'])
+	
+	print(fit_KNN)
 	
 	print('''
 	###############################
@@ -216,21 +226,35 @@ def kthNearestNeighbor():
 	)
 
 	# We predict the class for our training set
-	predictionsTrain = breastCancerKnn.predict(training_set) 
+	predictionsTrain = fit_KNN.predict(training_set) 
 	
-	# Here we create a matrix comparing the actual values vs. the predicted values
-	print(pd.crosstab(predictionsTrain, class_set['diagnosis'], 
-                  	rownames=['Predicted Values'], colnames=['Actual Values']))
+	# Here we create a matrix comparing the actual values 
+	# vs. the predicted values
+	print(pd.crosstab(predictionsTrain, 
+		class_set['diagnosis'], 
+		rownames=['Predicted Values'], 
+		colnames=['Actual Values']))
 	
 	# Measure the accuracy based on the trianing set
-	accuracyTrain = breastCancerKnn.score(training_set, class_set['diagnosis'])
+	accuracyTrain = fit_KNN.score(training_set, 
+		class_set['diagnosis'])
 	
-	print("Here is our accuracy for our training set:\n",
-		'%.3f' % (accuracyTrain * 100), '%')
+	print("Here is our accuracy for our training set:\n {0: .3f}"\
+		.format(accuracyTrain))
 
 	train_error_rate = 1 - accuracyTrain  
-	print("The train error rate for our model is:\n",
-		'%.3f' % (train_error_rate * 100), '%')
+	print("The train error rate for our model is:\n {0: .3f}"\
+		.format(train_error_rate))
+
+	print('''
+	###############################
+	##      CROSS VALIDATION     ##
+	###############################
+	'''
+	)
+
+	crossVD(fit_KNN, test_set, test_class_set['diagnosis'])
+	
 
 	print('''
 	###############################
@@ -240,32 +264,36 @@ def kthNearestNeighbor():
 	)
 
 	# First we predict the Dx for the test set and call it predictions
-	predictions = breastCancerKnn.predict(test_set)
+	predictions = fit_KNN.predict(test_set)
 	
 	# Let's compare the predictions vs. the actual values
-	print(pd.crosstab(predictions, test_class_set['diagnosis'], 
-					rownames=['Predicted Values'], 
-					colnames=['Actual Values']))
+	print(pd.crosstab(predictions, 
+		test_class_set['diagnosis'], 
+		rownames=['Predicted Values'], 
+		colnames=['Actual Values']))
 	
 	# Let's get the accuracy of our test set
-	accuracy = breastCancerKnn.score(test_set, test_class_set['diagnosis'])
+	accuracy = fit_KNN.score(test_set, 
+		test_class_set['diagnosis'])
 	
 	# TEST ERROR RATE!!
-	print("Here is our accuracy for our test set:\n",
-		'%.3f' % (accuracy * 100), '%')
+	print("Here is our accuracy for our test set:\n {0: .3f}"\
+		.format(accuracy))
 
 	# Here we calculate the test error rate!
 	test_error_rate = 1 - accuracy
-	print("The test error rate for our model is:\n",
-		'%.3f' % (test_error_rate * 100), '%')
+	print("The test error rate for our model is:\n {0: .3f}"\
+		.format(test_error_rate))
+
 	# ROC Curve and AUC Calculations
-	fpr, tpr, _ = roc_curve(predictions, test_class_set)
+	fpr, tpr, _ = roc_curve(predictions, 
+		test_class_set)
 
 	auc_knn = auc(fpr, tpr)
 
-
 	# ROC Curve
-	# NOTE: These functions were created in the helper.py script to reduce lines of code
+	# NOTE: These functions were created in the helper.py 
+	# script to reduce lines of code
 	# refer to helper.py for additional information
 	plotROC(fpr, tpr, auc_knn, 0)
 
@@ -289,14 +317,15 @@ def decisionTree():
 							criterion='gini', 
 							max_depth=3)
 
-	fit = dt.fit(training_set, class_set)
-	print(fit)
+	fit_DT = dt.fit(training_set, class_set)
+	print(fit_DT)
 
 	# Outputting the visual decision tree into .dot file 
 	with open('dotFiles/breastCancerWD.dot', 'w') as f:
-		f = export_graphviz(fit, out_file = f,
-							feature_names=namesInd,
-							rounded = True)
+		f = export_graphviz(fit_DT, 
+			out_file = f,
+			feature_names=namesInd,
+			rounded = True)
 
 
 	print('''
@@ -307,11 +336,20 @@ def decisionTree():
 	)
 
 	# Variable Importance for model
-	importances = fit.feature_importances_
+	importances = fit_DT.feature_importances_
 	indices = np.argsort(importances)[::-1]
 
 	varImport(namesInd, importances, indices)
+	
+	print('''
+	###############################
+	##      CROSS VALIDATION     ##
+	###############################
+	'''
+	)
 
+	crossVD(fit_DT, test_set, test_class_set['diagnosis'])
+	
 	print('''
 	###############################
 	##   TEST SET CALCULATIONS   ##
@@ -319,22 +357,25 @@ def decisionTree():
 	'''
 	)
 
-	accuracy_dt = fit.score(test_set, test_class_set['diagnosis'])
+	accuracy_dt = fit_DT.score(test_set, 
+		test_class_set['diagnosis'])
 	
-	print("Here is our mean accuracy on the test set:\n",
-		'%.2f' % (accuracy_dt * 100), '%')
+	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
+		.format(accuracy_dt))
 
-	predictions_DT = fit.predict(test_set)
+	predictions_DT = fit_DT.predict(test_set)
 	
 	print("Table comparing actual vs. predicted values for our test set:")
-	print(pd.crosstab(predictions_DT, test_class_set['diagnosis'], 
-					rownames=['Predicted Values'], 
-					colnames=['Actual Values']))
+	print(pd.crosstab(predictions_DT, 
+		test_class_set['diagnosis'], 
+		rownames=['Predicted Values'], 
+		colnames=['Actual Values']))
 
 	# Here we calculate the test error rate!
 	test_error_rate_dt = 1 - accuracy_dt
-	print("The test error rate for our model is:\n",
-		'%.3f' % (test_error_rate_dt * 100) , '%')
+	print("The test error rate for our model is:\n {0: .3f}"\
+		.format(test_error_rate_dt))
+
 	# ROC Curve stuff
 	fpr1, tpr1, _ = roc_curve(predictions_DT, test_class_set)
 
@@ -345,7 +386,7 @@ def decisionTree():
 
 	# Zoomed in ROC Curve
 	plotROCZoom(fpr1, tpr1, auc_dt, 1)
-
+	
 def randomForest():
 	'''
 	Function performs a random forest 
@@ -356,7 +397,9 @@ def randomForest():
 		criterion='gini',
 		n_estimators = 500,
 		max_features = 5)
-	fit_RF.fit(training_set, class_set['diagnosis'])
+	fit_RF.fit(training_set, 
+		class_set['diagnosis'])
+
 	print('''
 	####################################################
 	##          FITTING MODEL USING 500 TREES         ##
@@ -383,6 +426,10 @@ def randomForest():
 	indRf = sorted(importancesRF) # Sort by Decreasing order
 	index = np.arange(30)
 
+	feature_space = []
+	for i in range(29, -1, -1):
+		feature_space.append(namesInd[indicesRF[i]])
+
 	# PLOTTING VARIABLE IMPORTANCE
 	f, ax = plt.subplots(figsize=(11, 11))
 	
@@ -391,15 +438,8 @@ def randomForest():
 	plt.barh(index, indRf,
 		align="center", 
 		color = '#875FDB')
-	plt.yticks(index, ('smoothness_se', 'symmetry_mean', 'texture_se', 
-		'concave_points_se', 'fractal_dimension_mean', 
-		'symmetry_se', 'compactness_se', 'fractal_dimension_worst', 
-		'fractal_dimension_se', 'smoothness_mean', 'concavity_se', 
-		'perimeter_se', 'compactness_mean', 'smoothness_worst', 'symmetry_worst', 
-		'compactness_worst', 'texture_mean', 'radius_se', 'texture_worst', 'area_se', 
-		'concavity_worst', 'area_mean', 'perimeter_mean', 'radius_mean', 'concavity_mean', 
-		'radius_worst', 'perimeter_worst', 'concave_points_mean', 
-		'area_worst', 'concave_points_worst'))
+	plt.yticks(index, 
+		feature_space)
 	
 	plt.ylim(-1, 30)
 	plt.xlim(0, 0.15)
@@ -411,27 +451,41 @@ def randomForest():
 
 	print('''
 	###############################
+	##      CROSS VALIDATION     ##
+	###############################
+	'''
+	)
+
+
+	# CROSS VALIDATION
+	crossVD(fit_RF, test_set, test_class_set['diagnosis'])
+
+	print('''
+	###############################
 	##   TEST SET CALCULATIONS   ##
 	###############################
 	'''
 	)
 	predictions_RF = fit_RF.predict(test_set)
-	print(pd.crosstab(predictions_RF, test_class_set['diagnosis'], 
+	
+	print(pd.crosstab(predictions_RF, 
+		test_class_set['diagnosis'], 
 		rownames=['Predicted Values'], 
 		colnames=['Actual Values']))
 
 	accuracy_RF = fit_RF.score(test_set, test_class_set['diagnosis'])
 
-	print("Here is our mean accuracy on the test set:\n",
-		'%.3f' % (accuracy_RF * 100), '%')
+	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
+		.format(accuracy_RF))
 
 	# Here we calculate the test error rate!
 	test_error_rate_RF = 1 - accuracy_RF
-	print("The test error rate for our model is:\n",
-		'%.3f' % (test_error_rate_RF * 100), '%')
+	print("The test error rate for our model is:\n {0: .3f}"\
+		.format(test_error_rate_RF))
 
 	# ROC Curve stuff
-	fpr2, tpr2, _ = roc_curve(predictions_RF, test_class_set)
+	fpr2, tpr2, _ = roc_curve(predictions_RF, 
+		test_class_set)
 	
 	auc_rf = auc(fpr2, tpr2)
 	# ROC Curve
@@ -449,17 +503,28 @@ def neuralNetworks():
 		hidden_layer_sizes=(5, ), 
 		activation='logistic',
 		random_state=7)
-
-	fit_NN.fit(training_set, class_set['diagnosis'])
-
+	
 	print('''
-	####################################################
-	##          FITTING MODEL _ HIDDEN LAYERS         ##
-	####################################################
+	##################################
+	##         FITTING MLP          ##
+	##################################
 	'''
 	)
 
+	fit_NN.fit(training_set_scaled, 
+		class_set_scaled['diagnosis'])
 	print(fit_NN)
+
+
+	print('''
+	################################
+	##      CROSS VALIDATION      ##
+	################################
+	'''
+	)
+
+	crossVD(fit_NN, test_set_scaled, 
+		test_class_set_scaled['diagnosis'])	
 
 	print('''
 	###############################
@@ -468,25 +533,27 @@ def neuralNetworks():
 	'''
 	)
 
-	predictions_NN = fit_NN.predict(test_set)
+	predictions_NN = fit_NN.predict(test_set_scaled)
 	
-	print(pd.crosstab(predictions_NN, test_class_set['diagnosis'], 
+	print(pd.crosstab(predictions_NN, 
+		test_class_set_scaled['diagnosis'], 
 		rownames=['Predicted Values'], 
 		colnames=['Actual Values']))
 
-	accuracy_NN = fit_NN.score(test_set, test_class_set['diagnosis'])
+	accuracy_NN = fit_NN.score(test_set_scaled, 
+		test_class_set_scaled['diagnosis'])
 
-	print("Here is our mean accuracy on the test set:\n", 
-		'%.2f' % (accuracy_NN * 100), '%')
+	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
+		.format(accuracy_NN))
 
 	# Here we calculate the test error rate!
 	test_error_rate_NN = 1 - accuracy_NN
-	print("The test error rate for our model is:\n", 
-		'%.3f' % (test_error_rate_NN * 100), '%')
+	
+	print("The test error rate for our model is:\n {0: .3f}"\
+		.format(test_error_rate_NN))
 
 	# ROC Curve stuff
-	fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set)
-
+	fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set_scaled)
 	auc_nn = auc(fpr3, tpr3)
 	# ROC Curve
 	plotROC(fpr3, tpr3, auc_nn, 3)
