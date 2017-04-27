@@ -78,9 +78,9 @@ def varImport(names, importance, indices):
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1,
-									    names[indices[i]],
-									    importance[indices[f]]))
+		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+																	names[indices[i]], 
+																	importance[indices[f]]))
 
 	############################################
 	##        ROC Curve Helper Function       ##      
