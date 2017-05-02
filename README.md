@@ -14,7 +14,7 @@ If you would like to see a walk through of the analysis the **Jupyter Notebook**
 
 For the script I employed a technique I learned from [Nathan Fritter](https://github.com/Njfritter) (thanks homie). It is outlined as such:
 
-The **.py** script is broken into 5 sections (done by creating a function for each section) in the following order:
+The **.py** script is broken into 4 sections (done by creating a function for each section) in the following order:
 + **Exploratory Analysis**
 + **Visual Exploratory Analysis**
 + **Kth Nearest Neighbors**
