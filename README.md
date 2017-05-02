@@ -56,7 +56,7 @@ Once I employed all these methods, we can that **Neural Networks** performed the
 
 ### Diagnostics for Data Set
 
-| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | Hyperparameter optimization | 
+| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | Hyperparameter Optimization | 
 |-----------------|-----------------|-------------------------------|----------------------------|-----------|------|
 | Kth Nearest Neighbor | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | Optimal **K** = 9 |
 | Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.022) |  {'criterion': 'entropy', 'max_depth': 4, 'bootstrap': True} | 
@@ -75,5 +75,5 @@ The ROC Curves are more telling of **Random Forest** being a better model for pr
 Any feedback is welcomed!
 
 Things to do:
-+ Change **Jupter Notebook** to reflect changes made to **Neural Networks** since I got better predictions 
++ Change **Jupter Notebook** to reflect changes made when doing *Hyperparameter Optimization*
 + Change conclusions since reading documentation of real life application showed that both **Neural Networks** and **Random Forest** are useful. Its not just about picking one model. Found here: https://research.googleblog.com/2017/03/assisting-pathologists-in-detecting.html
