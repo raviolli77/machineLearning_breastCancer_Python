@@ -7,7 +7,6 @@ I created this repo as a way to get better acquainted with **Python** as a langu
 
 I employed four **Machine Learning** techniques:
 + **Kth Nearest Neighbor**
-+ **Decision Tree**
 + **Random Forest**
 + **Neural Networks**
 
@@ -19,7 +18,6 @@ The **.py** script is broken into 5 sections (done by creating a function for ea
 + **Exploratory Analysis**
 + **Visual Exploratory Analysis**
 + **Kth Nearest Neighbors**
-+ **Decision Tree**
 + **Random Forest**
 + **Neural Networks**
 
@@ -31,7 +29,6 @@ I have 6 functions which are called up using these initials:
 + **Exploratory Analysis** - `EA`
 + **Visual Exploratory Analysis** - `VEA`
 + **Kth Nearest Neighbors** - `KNN`
-+ **Decision Tree** - `DT`
 + **Random Forest** - `RF`
 + **Neural Networks** - `NN`
 
@@ -59,12 +56,11 @@ Once I employed all these methods, we can that **Neural Networks** performed the
 
 ### Diagnostics for Data Set
 
-| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | 
+| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | Hyperparameter optimization | 
 |-----------------|-----------------|-------------------------------|----------------------------|-----------|
-| Kth Nearest Neighbor* | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | 
-| Decision Trees 	| 0.053 	| 4 |	0.948 | 0.920 (+/-  0.024) | 
-| Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.030) |  
-| Neural Networks 	| 0.026 	| 1 	| 0.981 | 0.930 (+/-  0.034) |  
+| Kth Nearest Neighbor* | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | Optimal **K** = 9 |
+| Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.030) |  {'criterion': 'entropy', 'max_depth': 4, 'bootstrap': True} | 
+| Neural Networks 	| 0.026 	| 1 	| 0.981 | 0.930 (+/-  0.034) |  {'learning_rate_init': 0.05, 'hidden_layer_sizes': 8, 'activation': 'logistic'} | 
 
 *Only model with *Hyperparameter optimization* done
 

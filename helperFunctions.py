@@ -78,9 +78,31 @@ def varImport(names, importance, indices):
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Gini Importance of %f" % (f + 1, 
+		print("%d. The feature '%s' has a Information Gain of %f" % (f + 1, 
 																	names[indices[i]], 
 																	importance[indices[f]]))
+
+
+
+def varImportPlot(index, feature_space, indRf):
+	# PLOTTING VARIABLE IMPORTANCE
+	f, ax = plt.subplots(figsize=(11, 11))
+	
+	ax.set_axis_bgcolor('#fafafa')
+	plt.title('Feature importances for Random Forest Model')
+	plt.barh(index, indRf,
+		align="center", 
+		color = '#875FDB')
+	plt.yticks(index, 
+		feature_space)
+	
+	plt.ylim(-1, 30)
+	plt.xlim(0, 0.13)
+	plt.xlabel('Information Gain Entropy')
+	plt.ylabel('Feature')
+	
+	plt.show()
+	plt.close()
 
 	############################################
 	##        ROC Curve Helper Function       ##      
@@ -92,9 +114,9 @@ def plotROC(fpr, tpr, auc, i):
 	Where the legend is as such in dictionary form:
 	{0: 'KNN', 1: 'Decision Tree', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
-	colors = ['deeppink', 'navy', 'red', 'purple']
-	method = ['Kth Nearest Neighbor', 'Decision Trees', 
-	'Random Forest', 'Neural Network']
+	colors = ['deeppink', 'red', 'purple']
+	method = ['Kth Nearest Neighbor', 'Random Forest', 
+	'Neural Network']
 
 	# ROC Curve
 	fig, ax = plt.subplots(figsize=(10, 10))
@@ -110,7 +132,8 @@ def plotROC(fpr, tpr, auc, i):
 	plt.ylim([0.0, 1.05])
 	plt.xlabel('False Positive Rate')
 	plt.ylabel('True Positive Rate')
-	plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'.format(method[i], auc))		
+	plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'\
+		.format(method[i], auc))		
 	plt.show()
 	plt.close()
 
@@ -124,9 +147,9 @@ def plotROCZoom(fpr, tpr, auc, i):
 	Where the legend is as such in dictionary form:
 	{0: 'KNN', 1: 'Decision Trees', 2: 'Random Forest', 3: 'Neural Networks'}
 	'''
-	colors = ['deeppink', 'navy', 'red', 'purple']
-	method = ['Kth Nearest Neighbor', 'Decision Trees', 
-	'Random Forest', 'Neural Network']
+	colors = ['deeppink', 'red', 'purple']
+	method = ['Kth Nearest Neighbor', 'Random Forest', 
+	'Neural Network']
 
 	fig, ax = plt.subplots(figsize=(10, 10))
 	plt.plot(fpr, tpr, 
@@ -160,23 +183,3 @@ def crossVD(fit, test_set, test_class_set):
 	print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 		.format(scores.mean(), scores.std() / 2))
 
-'''
-KNN Optimal K
-# Inspired by: https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/
-myKs = []
-for i in range(0, 50):
-	if (i % 2 != 0):
-		myKs.append(i)	
-cross_vals = []
-for k in myKs:
-	knn = KNeighborsClassifier(n_neighbors=k)
-	scores = cross_val_score(knn,
-	training_set, 
-	class_set['diagnosis'], 
-	cv = 10, 
-	scoring='accuracy')
-	cross_vals.append(scores.mean())
-MSE = [1 - x for x in cross_vals]
-optimal_k = myKs[MSE.index(min(MSE))]
-print("Optimal K is {0}".format(optimal_k))
-'''

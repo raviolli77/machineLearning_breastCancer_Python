@@ -5,6 +5,7 @@
 	#####################################################
 
 # Project by Raul Eulogio
+import time
 import sys, os
 import numpy as np
 import pandas as pd # Data frames
@@ -17,7 +18,8 @@ from sklearn.tree import DecisionTreeClassifier # Decision Trees
 from sklearn.tree import export_graphviz # Extract Decision Tree visual
 from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.neural_network import MLPClassifier # Neural Networks
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, GridSearchCV
+from scipy.stats import randint as sp_randint
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 from urllib.request import urlopen # Get data from UCI Machine Learning Repository
@@ -32,7 +34,8 @@ plt.style.use('ggplot') # Using ggplot2 style visuals
 	##        LOADING DATA         ##
 	#################################
 
-UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data'
+UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
+/breast-cancer-wisconsin/wdbc.data'
 
 names = ['id_number', 'diagnosis', 'radius_mean', 
          'texture_mean', 'perimeter_mean', 'area_mean', 
@@ -192,7 +195,8 @@ def visualExplorAnalysis():
 training_set, class_set, test_set, test_class_set = splitSets(breastCancer)
 
 breastCancerNorm = normalize_df(breastCancer)
-training_set_scaled, class_set_scaled, test_set_scaled, test_class_set_scaled = splitSets(breastCancerNorm)
+training_set_scaled, class_set_scaled, test_set_scaled, \
+test_class_set_scaled = splitSets(breastCancerNorm)
 
 	############################################
 	##    RUNNING MACHINE LEARNING MODELS     ##
@@ -202,6 +206,26 @@ def kthNearestNeighbor():
 	'''
 	Function Kth Nearest Neighbor using k=9
 	by running (on terminal):
+
+	# KNN Optimal K
+	# Inspired by: https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/
+	myKs = []
+	for i in range(0, 50):
+		if (i % 2 != 0):
+			myKs.append(i)	
+	cross_vals = []
+	for k in myKs:
+		knn = KNeighborsClassifier(n_neighbors=k)
+		scores = cross_val_score(knn,
+		training_set, 
+		class_set['diagnosis'], 
+		cv = 10, 
+		scoring='accuracy')
+		cross_vals.append(scores.mean())
+	MSE = [1 - x for x in cross_vals]
+	optimal_k = myKs[MSE.index(min(MSE))]
+	print("Optimal K is {0}".format(optimal_k))
+	
 	$ python breastCancerWisconsinDataSet_MachineLearning.py KNN 
 	'''
 
@@ -299,93 +323,6 @@ def kthNearestNeighbor():
 
 	# Zoomed in ROC Curve
 	plotROCZoom(fpr, tpr, auc_knn, 0)
-
-def decisionTree():
-	'''
-	Function performs a decision tree 
-	by running (on terminal):
-	$ python breastCancerWisconsinDataSet_MachineLearning.py DT 
-	'''
-	print('''
-	####################################################
-	##       FITTING MODEL USING MAX DEPTH OF 3       ##
-	####################################################
-	'''
-	)
-
-	dt = DecisionTreeClassifier(random_state = 42, 
-							criterion='gini', 
-							max_depth=3)
-
-	fit_DT = dt.fit(training_set, class_set)
-	print(fit_DT)
-
-	# Outputting the visual decision tree into .dot file 
-	with open('dotFiles/breastCancerWD.dot', 'w') as f:
-		f = export_graphviz(fit_DT, 
-			out_file = f,
-			feature_names=namesInd,
-			rounded = True)
-
-
-	print('''
-	###############################
-	##    VARIABLE IMPORTANCE    ##
-	###############################
-	'''
-	)
-
-	# Variable Importance for model
-	importances = fit_DT.feature_importances_
-	indices = np.argsort(importances)[::-1]
-
-	varImport(namesInd, importances, indices)
-	
-	print('''
-	###############################
-	##      CROSS VALIDATION     ##
-	###############################
-	'''
-	)
-
-	crossVD(fit_DT, test_set, test_class_set['diagnosis'])
-	
-	print('''
-	###############################
-	##   TEST SET CALCULATIONS   ##
-	###############################
-	'''
-	)
-
-	accuracy_dt = fit_DT.score(test_set, 
-		test_class_set['diagnosis'])
-	
-	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
-		.format(accuracy_dt))
-
-	predictions_DT = fit_DT.predict(test_set)
-	
-	print("Table comparing actual vs. predicted values for our test set:")
-	print(pd.crosstab(predictions_DT, 
-		test_class_set['diagnosis'], 
-		rownames=['Predicted Values'], 
-		colnames=['Actual Values']))
-
-	# Here we calculate the test error rate!
-	test_error_rate_dt = 1 - accuracy_dt
-	print("The test error rate for our model is:\n {0: .3f}"\
-		.format(test_error_rate_dt))
-
-	# ROC Curve stuff
-	fpr1, tpr1, _ = roc_curve(predictions_DT, test_class_set)
-
-	auc_dt = auc(fpr1, tpr1)
-
-	# ROC Curve
-	plotROC(fpr1, tpr1, auc_dt, 1)
-
-	# Zoomed in ROC Curve
-	plotROCZoom(fpr1, tpr1, auc_dt, 1)
 	
 def randomForest():
 	'''
@@ -394,9 +331,11 @@ def randomForest():
 	$ python breastCancerWisconsinDataSet_MachineLearning.py RF 
 	'''
 	fit_RF = RandomForestClassifier(random_state = 42, 
-		criterion='gini',
+		criterion='entropy',
 		n_estimators = 500,
-		max_features = 5)
+		max_features = 4,
+		bootstrap=True)
+
 	fit_RF.fit(training_set, 
 		class_set['diagnosis'])
 
@@ -430,24 +369,33 @@ def randomForest():
 	for i in range(29, -1, -1):
 		feature_space.append(namesInd[indicesRF[i]])
 
-	# PLOTTING VARIABLE IMPORTANCE
-	f, ax = plt.subplots(figsize=(11, 11))
-	
-	ax.set_axis_bgcolor('#fafafa')
-	plt.title('Feature importances for Random Forest Model')
-	plt.barh(index, indRf,
-		align="center", 
-		color = '#875FDB')
-	plt.yticks(index, 
-		feature_space)
-	
-	plt.ylim(-1, 30)
-	plt.xlim(0, 0.15)
-	plt.xlabel('Gini Importance')
-	plt.ylabel('Feature')
-	
-	plt.show()
-	plt.close()
+	varImportPlot(index, feature_space, indRf)
+
+
+	print('''
+	############################################
+	##      HYPERPARAMETER OPTIMIZATION       ##
+	############################################
+	'''
+	)
+
+	print("Note: Remove commented code to see this section")
+	print("chosen parameters: {'criterion': 'entropy', 'max_depth': 4, 'bootstrap': True}\
+	 \n elapsed time of estimation: 111.895 seconds")
+	#start = time.time()
+
+	#param_dist = {"max_depth": [2, 3, 4],
+	#"bootstrap": [True, False],
+	#"criterion": ["gini", "entropy"]}
+
+	#gs_rf = GridSearchCV(fit_RF, cv = 10,
+		#param_grid=param_dist)
+
+	#gs_rf.fit(training_set, class_set['diagnosis'])
+	#print(gs_rf.best_params_)
+	#end = time.time()
+	#print(end - start)
+
 
 	print('''
 	###############################
@@ -489,9 +437,9 @@ def randomForest():
 	
 	auc_rf = auc(fpr2, tpr2)
 	# ROC Curve
-	plotROC(fpr2, tpr2, auc_rf, 2)
+	plotROC(fpr2, tpr2, auc_rf, 1)
 	# Zoomed in ROC Curve
-	plotROCZoom(fpr2, tpr2, auc_rf, 2)
+	plotROCZoom(fpr2, tpr2, auc_rf, 1)
 
 def neuralNetworks():
 	'''
@@ -500,8 +448,9 @@ def neuralNetworks():
 	$ python breastCancerWisconsinDataSet_MachineLearning.py NN 
 	'''
 	fit_NN = MLPClassifier(solver='lbfgs', 
-		hidden_layer_sizes=(5, ), 
+		hidden_layer_sizes=(8, ), 
 		activation='logistic',
+		learning_rate_init=0.05,
 		random_state=7)
 	
 	print('''
@@ -513,8 +462,31 @@ def neuralNetworks():
 
 	fit_NN.fit(training_set_scaled, 
 		class_set_scaled['diagnosis'])
+	
 	print(fit_NN)
 
+	print('''
+	############################################
+	##       HYPERPARAMETER OPTIMIZATION      ##
+	############################################
+	'''
+	)
+
+	print("Note: Remove commented code to see this section")
+	print("chosen parameters: {'learning_rate_init': 0.05, 'hidden_layer_sizes': 8, 'activation': 'logistic'} \
+		\n Estimated time: 26.818 seconds")
+
+	#start = time.time()
+	#gs = GridSearchCV(fit_NN, cv = 10,
+		#param_grid={
+		#'learning_rate_init': [0.05, 0.01, 0.005, 0.001],
+		#'hidden_layer_sizes': [4, 8, 12],
+		#'activation': ["relu", "identity", "tanh", "logistic"]})
+	
+	#gs.fit(training_set_scaled, class_set_scaled['diagnosis'])
+	#print(gs.best_params_)
+	#end = time.time()
+	#print(end - start)
 
 	print('''
 	################################
@@ -556,10 +528,10 @@ def neuralNetworks():
 	fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set_scaled)
 	auc_nn = auc(fpr3, tpr3)
 	# ROC Curve
-	plotROC(fpr3, tpr3, auc_nn, 3)
+	plotROC(fpr3, tpr3, auc_nn, 2)
 
 	# Zoomed in ROC Curve
-	plotROCZoom(fpr3, tpr3, auc_nn, 3)
+	plotROCZoom(fpr3, tpr3, auc_nn, 2)
 
 if __name__ == '__main__':
 	if len(sys.argv) == 2:
@@ -569,8 +541,6 @@ if __name__ == '__main__':
 			visualExplorAnalysis()
 		elif sys.argv[1] == 'KNN':
 			kthNearestNeighbor()
-		elif sys.argv[1] == 'DT':
-			decisionTree()
 		elif sys.argv[1] == 'RF':
 			randomForest()
 		elif sys.argv[1] == 'NN':
