@@ -52,7 +52,7 @@ then you would simply just run it (I'll use **Random Forest** as an example)
 	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
 
 ## Conclusions
-Once I employed all these methods, we can that **Neural Networks** performed the best in terms of most diagnostics. *Kth Nearest Neighbor* performed better in terms of *cross validation*, but I have yet to perform *hyperparameter optimization* on other processes.  This project is an iterative process, so I will be working to reach a final consensus. In terms of most insight into the data, *random forest* model is able to tell us the most of our model. In terms of cross validated performance *kth nearest neighbor* performed the best.  
+Once I employed all these methods, we can that **Neural Networks** performed the best in terms of most diagnostics. *Kth Nearest Neighbor* performed better in terms of *cross validation*, but I have yet to perform *hyperparameter optimization* on other processes.  This project is an iterative process, so I will be working to reach a final consensus. In terms of most insight into the data, *random forest* model is able to tell us the most of our model. Although *Kth Nearest Neighbor* performed better in terms of cross validation. 
 
 ### Diagnostics for Data Set
 
