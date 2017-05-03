@@ -19,7 +19,6 @@ from sklearn.tree import export_graphviz # Extract Decision Tree visual
 from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.neural_network import MLPClassifier # Neural Networks
 from sklearn.model_selection import KFold, GridSearchCV
-from scipy.stats import randint as sp_randint
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 from urllib.request import urlopen # Get data from UCI Machine Learning Repository
@@ -241,6 +240,28 @@ def kthNearestNeighbor():
 		class_set['diagnosis'])
 	
 	print(fit_KNN)
+
+	print('''
+		###############
+		## Optimal K ##
+		###############
+		''')
+	myKs = []
+	for i in range(0, 50):
+		if (i % 2 != 0):
+			myKs.append(i)	
+	cross_vals = []
+	for k in myKs:
+		knn = KNeighborsClassifier(n_neighbors=k)
+		scores = cross_val_score(knn,
+		training_set, 
+		class_set['diagnosis'], 
+		cv = 10, 
+		scoring='accuracy')
+		cross_vals.append(scores.mean())
+	MSE = [1 - x for x in cross_vals]
+	optimal_k = myKs[MSE.index(min(MSE))]
+	print("Optimal K is {0}".format(optimal_k))
 	
 	print('''
 	###############################
@@ -331,10 +352,10 @@ def randomForest():
 	$ python breastCancerWisconsinDataSet_MachineLearning.py RF 
 	'''
 	fit_RF = RandomForestClassifier(random_state = 42, 
+		bootstrap=True,
+		max_depth=4,
 		criterion='entropy',
-		n_estimators = 500,
-		max_features = 4,
-		bootstrap=True)
+		n_estimators = 500)
 
 	fit_RF.fit(training_set, 
 		class_set['diagnosis'])
@@ -358,8 +379,6 @@ def randomForest():
 	importancesRF = fit_RF.feature_importances_
 	indicesRF = np.argsort(importancesRF)[::-1]
 
-
-
 	varImport(namesInd, importancesRF, indicesRF)
 
 	indRf = sorted(importancesRF) # Sort by Decreasing order
@@ -371,7 +390,6 @@ def randomForest():
 
 	varImportPlot(index, feature_space, indRf)
 
-
 	print('''
 	############################################
 	##      HYPERPARAMETER OPTIMIZATION       ##
@@ -380,8 +398,9 @@ def randomForest():
 	)
 
 	print("Note: Remove commented code to see this section")
-	print("chosen parameters: {'criterion': 'entropy', 'max_depth': 4, 'bootstrap': True}\
-	 \n elapsed time of estimation: 111.895 seconds")
+	print("chosen parameters: {'bootstrap': True, 'criterion': 'entropy', 'max_depth': 4}\
+	 \n elapsed time of estimation: 189.949 seconds")
+
 	#start = time.time()
 
 	#param_dist = {"max_depth": [2, 3, 4],
@@ -403,7 +422,6 @@ def randomForest():
 	###############################
 	'''
 	)
-
 
 	# CROSS VALIDATION
 	crossVD(fit_RF, test_set, test_class_set['diagnosis'])
@@ -448,10 +466,10 @@ def neuralNetworks():
 	$ python breastCancerWisconsinDataSet_MachineLearning.py NN 
 	'''
 	fit_NN = MLPClassifier(solver='lbfgs', 
-		hidden_layer_sizes=(8, ), 
-		activation='logistic',
-		learning_rate_init=0.05,
-		random_state=7)
+		hidden_layer_sizes = (12, ),
+		activation='tanh',
+		learning_rate_init=0.05, 
+		random_state=42)
 	
 	print('''
 	##################################
@@ -473,8 +491,9 @@ def neuralNetworks():
 	)
 
 	print("Note: Remove commented code to see this section")
-	print("chosen parameters: {'learning_rate_init': 0.05, 'hidden_layer_sizes': 8, 'activation': 'logistic'} \
-		\n Estimated time: 26.818 seconds")
+	print("chosen parameters: \
+		{'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} \
+		\n Estimated time: 31.019 seconds")
 
 	#start = time.time()
 	#gs = GridSearchCV(fit_NN, cv = 10,
