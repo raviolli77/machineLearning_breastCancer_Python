@@ -10,6 +10,26 @@ from sklearn.model_selection import KFold, cross_val_score # Cross validation
 	###################################
 	##    HELPER FUNCTIONS SCRIPT    ##
 	###################################
+def classImbalance(dataFrame, item):
+    '''
+    Goal of this function:
+    Loops through the Dx to print percentage of class distributions 
+    w.r.t. the length of the data set
+    '''
+    i = 0
+    n = 0
+    perMal = 0 
+    perBeg = 0
+    for item in dataFrame[item]:
+        if (item == 1):
+            i += 1
+        elif (item == 0):
+            n += 1
+    perMal = (i/len(dataFrame)) * 100
+    perBeg = (n/len(dataFrame)) * 100
+    print("The percentage of Malignant Dx is: {0:.3f}%".format(perMal)) 
+    print("The percentage of Begnin Dx is: {0:.3f}%".format(perBeg))
+
 
 def pltBoxPlot(minxLim, maxXLim, dataFrame, dataSet):
 	f, ax = plt.subplots(figsize=(11, 15))
@@ -97,7 +117,7 @@ def varImportPlot(index, feature_space, indRf):
 		feature_space)
 	
 	plt.ylim(-1, 30)
-	plt.xlim(0, 0.13)
+	plt.xlim(0, 0.15)
 	plt.xlabel('Information Gain Entropy')
 	plt.ylabel('Feature')
 	
