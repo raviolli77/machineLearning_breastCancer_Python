@@ -16,7 +16,6 @@ For the script I employed a technique I learned from [Nathan Fritter](https://gi
 
 The **.py** script is broken into 4 sections (done by creating a function for each section) in the following order:
 + **Exploratory Analysis**
-+ **Visual Exploratory Analysis**
 + **Kth Nearest Neighbors**
 + **Random Forest**
 + **Neural Networks**
@@ -25,12 +24,12 @@ The **.py** script is broken into 4 sections (done by creating a function for ea
 
 To run the script successfully, within the terminal you would employ this technique (Outlined starting at line 618):
 
-I have 6 functions which are called up using these initials:
+I have 5 functions which are called up using these initials:
 + **Exploratory Analysis** - `EA`
-+ **Visual Exploratory Analysis** - `VEA`
 + **Kth Nearest Neighbors** - `KNN`
 + **Random Forest** - `RF`
 + **Neural Networks** - `NN`
++ **Compare Models** - `CM`
 
 So for example you wanted to run **Exploratory Analysis** section you type this into the terminal:
 
@@ -52,13 +51,13 @@ then you would simply just run it (I'll use **Random Forest** as an example)
 	$ ./breastCancerWisconsinDataSet_MachineLearning.py RF
 
 ## Conclusions
-Once I employed all these methods, we can that **Neural Networks** performed the best in terms of most diagnostics. *Kth Nearest Neighbor* performed better in terms of *cross validation*, but I have yet to perform *hyperparameter optimization* on other processes.  This project is an iterative process, so I will be working to reach a final consensus. In terms of most insight into the data, *random forest* model is able to tell us the most of our model. Although *Kth Nearest Neighbor* performed better in terms of cross validation. 
+Once I employed all these methods, we can that **Neural Networks** performed the best in terms of most diagnostics. *Kth Nearest Neighbor* performed better in terms of *cross validation*, but I have yet to perform *hyperparameter optimization* on other processes.  This project is an iterative process, so I will be working to reach a final consensus. In terms of most insight into the data, *random forest* model is able to tell us the most of our model. In terms of cross validated performance *kth nearest neighbor* performed the best.  
 
 ### Diagnostics for Data Set
 
 | Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | Hyperparameter Optimization | 
 |-----------------|-----------------|-------------------------------|----------------------------|-----------|------|
-| Kth Nearest Neighbor | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | Optimal **k** = 7 |
+| Kth Nearest Neighbor | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | Optimal **k** = 9 |
 | Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.022) |  {'bootstrap': True, 'criterion': 'entropy', 'max_depth': 4} | 
 | Neural Networks 	| 0.035 	| 1 	| 0.952 |  0.947 (+/-  0.030) |  {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} | 
 
