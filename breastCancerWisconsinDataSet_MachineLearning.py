@@ -62,10 +62,6 @@ breastCancer['diagnosis'] = breastCancer['diagnosis'].map({'M':1, 'B':0})
 # For later use in CART models
 namesInd = names[2:]
 
-# FUNCTION NOT WORKING WHEN PUT INSIDE 'helperfunctions.py'
-# NEED TO LEARN HOW TO FIX
-
-
 	#################################
 	##    EXPLORATORY ANALYSIS     ##
 	#################################
@@ -110,6 +106,7 @@ def exploratoryAnalysis():
 		'perimeter_worst', 'radius_worst', 
 		'area_worst', 'diagnosis']
 
+	f, ax = plt.subplots(figsize=(11, 9))
 	sns.pairplot(breastCancer,
 		x_vars = cols,
 		y_vars = cols,
@@ -149,9 +146,10 @@ def exploratoryAnalysis():
 	# BoxPlot
 	pltBoxPlot(-.05, 50, breastCancer, 'Pre-Processed')
 
-	# Visuals relating to normalized data to show significant difference
+	# Normalizing data 
 	breastCancerNorm = normalize_df(breastCancer)
 
+	# Visuals relating to normalized data to show significant difference
 	print('''
 	#################################
 	## Transformed Data Statistics ##
@@ -176,7 +174,7 @@ test_class_set_scaled = splitSets(breastCancerNorm)
 
 def kthNearestNeighbor(dataFrame, printStats = True):
 	'''
-	Function Kth Nearest Neighbor using k=9
+	Function Kth Nearest Neighbor using k=7
 	by running (on terminal):
 	
 	$ python breastCancerWisconsinDataSet_MachineLearning.py KNN 
