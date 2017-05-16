@@ -67,12 +67,12 @@ namesInd = names[2:]
 	#################################
 
 def exploratoryAnalysis():
-	'''
+	"""
 	Function shows various statistical calculations done 
 	as a preliminary exploratory analysis 
 	by running (on terminal):
 	$ python breastCancerWisconsinDataSet_MachineLearning.py EA 
-	'''
+	"""
 	print('''
 	########################################
 	##    DATA FRAME SHAPE AND DTYPES     ##
@@ -173,12 +173,12 @@ test_class_set_scaled = splitSets(breastCancerNorm)
 	############################################
 
 def kthNearestNeighbor(dataFrame, printStats = True):
-	'''
+	"""
 	Function Kth Nearest Neighbor using k=7
 	by running (on terminal):
 	
 	$ python breastCancerWisconsinDataSet_MachineLearning.py KNN 
-	'''
+	"""
 	fit_KNN = KNeighborsClassifier(n_neighbors=7)
 	fit_KNN.fit(training_set, 
 		class_set['diagnosis'])
@@ -186,7 +186,7 @@ def kthNearestNeighbor(dataFrame, printStats = True):
 	# We predict the class for our training set
 	predictionsTrain = fit_KNN.predict(training_set) 
 	
-	# Measure the accuracy based on the trianing set
+	# Measure the accuracy based on the training set
 	accuracyTrain = fit_KNN.score(training_set, 
 		class_set['diagnosis'])
 
@@ -213,7 +213,7 @@ def kthNearestNeighbor(dataFrame, printStats = True):
 		#################################
 		'''
 		)
-		# STUFF BEING PRINTED GOES UNDER HERE
+		
 		print(fit_KNN)
 	
 		print('''
@@ -308,11 +308,11 @@ def kthNearestNeighbor(dataFrame, printStats = True):
 
 
 def randomForest(dataFrame, printStats = True):
-	'''
+	"""
 	Function performs a random forest 
 	by running (on terminal):
 	$ python breastCancerWisconsinDataSet_MachineLearning.py RF 
-	'''
+	"""
 	fit_RF = RandomForestClassifier(random_state = 42, 
 		bootstrap=True,
 		max_depth=4,
@@ -321,10 +321,13 @@ def randomForest(dataFrame, printStats = True):
 
 	fit_RF.fit(training_set, 
 		class_set['diagnosis'])
+
 	importancesRF = fit_RF.feature_importances_
+	# Create indices for importance of features
 	indicesRF = np.argsort(importancesRF)[::-1]
 
-	indRf = sorted(importancesRF) # Sort by Decreasing order
+	# Sort by Decreasing order
+	indRf = sorted(importancesRF) 
 	index = np.arange(30)
 	
 	predictions_RF = fit_RF.predict(test_set)
@@ -358,9 +361,7 @@ def randomForest(dataFrame, printStats = True):
 		'''
 		)
 	
-	
 		varImport(namesInd, importancesRF, indicesRF)
-	
 	
 		feature_space = []
 		for i in range(29, -1, -1):
@@ -380,20 +381,19 @@ def randomForest(dataFrame, printStats = True):
 	'max_depth': 4}\
 	 	\nElapsed time of optimization: 189.949 seconds")
 	
-		#start = time.time()
+		# start = time.time()
 	
-		#param_dist = {"max_depth": [2, 3, 4],
-		#"bootstrap": [True, False],
-		#"criterion": ["gini", "entropy"]}
+		# param_dist = {"max_depth": [2, 3, 4],
+		# "bootstrap": [True, False],
+		# "criterion": ["gini", "entropy"]}
 	
-		#gs_rf = GridSearchCV(fit_RF, cv = 10,
-			#param_grid=param_dist)
+		# gs_rf = GridSearchCV(fit_RF, cv = 10,
+			# param_grid=param_dist)
 	
-		#gs_rf.fit(training_set, class_set['diagnosis'])
-		#print(gs_rf.best_params_)
-		#end = time.time()
-		#print(end - start)
-	
+		# gs_rf.fit(training_set, class_set['diagnosis'])
+		# print(gs_rf.best_params_)
+		# end = time.time()
+		# print(end - start)
 	
 		print('''
 		###############################
@@ -417,13 +417,11 @@ def randomForest(dataFrame, printStats = True):
 			rownames=['Predicted Values'], 
 			colnames=['Actual Values']))
 	
-	
 		print("Here is our mean accuracy on the test set:\n {0: .3f}"\
 			.format(accuracy_RF))
 	
 		print("The test error rate for our model is:\n {0: .3f}"\
 			.format(test_error_rate_RF))
-	
 		
 		# ROC Curve
 		plotROC(fpr2, tpr2, auc_rf, 1)
@@ -433,11 +431,11 @@ def randomForest(dataFrame, printStats = True):
 	return fpr2, tpr2, auc_rf
 
 def neuralNetworks(breastCancerNorm, printStats = True):
-	'''
+	"""
 	Function performs a neural network 
 	by running (on terminal):
 	$ python breastCancerWisconsinDataSet_MachineLearning.py NN 
-	'''
+	"""
 	fit_NN = MLPClassifier(solver='lbfgs', 
 		hidden_layer_sizes = (12, ),
 		activation='tanh',
@@ -460,7 +458,7 @@ def neuralNetworks(breastCancerNorm, printStats = True):
 	auc_nn = auc(fpr3, tpr3)
 
 	if printStats:
-		# PRINTING STUFF GOES UNDER HERE 
+		
 		print('''
 		##################################
 		##         FITTING MLP          ##
@@ -484,17 +482,17 @@ def neuralNetworks(breastCancerNorm, printStats = True):
 		'learning_rate_init': 0.05} \
 			\nEstimated time: 31.019 seconds")
 	
-		#start = time.time()
-		#gs = GridSearchCV(fit_NN, cv = 10,
-			#param_grid={
-			#'learning_rate_init': [0.05, 0.01, 0.005, 0.001],
-			#'hidden_layer_sizes': [4, 8, 12],
-			#'activation': ["relu", "identity", "tanh", "logistic"]})
-		
-		#gs.fit(training_set_scaled, class_set_scaled['diagnosis'])
-		#print(gs.best_params_)
-		#end = time.time()
-		#print(end - start)
+		# start = time.time()
+		# gs = GridSearchCV(fit_NN, cv = 10,
+			# param_grid={
+			# 'learning_rate_init': [0.05, 0.01, 0.005, 0.001],
+			# 'hidden_layer_sizes': [4, 8, 12],
+			# 'activation': ["relu", "identity", "tanh", "logistic"]})
+	 	
+		# gs.fit(training_set_scaled, class_set_scaled['diagnosis'])
+		# print(gs.best_params_)
+		# end = time.time()
+		# print(end - start)
 	
 		print('''
 		################################
@@ -554,11 +552,13 @@ def compareModels():
 	plt.plot(fpr, tpr, label='K-NN ROC Curve (area = {0: .3f})'.format(auc_knn), 
          	color = 'deeppink', 
          	linewidth=1)
+
 	plt.plot(fpr2, tpr2,label='Random Forest ROC Curve (area = {0: .3f})'\
 		.format(auc_rf), 
          	color = 'red', 
          	linestyle=':', 
          	linewidth=2)
+
 	plt.plot(fpr3, tpr3,label='Neural Networks ROC Curve (area = {0: .3f})'\
 		.format(auc_nn), 
          	color = 'purple', 
@@ -582,17 +582,18 @@ def compareModels():
 	plt.plot(fpr, tpr, label='K-NN ROC Curve  (area = {0: .3f})'.format(auc_knn), 
          	color = 'deeppink', 
          	linewidth=1)
+
 	plt.plot(fpr2, tpr2,label='Random Forest ROC Curve  (area = {0: .3f})'\
 		.format(auc_rf), 
          	color = 'red', 
          	linestyle=':', 
          	linewidth=3)
+
 	plt.plot(fpr3, tpr3,label='Neural Networks ROC Curve  (area = {0: .3f})'\
 		.format(auc_nn), 
          	color = 'purple', 
          	linestyle=':', 
          	linewidth=3)
-	
 	
 	ax.set_axis_bgcolor('#fafafa')
 	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
