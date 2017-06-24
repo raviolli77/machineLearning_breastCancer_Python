@@ -64,10 +64,10 @@ Once I employed all these methods, we can that **Neural Networks** performed the
 
 #### ROC Curves for Data Set
 **NOTE**: Created on the **Jupyter Notebook** iteration. Not found in **Python** script. 
-<img src="images/rocNotebook.png" style="width: 100px;"/>
+<img src="images/rocCurve.png" style="width: 100px;"/>
 
 #### ROC Curves zoomed in
-<img src="images/rocClose.png" style="width: 100px;"/>
+<img src="images/rocZoom.png" style="width: 100px;"/>
 
 The ROC Curves are more telling of **Random Forest** being a better model for predicting. 
 

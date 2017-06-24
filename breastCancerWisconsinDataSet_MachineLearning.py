@@ -579,7 +579,8 @@ def compareModels():
 	plt.show()
 
 	f, ax = plt.subplots(figsize=(10, 10))
-	plt.plot(fpr, tpr, label='K-NN ROC Curve  (area = {0: .3f})'.format(auc_knn), 
+	plt.plot(fpr, tpr, label='K-NN ROC Curve  (area = {0: .3f})'\
+		.format(auc_knn), 
          	color = 'deeppink', 
          	linewidth=1)
 
