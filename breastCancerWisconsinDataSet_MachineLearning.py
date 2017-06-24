@@ -19,6 +19,7 @@ from sklearn.tree import export_graphviz # Extract Decision Tree visual
 from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.neural_network import MLPClassifier # Neural Networks
 from sklearn.model_selection import KFold, GridSearchCV
+from sklearn.metrics import classification_report
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 from urllib.request import urlopen # Get data from UCI Machine Learning Repository
@@ -106,7 +107,6 @@ def exploratoryAnalysis():
 		'perimeter_worst', 'radius_worst', 
 		'area_worst', 'diagnosis']
 
-	f, ax = plt.subplots(figsize=(11, 9))
 	sns.pairplot(breastCancer,
 		x_vars = cols,
 		y_vars = cols,
@@ -304,7 +304,7 @@ def kthNearestNeighbor(dataFrame, printStats = True):
 		# Zoomed in ROC Curve
 		plotROCZoom(fpr, tpr, auc_knn, 0)
 
-	return fpr, tpr, auc_knn
+	return fpr, tpr, auc_knn, predictions
 
 
 def randomForest(dataFrame, printStats = True):
@@ -417,7 +417,7 @@ def randomForest(dataFrame, printStats = True):
 			rownames=['Predicted Values'], 
 			colnames=['Actual Values']))
 	
-		print("Here is our mean accuracy on the test set:\n {0: .3f}"\
+		print("Here is our mean accuracy on the test set:\n {0: 0.3f}"\
 			.format(accuracy_RF))
 	
 		print("The test error rate for our model is:\n {0: .3f}"\
@@ -428,7 +428,7 @@ def randomForest(dataFrame, printStats = True):
 		# Zoomed in ROC Curve
 		plotROCZoom(fpr2, tpr2, auc_rf, 1)
 
-	return fpr2, tpr2, auc_rf
+	return fpr2, tpr2, auc_rf, predictions_RF
 
 def neuralNetworks(breastCancerNorm, printStats = True):
 	"""
@@ -528,26 +528,26 @@ def neuralNetworks(breastCancerNorm, printStats = True):
 		# Zoomed in ROC Curve
 		plotROCZoom(fpr3, tpr3, auc_nn, 2)
 		
-	return fpr3, tpr3, auc_nn
+	return fpr3, tpr3, auc_nn, predictions_NN
 
-fpr, tpr, auc_knn = kthNearestNeighbor(breastCancer, False)
+fpr, tpr, auc_knn, predictions = kthNearestNeighbor(breastCancer, False)
 
-fpr2, tpr2, auc_rf = randomForest(breastCancer, False)
+fpr2, tpr2, auc_rf, predictions_RF = randomForest(breastCancer, False)
 
-fpr3, tpr3, auc_nn = neuralNetworks(breastCancerNorm, False)
+fpr3, tpr3, auc_nn, predictions_NN = neuralNetworks(breastCancerNorm, False)
 
 def compareModels():
 
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate', 
 	'False Negative for Test Set', 'Area under the Curve for ROC', 
 	'Cross Validation Score'],
-	['Kth Nearest Neighbor',  '0.035', 	'2',	'0.963', '0.966 (+/-  0.021)'],
-	[ 'Random Forest', '0.035', '3', '0.967', '0.955 (+/-  0.022)'], 
-	[ "Neural Networks" ,  "0.035",  "1", "0.959" ,"0.938 (+/-  0.041)"]]
+	['Kth Nearest Neighbor',  '0.035', 	'2', round(auc_knn, 3), '0.966 (+/-  0.021)'],
+	[ 'Random Forest', '0.035', '3', round(auc_rf, 3), '0.955 (+/-  0.022)'], 
+	[ 'Neural Networks' ,  '0.035',  '1', round(auc_nn, 3), '0.938 (+/-  0.041)']]
 	
 	table = AsciiTable(table_data)
 	
-	f, ax = plt.subplots(figsize=(13, 15))
+	f, ax = plt.subplots(figsize=(10, 10))
 
 	plt.plot(fpr, tpr, label='K-NN ROC Curve (area = {0: .3f})'.format(auc_knn), 
          	color = 'deeppink', 
@@ -578,7 +578,7 @@ def compareModels():
 	
 	plt.show()
 
-	f, ax = plt.subplots(figsize=(13, 15))
+	f, ax = plt.subplots(figsize=(10, 10))
 	plt.plot(fpr, tpr, label='K-NN ROC Curve  (area = {0: .3f})'.format(auc_knn), 
          	color = 'deeppink', 
          	linewidth=1)
@@ -609,8 +609,21 @@ def compareModels():
 	
 	plt.show()
 
+	target_names = ['Benign', 'Malignant']
+
+	print('Classification Report for Kth Nearest Neighbor:')
+	print(classification_report(predictions, test_class_set['diagnosis'], target_names = target_names))
+
+	print('Classification Report for Random Forest:')
+	print(classification_report(predictions_RF, test_class_set['diagnosis'], target_names = target_names))
+
+	print('Classification Report for Neural Networks:')
+	print(classification_report(predictions_NN, test_class_set_scaled['diagnosis'], target_names = target_names))
+
+
 	print("Comparison of different logistics relating to model evaluation:")
 	print(table.table)
+
 	print("Fin \n :)")
 
 if __name__ == '__main__':
