@@ -30,11 +30,14 @@ if __name__ == '__main__':
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate', 
 		'False Negative for Test Set', 'Area under the Curve for ROC', 
 		'Cross Validation Score'],
-		['Kth Nearest Neighbor',  round(test_error_rate, 3), 	2, round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+		['Kth Nearest Neighbor',  round(test_error_rate, 3), 2, 
+		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 				.format(mean_cv_knn, std_cv_knn)],
-		[ 'Random Forest', round(test_error_rate_RF, 3), 3, round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+		[ 'Random Forest', round(test_error_rate_RF, 3), 3, 
+		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 				.format(mean_cv_rf, std_cv_rf)], 
-		[ 'Neural Networks' ,  round(test_error_rate_NN, 3),  1, round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+		[ 'Neural Networks' ,  round(test_error_rate_NN, 3),  
+		1, round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 				.format(mean_cv_nn, std_cv_nn)]]
 		
 	table = AsciiTable(table_data)	
@@ -42,13 +45,19 @@ if __name__ == '__main__':
 	target_names = ['Benign', 'Malignant']
 	
 	print('Classification Report for Kth Nearest Neighbor:')
-	print(classification_report(predictions, test_class_set['diagnosis'], target_names = target_names))
+	print(classification_report(predictions, 
+		test_class_set['diagnosis'], 
+		target_names = target_names))
 	
 	print('Classification Report for Random Forest:')
-	print(classification_report(predictions_RF, test_class_set['diagnosis'], target_names = target_names))
+	print(classification_report(predictions_RF, 
+		test_class_set['diagnosis'], 
+		target_names = target_names))
 	
 	print('Classification Report for Neural Networks:')
-	print(classification_report(predictions_NN, test_class_set_scaled['diagnosis'], target_names = target_names))
+	print(classification_report(predictions_NN, 
+		test_class_set_scaled['diagnosis'], 
+		target_names = target_names))
 	
 	print("Comparison of different logistics relating to model evaluation:")
 	print(table.table)
@@ -56,7 +65,8 @@ if __name__ == '__main__':
 	# Plotting ROC Curves
 	f, ax = plt.subplots(figsize=(10, 10))
 	
-	plt.plot(fpr, tpr, label='Kth Nearest Neighbor ROC Curve (area = {0: .3f})'.format(auc_knn), 
+	plt.plot(fpr, tpr, label='Kth Nearest Neighbor ROC Curve (area = {0: .3f})'\
+		.format(auc_knn), 
          	color = 'deeppink', 
          	linewidth=1)
 	plt.plot(fpr2, tpr2,label='Random Forest ROC Curve (area = {0: .3f})'\
