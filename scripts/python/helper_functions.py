@@ -69,8 +69,10 @@ def classImbalance(dataFrame, item):
             n += 1
     perMal = (i/len(dataFrame)) * 100
     perBeg = (n/len(dataFrame)) * 100
-    print("The percentage of Malignant Dx is: {0:.3f}%".format(perMal)) 
-    print("The percentage of Begnin Dx is: {0:.3f}%".format(perBeg))
+    print("The percentage of Malignant Dx is: {0:.3f}%"\
+    	.format(perMal)) 
+    print("The percentage of Begnin Dx is: {0:.3f}%"\
+    	.format(perBeg))
 
 
 def pltBoxPlot(minxLim, maxXLim, dataFrame, dataSet):
@@ -79,7 +81,8 @@ def pltBoxPlot(minxLim, maxXLim, dataFrame, dataSet):
 	ax.set_axis_bgcolor('#fafafa')
 	ax.set(xlim=(minxLim, maxXLim))
 	plt.ylabel('Dependent Variables')
-	plt.title("Box Plot of {0} Data Set".format(dataSet))
+	plt.title("Box Plot of {0} Data Set"\
+		.format(dataSet))
 	ax = sns.boxplot(data = dataFrame, orient = 'h', palette = 'Set2')
 	
 	plt.show()
@@ -91,7 +94,8 @@ def normalize_df(frame):
 	'''
 	Helper function to Normalize data set
 	Intializes an empty data frame which will normalize all floats types
-	and just append the non-float types so basically the class in our data frame
+	and just append the non-float types so basically the class in our 
+	data frame
 	'''
 	breastCancerNorm = pd.DataFrame()
 	for item in frame:
@@ -123,7 +127,8 @@ def splitSets(breastCancer):
 	# Create the training test omitting the diagnosis
 	training_set = train.ix[:, train.columns != 'diagnosis']
 	# Next we create the class set (Called target in Python Documentation)
-	# Note: This was confusing af to figure out cus the documentation is low-key kind of shitty
+	# Note: This was confusing af to figure out cus the documentation is 
+	# low-key kind of shitty
 	class_set = train.ix[:, train.columns == 'diagnosis']
 	
 	# Next we create the test set doing the same process as the training set
@@ -147,9 +152,10 @@ def varImport(names, importance, indices):
 	
 	for f in range(30):
 		i = f
-		print("%d. The feature '%s' has a Information Gain of %f" % (f + 1, 
-									     names[indices[i]], 
-									     importance[indices[f]]))
+		print("%d. The feature '%s' \
+	has a Information Gain of %f" % (f + 1, 
+			names[indices[i]], 
+			importance[indices[f]]))
 
 
 
@@ -239,14 +245,14 @@ def plotROCZoom(fpr, tpr, auc, i):
 	plt.close()
 
 
-def crossVD(fit, test_set, test_class_set, print_results = True):
+def crossVD(fit, training_set, class_set, print_results = True):
 	'''
 	Helper function helps automate cross validation processes
 	'''
 	n = KFold(n_splits=10)
 	scores = cross_val_score(fit, 
-                         test_set, 
-                         test_class_set, 
+                         training_set, 
+                         class_set, 
                          cv = n)
 	if print_results:
 		print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\

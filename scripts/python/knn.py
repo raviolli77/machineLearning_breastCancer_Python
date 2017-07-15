@@ -116,7 +116,7 @@ if __name__ == '__main__':
 		'''
 		)
 	
-	crossVD(fit_KNN, test_set, test_class_set['diagnosis'], 
+	crossVD(fit_KNN, training_set, class_set['diagnosis'], 
 		print_results = True)
 			
 	print('''
@@ -153,6 +153,6 @@ else:
 		return fpr, tpr, auc_knn, predictions, test_error_rate
 
 	mean_cv_knn, std_cv_knn = crossVD(fit_KNN, 
-		test_set, 
-		test_class_set['diagnosis'], 
+		training_set, 
+		class_set['diagnosis'],
 		print_results = False)

@@ -10,110 +10,127 @@
 
 
 """
-Neural Networks Classification
+Random Forest Classification
 """
 
 import time
 import sys, os
 from helper_functions import *
-from sklearn.neural_network import MLPClassifier # Neural Networks
 from sklearn.model_selection import KFold, cross_val_score # Cross validation
+from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 
 
-fit_NN = MLPClassifier(solver='lbfgs', 
-	hidden_layer_sizes = (12, ),
-	activation='tanh',
-	learning_rate_init=0.05, 
-	random_state=42)
+# Fitting Random Forest
+fit_RF = RandomForestClassifier(random_state = 42, 
+	bootstrap=True,
+	max_depth=4,
+	criterion='entropy',
+	n_estimators = 500)
 
-fit_NN.fit(training_set_scaled, 
-	class_set_scaled['diagnosis'])	
+fit_RF.fit(training_set, 
+	class_set['diagnosis'])
 
-predictions_NN = fit_NN.predict(test_set_scaled)
+importancesRF = fit_RF.feature_importances_
 
-accuracy_NN = fit_NN.score(test_set_scaled, 
-	test_class_set_scaled['diagnosis'])
+# Create indices for importance of features
+indicesRF = np.argsort(importancesRF)[::-1]
+
+# Sort by Decreasing order
+indRf = sorted(importancesRF) 
+
+index = np.arange(30)	
+
+predictions_RF = fit_RF.predict(test_set)	
+accuracy_RF = fit_RF.score(test_set, test_class_set['diagnosis'])
 
 # Here we calculate the test error rate!
-test_error_rate_NN = 1 - accuracy_NN
+test_error_rate_RF = 1 - accuracy_RF
 
 # ROC Curve stuff
-fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set_scaled)
+fpr2, tpr2, _ = roc_curve(predictions_RF, 
+	test_class_set)	
 
-auc_nn = auc(fpr3, tpr3)
+auc_rf = auc(fpr2, tpr2)
 
-if __name__ == '__main__':	
-	print('''
-	##################################
-	##         FITTING MLP          ##
-	##################################
-	'''
-	)	
-	print(fit_NN)	
+# Fitting model 
+if __name__=='__main__':
+	print(fit_RF)
+
+	varImport(namesInd, importancesRF, indicesRF)
+	
+	feature_space = []
+	for i in range(29, -1, -1):
+		feature_space.append(namesInd[indicesRF[i]])
+	
+	varImportPlot(index, feature_space, indRf)
+	
 	print('''
 	############################################
-	##       HYPERPARAMETER OPTIMIZATION      ##
+	##      HYPERPARAMETER OPTIMIZATION       ##
 	############################################
 	'''
-	)	
+	)
+	
 	print("Note: Remove commented code to see this section")
-	print("chosen parameters: \n \
-	{'hidden_layer_sizes': 12, \n \
-	'activation': 'tanh', \n \
-	'learning_rate_init': 0.05} \
-		\nEstimated time: 31.019 seconds")	
-	# start = time.time()
-	# gs = GridSearchCV(fit_NN, cv = 10,
-		# param_grid={
-		# 'learning_rate_init': [0.05, 0.01, 0.005, 0.001],
-		# 'hidden_layer_sizes': [4, 8, 12],
-		# 'activation': ["relu", "identity", "tanh", "logistic"]})	 	
-	# gs.fit(training_set_scaled, class_set_scaled['diagnosis'])
-	# print(gs.best_params_)
-	# end = time.time()
-	# print(end - start)	
+	print("chosen parameters: {'bootstrap': True, 'criterion': 'entropy', \
+	'max_depth': 4}\
+	 	\nElapsed time of optimization: 189.949 seconds")
+	
+		# start = time.time()
+	
+		# param_dist = {"max_depth": [2, 3, 4],
+		# "bootstrap": [True, False],
+		# "criterion": ["gini", "entropy"]}
+	
+		# gs_rf = GridSearchCV(fit_RF, cv = 10,
+			# param_grid=param_dist)
+	
+		# gs_rf.fit(training_set, class_set['diagnosis'])
+		# print(gs_rf.best_params_)
+		# end = time.time()
+		# print(end - start)
+	
 	print('''
-	################################
-	##      CROSS VALIDATION      ##
-	################################
-	'''
-	)	
-
-	test_thing = crossVD(fit_NN, test_set_scaled, 
-		test_class_set_scaled['diagnosis'], 
-		print_results = True)	
-
+		###############################
+		##      CROSS VALIDATION     ##
+		###############################
+		'''
+		)
+	
+	# CROSS VALIDATION
+	crossVD(fit_RF, training_set, class_set['diagnosis'], 
+		print_results = True)
+	
 	print('''
-	###############################
-	##   TEST SET CALCULATIONS   ##
-	###############################
-	'''
-	)	
-	print(pd.crosstab(predictions_NN, 
-		test_class_set_scaled['diagnosis'], 
-		rownames=['Predicted Values'], 
-		colnames=['Actual Values']))
-
-	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
-		.format(accuracy_NN))			
+		###############################
+		##   TEST SET CALCULATIONS   ##
+		###############################
+		'''
+		)
+		
+	print(pd.crosstab(predictions_RF, 
+			test_class_set['diagnosis'], 
+			rownames=['Predicted Values'], 
+			colnames=['Actual Values']))
+	
+	print("Here is our mean accuracy on the test set:\n {0: 0.3f}"\
+		.format(accuracy_RF))
 	
 	print("The test error rate for our model is:\n {0: .3f}"\
-		.format(test_error_rate_NN))	
-	
+		.format(test_error_rate_RF))
+		
 	# ROC Curve
-	plotROC(fpr3, tpr3, auc_nn, 2)	
-	
-	# Zoomed in ROC Curve
-	plotROCZoom(fpr3, tpr3, auc_nn, 2)
+	plotROC(fpr2, tpr2, auc_rf, 1)
+		# Zoomed in ROC Curve
+	plotROCZoom(fpr2, tpr2, auc_rf, 1)
 else:
-	def return_nn():
-		return fpr3, tpr3, auc_nn, predictions_NN, test_error_rate_NN
-	
-	# Keep Cross validation metrics 
-	mean_cv_nn, std_cv_nn = crossVD(fit_NN, 
-		test_set_scaled, 
-		test_class_set_scaled['diagnosis'], 
+	def return_rf():
+		return fpr2, tpr2, auc_rf, predictions_RF, test_error_rate_RF
+
+	mean_cv_rf, std_cv_rf = crossVD(fit_RF, 
+		training_set, 
+		class_set['diagnosis'], 
 		print_results = False)

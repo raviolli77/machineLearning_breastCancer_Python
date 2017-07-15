@@ -82,8 +82,8 @@ if __name__ == '__main__':
 	'''
 	)	
 
-	test_thing = crossVD(fit_NN, test_set_scaled, 
-		test_class_set_scaled['diagnosis'], 
+	test_thing = crossVD(fit_NN, training_set_scaled, 
+		class_set_scaled['diagnosis'], 
 		print_results = True)	
 
 	print('''
@@ -113,6 +113,7 @@ else:
 		return fpr3, tpr3, auc_nn, predictions_NN, test_error_rate_NN
 	
 	# Keep Cross validation metrics 
-	mean_cv_nn, std_cv_nn = crossVD(fit_NN, test_set_scaled, 
-		test_class_set_scaled['diagnosis'], 
+	mean_cv_nn, std_cv_nn = crossVD(fit_NN, 
+		training_set_scaled, 
+		class_set_scaled['diagnosis'], 
 		print_results = False)
