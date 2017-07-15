@@ -21,6 +21,7 @@ from sklearn.model_selection import KFold, cross_val_score # Cross validation
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
+from sklearn.externals import joblib
 
 fit_KNN = KNeighborsClassifier(n_neighbors=7)
 
@@ -50,6 +51,9 @@ fpr, tpr, _ = roc_curve(predictions,
 	test_class_set)
 
 auc_knn = auc(fpr, tpr)
+
+# Uncomment to save your model as a pickle object!
+# joblib.dump(fit_KNN, 'pickle_models/model_knn.pkl')
 
 if __name__ == '__main__':
 	print('''

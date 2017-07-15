@@ -21,7 +21,7 @@ from sklearn.ensemble import RandomForestClassifier # Random Forest
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
-
+from sklearn.externals import joblib
 
 # Fitting Random Forest
 fit_RF = RandomForestClassifier(random_state = 42, 
@@ -54,6 +54,9 @@ fpr2, tpr2, _ = roc_curve(predictions_RF,
 	test_class_set)	
 
 auc_rf = auc(fpr2, tpr2)
+
+# Uncomment to save your model as a pickle object!
+# joblib.dump(fit_RF, 'pickle_models/model_rf.pkl')
 
 # Fitting model 
 if __name__=='__main__':

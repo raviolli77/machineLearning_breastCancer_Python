@@ -21,7 +21,7 @@ from sklearn.model_selection import KFold, cross_val_score # Cross validation
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
-
+from sklearn.externals import joblib
 
 fit_NN = MLPClassifier(solver='lbfgs', 
 	hidden_layer_sizes = (12, ),
@@ -44,6 +44,9 @@ test_error_rate_NN = 1 - accuracy_NN
 fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set_scaled)
 
 auc_nn = auc(fpr3, tpr3)
+
+# Uncomment to save your model as a pickle object!
+# joblib.dump(fit_NN, 'pickle_models/model_nn.pkl')
 
 if __name__ == '__main__':	
 	print('''
