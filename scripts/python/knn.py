@@ -67,7 +67,8 @@ if __name__ == '__main__':
 		###############
 			''')
 	# KNN Optimal K
-	# Inspired by: https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/
+	# Inspired by: 
+	# https://kevinzakka.github.io/2016/07/13/k-nearest-neighbor/
 		
 	myKs = []
 	for i in range(0, 50):
@@ -151,5 +152,7 @@ else:
 	def return_knn():
 		return fpr, tpr, auc_knn, predictions, test_error_rate
 
-	mean_cv_knn, std_cv_knn = crossVD(fit_KNN, test_set, test_class_set['diagnosis'], 
+	mean_cv_knn, std_cv_knn = crossVD(fit_KNN, 
+		test_set, 
+		test_class_set['diagnosis'], 
 		print_results = False)
