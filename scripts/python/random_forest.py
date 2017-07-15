@@ -130,5 +130,7 @@ else:
 	def return_rf():
 		return fpr2, tpr2, auc_rf, predictions_RF, test_error_rate_RF
 
-	mean_cv_rf, std_cv_rf = crossVD(fit_RF, test_set, test_class_set['diagnosis'], 
+	mean_cv_rf, std_cv_rf = crossVD(fit_RF, 
+		test_set, 
+		test_class_set['diagnosis'], 
 		print_results = False)
