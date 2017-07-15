@@ -53,13 +53,12 @@ Once I employed all these methods, we can get a better feel for the data. Each m
 
 ### Diagnostics for Data Set
 
-+----------------------+-----------------+-----------------------------+------------------------------+-------------------------------+------------------------+
+
 | Model/Algorithm      | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC | Cross Validation Score        | Hyperparameter Optimization | 
 +----------------------+-----------------+-----------------------------+------------------------------+-------------------------------+-----------------------+
-| Kth Nearest Neighbor | 0.035 | 2 | 0.963 | Accuracy:  0.966 (+/-  0.021) | Optimal *K* is 7 | 
-| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.955 (+/-  0.022) | {'bootstrap': True, 'criterion': 'entropy', 	'max_depth': 4}	|
-| Neural Networks      | 0.035 | 1 | 0.959 | Accuracy:  0.938 (+/-  0.041) | {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} | 
-+----------------------+-------+---+-------+-------------------------------+----------------+
+| Kth Nearest Neighbor | 0.035 | 2 | 0.963 | Accuracy:  0.965 (+/-  0.010) | Optimal *K* is 7 | 
+| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.963 (+/-  0.013) | {'bootstrap': True, 'criterion': 'entropy', 	'max_depth': 4}	|
+| Neural Networks      | 0.035 | 1 | 0.959 | Accuracy:  0.967 (+/-  0.011) | {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} | 
 
 
 
