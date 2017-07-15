@@ -148,8 +148,8 @@ def varImport(names, importance, indices):
 	for f in range(30):
 		i = f
 		print("%d. The feature '%s' has a Information Gain of %f" % (f + 1, 
-																	names[indices[i]], 
-																	importance[indices[f]]))
+									     names[indices[i]], 
+									     importance[indices[f]]))
 
 
 
