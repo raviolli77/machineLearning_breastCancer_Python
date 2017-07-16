@@ -74,3 +74,6 @@ Any feedback is welcomed!
 
 Things to do:
 + Create new **Jupter Notebook** to reflect changes made since newest iteration (7/14/2017)
++ Add unit testing if appropriate after research 
++ Update inertia7 project
++ More detailed conclusion 
