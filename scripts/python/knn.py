@@ -15,7 +15,9 @@ Kth Nearest Neighbor Classification
 
 import time
 import sys, os
-from helper_functions import *
+import pandas as pd
+import helper_functions as hf
+from helper_functions import training_set, class_set, test_set, test_class_set
 from sklearn.neighbors import KNeighborsClassifier # Kth Nearest Neighbor
 from sklearn.model_selection import KFold, cross_val_score # Cross validation
 from sklearn.model_selection import KFold, GridSearchCV
@@ -124,7 +126,7 @@ if __name__ == '__main__':
 		'''
 		)
 	
-	cross_val_metrics(fit_knn, training_set, class_set['diagnosis'], 
+	hf.cross_val_metrics(fit_knn, training_set, class_set['diagnosis'], 
 		print_results = True)
 			
 	print('''
@@ -152,10 +154,10 @@ if __name__ == '__main__':
 	# NOTE: These functions were created in the helperFunctions.py 
 	# script to reduce lines of code
 	# refer to helper.py for additional information
-	plot_roc_curve(fpr, tpr, auc_knn, 'knn')
+	hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn')
 	
 	# Zoomed in ROC Curve
-	plot_roc_curve(fpr, tpr, auc_knn, 'knn',
+	hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn',
 		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_knn():
@@ -164,7 +166,7 @@ else:
 		'''
 		return fpr, tpr, auc_knn, predictions, test_error_rate
 
-	mean_cv_knn, std_error_knn = cross_val_metrics(fit_knn, 
+	mean_cv_knn, std_error_knn = hf.cross_val_metrics(fit_knn, 
 		training_set, 
 		class_set['diagnosis'],
 		print_results = False)

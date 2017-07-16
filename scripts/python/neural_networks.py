@@ -15,12 +15,15 @@ Neural Networks Classification
 
 import time
 import sys, os
-from helper_functions import *
-from sklearn.neural_network import MLPClassifier # Neural Networks
-from sklearn.model_selection import KFold, cross_val_score # Cross validation
+import pandas as pd
+import helper_functions as hf
+from helper_functions import training_set_scaled, class_set_scaled
+from helper_functions import test_set_scaled, test_class_set_scaled
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import KFold, cross_val_score 
 from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.metrics import roc_curve # ROC Curves
-from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
+from sklearn.metrics import roc_curve 
+from sklearn.metrics import auc 
 from sklearn.externals import joblib
 
 # Fit model 
@@ -87,7 +90,7 @@ if __name__ == '__main__':
 	'''
 	)	
 
-	test_thing = cross_val_metrics(fit_nn, training_set_scaled, 
+	test_thing = hf.cross_val_metrics(fit_nn, training_set_scaled, 
 		class_set_scaled['diagnosis'], 
 		print_results = True)	
 
@@ -109,10 +112,10 @@ if __name__ == '__main__':
 		.format(test_error_rate_nn))	
 	
 	# ROC Curve
-	plot_roc_curve(fpr3, tpr3, auc_nn, 'nn')	
+	hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn')	
 	
 	# Zoomed in ROC Curve
-	plot_roc_curve(fpr3, tpr3, auc_nn, 'nn',  
+	hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn',  
 		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_nn():
@@ -122,7 +125,7 @@ else:
 		return fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn
 	
 	# Keep Cross validation metrics 
-	mean_cv_nn, std_error_nn = cross_val_metrics(fit_nn, 
+	mean_cv_nn, std_error_nn = hf.cross_val_metrics(fit_nn, 
 		training_set_scaled, 
 		class_set_scaled['diagnosis'], 
 		print_results = False)

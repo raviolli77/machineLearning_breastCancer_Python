@@ -13,18 +13,20 @@
 Model Evaluation 
 """
 
-from random_forest import *
-from knn import *
-from neural_networks import *
+import matplotlib.pyplot as plt 
+from helper_functions import test_class_set, test_class_set_scaled
+import random_forest as rf
+import knn
+import neural_networks as nn
 from terminaltables import AsciiTable
 from sklearn.metrics import classification_report
 
 # Calling up metrics from the model scripts
-fpr, tpr, auc_knn, predictions, test_error_rate = return_knn()
+fpr, tpr, auc_knn, predictions, test_error_rate = knn.return_knn()
 
-fpr2, tpr2, auc_rf, predictions_rf, test_error_rate_rf = return_rf()
+fpr2, tpr2, auc_rf, predictions_rf, test_error_rate_rf = rf.return_rf()
 
-fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn = return_nn()
+fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn =nn.return_nn()
 
 if __name__ == '__main__':
 	# Populate list for human readable table from terminal line
@@ -33,13 +35,13 @@ if __name__ == '__main__':
 		'Cross Validation Score'],
 		['Kth Nearest Neighbor',  round(test_error_rate, 3), 5, 
 		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_knn, std_error_knn)],
+				.format(knn.mean_cv_knn, knn.std_error_knn)],
 		[ 'Random Forest', round(test_error_rate_rf, 3), 3, 
 		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_rf, std_error_rf)], 
+				.format(rf.mean_cv_rf, rf.std_error_rf)], 
 		[ 'Neural Networks' ,  round(test_error_rate_nn, 3),  1, 
 		round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_nn, std_error_nn)]]
+				.format(nn.mean_cv_nn, nn.std_error_nn)]]
 	
 	# convert to AsciiTable from terminaltables package
 	table = AsciiTable(table_data)	

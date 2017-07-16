@@ -15,7 +15,10 @@ Random Forest Classification
 
 import time
 import sys, os
-from helper_functions import *
+import numpy as np
+import pandas as pd
+import helper_functions as hf
+from helper_functions import training_set, class_set, test_set, test_class_set
 from sklearn.model_selection import KFold, cross_val_score 
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.model_selection import KFold, GridSearchCV
@@ -63,9 +66,9 @@ if __name__=='__main__':
 	# Print model parameters
 	print(fit_RF)
 
-	variable_importance(import_rf, ind_rf)
+	hf.variable_importance(import_rf, ind_rf)
 	
-	variable_importance_plot(import_rf_desc, ind_rf)
+	hf.variable_importance_plot(import_rf_desc, ind_rf)
 
 	print('''
 	############################################
@@ -101,7 +104,7 @@ if __name__=='__main__':
 		)
 	
 	# Cross validation 
-	cross_val_metrics(fit_RF, training_set, class_set['diagnosis'], 
+	hf.cross_val_metrics(fit_RF, training_set, class_set['diagnosis'], 
 		print_results = True)
 	
 	print('''
@@ -123,9 +126,9 @@ if __name__=='__main__':
 		.format(test_error_rate_RF))
 		
 	# ROC Curve
-	plot_roc_curve(fpr2, tpr2, auc_rf, 'rf')
+	hf.plot_roc_curve(fpr2, tpr2, auc_rf, 'rf')
 	# Zoomed in ROC Curve
-	plot_roc_curve(fpr2, tpr2, auc_rf, 'rf', 
+	hf.plot_roc_curve(fpr2, tpr2, auc_rf, 'rf', 
 		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_rf():
@@ -134,7 +137,7 @@ else:
 		'''
 		return fpr2, tpr2, auc_rf, predictions_RF, test_error_rate_RF
 
-	mean_cv_rf, std_error_rf = cross_val_metrics(fit_RF, 
+	mean_cv_rf, std_error_rf = hf.cross_val_metrics(fit_RF, 
 		training_set, 
 		class_set['diagnosis'], 
 		print_results = False)

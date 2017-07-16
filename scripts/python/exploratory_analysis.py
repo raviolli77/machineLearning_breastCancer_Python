@@ -12,7 +12,11 @@
 """
 Exploratory Analysis
 """
-from helper_functions import *
+import helper_functions as hf
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+
+breast_cancer = hf.breast_cancer
 
 print('''
 	########################################
@@ -41,7 +45,7 @@ print("Count of the Dx:\n", breast_cancer['diagnosis']\
 
 # Next let's use the helper function to show distribution
 # of our data frame
-calc_diag_percent(breast_cancer, 'diagnosis')
+hf.calc_diag_percent(breast_cancer, 'diagnosis')
 
 # Scatterplot Matrix
 # Variables chosen from Random Forest modeling.
@@ -85,10 +89,10 @@ plt.show()
 plt.close()
 
 # BoxPlot
-plot_box_plot(breast_cancer, 'Pre-Processed', (-.05, 50))
+hf.plot_box_plot(breast_cancer, 'Pre-Processed', (-.05, 50))
 
 # Normalizing data 
-breast_cancer_norm = normalize_data_frame(breast_cancer)
+breast_cancer_norm = hf.normalize_data_frame(breast_cancer)
 
 # Visuals relating to normalized data to show significant difference
 print('''
@@ -99,4 +103,4 @@ print('''
 
 print(breast_cancer_norm.describe())
 
-plot_box_plot(breast_cancer_norm, 'Transformed', (-.05, 1.05))
+hf.plot_box_plot(breast_cancer_norm, 'Transformed', (-.05, 1.05))
