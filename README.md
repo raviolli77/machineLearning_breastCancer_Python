@@ -26,6 +26,8 @@ The multiple *python* script is broken into 5 sections (done by creating a scipt
 + **Neural Networks**
 + **Comparing Models**
 
+**NOTE**: The `helpers_function.py` script automates a lot of the processes and is used heavily in the other scripts. So if you want to see how my user made functions work, definitely check it out.  
+
 ## Running .py Script
 It goes without saying that a `virtualenv` is needed where you will download the necessary packages from the `requirements.txt` using:
 
