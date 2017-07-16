@@ -54,13 +54,15 @@ namesInd = names[2:]
 
 def calc_diag_percent(data_frame, col):
     '''
-	Arguments:
-	* data_frame :	Name of pandas.dataframe 
-	* col :	Name of column within previous mentioned dataframe
-
-    **Purpose**
+    Purpose
+    ----------
     Creates counters for each respective diagnoses
     and prints the percentage of each unique instance
+
+	Parameters
+	----------
+	* data_frame :	Name of pandas.dataframe 
+	* col :	Name of column within previous mentioned dataframe
     '''
     i = 0
     n = 0
@@ -81,14 +83,16 @@ def calc_diag_percent(data_frame, col):
 
 def plot_box_plot(data_frame, data_set, xlim=None):
 	'''
-	Arguments:
+	Purpose
+	----------
+	Creates a seaborn boxplot including all dependent 
+	variables and includes x limit parameters
+
+	Parameters
+	----------
 	* data_frame :	Name of pandas.dataframe 
 	* data_set :		Name of title for the boxplot
 	* xlim : 	Set upper and lower x-limits
-
-	**Purpose**
-	Creates a seaborn boxplot including all dependent 
-	variables and includes x limit parameters
 	'''
 	f, ax = plt.subplots(figsize=(11, 15))
 	
@@ -107,17 +111,21 @@ def plot_box_plot(data_frame, data_set, xlim=None):
 
 def normalize_data_frame(data_frame):
 	'''
-	Arguments:
-	* data_frame: 	Name of pandas.dataframe 
-
-	**Purpose**
+	Purpose
+	----------
 	Function created to normalize data set.
 	Intializes an empty data frame which will normalize all floats types
 	and append the non-float types. Application is very specific 
 	to this dataset, can be changed to include integer types in the 
-	normalization. 
+	normalization.
 
-	Returns:
+	Parameters
+	----------
+	* data_frame: 	Name of pandas.dataframe 
+
+
+	Returns
+	----------
 	* data_frame_norm:	Normalized dataframe values ranging (0, 1)
 	'''
 	data_frame_norm = pd.DataFrame()
@@ -131,13 +139,16 @@ def normalize_data_frame(data_frame):
 
 def create_train_test_sets(data_frame):
 	'''
-	Arguments:
-	* data_frame: 	Name of pandas.dataframe 
-
-	**Purpose**	
+	Purpose
+	----------
 	Function creates training and test sets
 
-	Returns:
+	Parameters
+	----------
+	* data_frame: 	Name of pandas.dataframe 
+
+	Returns
+	----------
 	* training_set: 	Dataframe containing 80% of original dataframe
 	* class_set: 	Dataframe containing the respective target vaues 
 					for the training_set
@@ -174,16 +185,18 @@ test_class_set_scaled = create_train_test_sets(breast_cancer_norm)
 
 def variable_importance(importance, indices):
 	'''
-	Arguments:
+	Purpose
+	----------	
+	Prints dependent variable names ordered from largest to smallest
+	based on information gain for CART model. 
+	
+	Parameters
+	----------
 	* names: 	Name of columns included in model
 	* importance: 	Array returned from feature_importances_ for CART
 					models organized by dataframe index
 	* indices: 	Organized index of dataframe from largest to smallest
 				based on feature_importances_ 
-
-	**Purpose**	
-	Prints dependent variable names ordered from largest to smallest
-	based on information gain for CART model. 
 	'''
 	print("Feature ranking:")
 	
@@ -195,18 +208,19 @@ def variable_importance(importance, indices):
 
 def variable_importance_plot(importance_desc, indices):
 	'''
-	Arguments:
+	Purpose
+	----------	
+	Prints bar chart detailing variable importance for CART model 
+	NOTE: feature_space list was created because the bar chart 
+	was transposed and index would be in incorrect order.
+	
+	Parameters
+	----------
 	* importance_desc: 	Array returned from feature_importances_ for CART
 						models organized in descending order 
 
 	* indices: 	Organized index of dataframe from largest to smallest
 				based on feature_importances_ 
-
-	**Purpose**	
-	Prints bar chart detailing variable importance for CART model 
-	NOTE: feature_space list was created because the bar chart 
-	was transposed and index would be in incorrect order.
-
 	'''
 	index = np.arange(30)
 
@@ -234,7 +248,13 @@ def variable_importance_plot(importance_desc, indices):
 
 def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
 	'''
-	Arguments:
+	Purpose
+	----------
+	Function creates ROC Curve for respective model given selected parameters.
+	Optional x and y limits to zoom into graph 
+	
+	Parameters
+	----------
 	* fpr: 	Array returned from sklearn.metrics.roc_curve for increasing 
 			false positive rates
 	* tpr: 	Array returned from sklearn.metrics.roc_curve for increasing 
@@ -244,10 +264,6 @@ def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
 			following: ['knn', 'rf', 'nn']
 	* xlim:		Set upper and lower x-limits
 	* ylim:		Set upper and lower y-limits
-
-	**Purpose**	
-	Function creates ROC Curve for respective model given selected parameters.
-	Optional x and y limits to zoom into graph 
 	'''
 	mod_list = ['knn', 'rf', 'nn']
 	method = [('Kth Nearest Neighbor', 'deeppink'), ('Random Forest', 'red'), 
@@ -283,7 +299,13 @@ def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
 
 def cross_val_metrics(fit, training_set, class_set, print_results = True):
 	'''
-	Arguments:
+	Purpose
+	----------
+	Function helps automate cross validation processes while including 
+	option to print metrics or store in variable
+	
+	Parameters
+	----------
 	* fit:	Fitted model 
 	* training_set: 	Dataframe containing 80% of original dataframe
 	* class_set: 	Dataframe containing the respective target vaues 
@@ -291,11 +313,8 @@ def cross_val_metrics(fit, training_set, class_set, print_results = True):
 	* print_results:	If true prints the metrics, else saves metrics as 
 	variables
 
-	**Purpose**
-	Function helps automate cross validation processes while including 
-	option to print metrics or store in variable
-
-	Returns:
+	Returns
+	----------
 	* scores.mean(): 	Float representing cross validation score
 	* scores.std() / 2: 	Float representing the standard error (derived
 				from cross validation score's standard deviation)
