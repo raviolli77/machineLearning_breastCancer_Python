@@ -22,24 +22,26 @@ from sklearn.metrics import classification_report
 # Calling up metrics from the model scripts
 fpr, tpr, auc_knn, predictions, test_error_rate = return_knn()
 
-fpr2, tpr2, auc_rf, predictions_RF, test_error_rate_RF = return_rf()
+fpr2, tpr2, auc_rf, predictions_rf, test_error_rate_rf = return_rf()
 
-fpr3, tpr3, auc_nn, predictions_NN, test_error_rate_NN = return_nn()
+fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn = return_nn()
 
 if __name__ == '__main__':
+	# Populate list for human readable table from terminal line
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate', 
 		'False Negative for Test Set', 'Area under the Curve for ROC', 
 		'Cross Validation Score'],
-		['Kth Nearest Neighbor',  round(test_error_rate, 3), 2, 
+		['Kth Nearest Neighbor',  round(test_error_rate, 3), 5, 
 		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_knn, std_cv_knn)],
-		[ 'Random Forest', round(test_error_rate_RF, 3), 3, 
+				.format(mean_cv_knn, std_error_knn)],
+		[ 'Random Forest', round(test_error_rate_rf, 3), 3, 
 		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_rf, std_cv_rf)], 
-		[ 'Neural Networks' ,  round(test_error_rate_NN, 3),  
-		1, round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_nn, std_cv_nn)]]
-		
+				.format(mean_cv_rf, std_error_rf)], 
+		[ 'Neural Networks' ,  round(test_error_rate_nn, 3),  1, 
+		round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+				.format(mean_cv_nn, std_error_nn)]]
+	
+	# convert to AsciiTable from terminaltables package
 	table = AsciiTable(table_data)	
 	
 	target_names = ['Benign', 'Malignant']
@@ -50,12 +52,12 @@ if __name__ == '__main__':
 		target_names = target_names))
 	
 	print('Classification Report for Random Forest:')
-	print(classification_report(predictions_RF, 
+	print(classification_report(predictions_rf, 
 		test_class_set['diagnosis'], 
 		target_names = target_names))
 	
 	print('Classification Report for Neural Networks:')
-	print(classification_report(predictions_NN, 
+	print(classification_report(predictions_nn, 
 		test_class_set_scaled['diagnosis'], 
 		target_names = target_names))
 	

@@ -23,25 +23,29 @@ from sklearn.metrics import roc_curve # ROC Curves
 from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
 from sklearn.externals import joblib
 
-fit_KNN = KNeighborsClassifier(n_neighbors=7)
+# Fitting model
+fit_knn = KNeighborsClassifier(n_neighbors=3)
 
-fit_KNN.fit(training_set, 
+# Training model
+fit_knn.fit(training_set, 
 	class_set['diagnosis'])
-	
+
+# Since KNN was first algorithm I included training set metrics
+# to give context  
 # We predict the class for our training set
-predictionsTrain = fit_KNN.predict(training_set) 
+predictionsTrain = fit_knn.predict(training_set) 
 	
 # Measure the accuracy based on the training set
-accuracyTrain = fit_KNN.score(training_set, 
+accuracy_train = fit_knn.score(training_set, 
 	class_set['diagnosis'])
 
-train_error_rate = 1 - accuracyTrain  
+train_error_rate = 1 - accuracy_train  
 
 # First we predict the Dx for the test set and call it predictions
-predictions = fit_KNN.predict(test_set)	
+predictions = fit_knn.predict(test_set)	
 
 # Let's get the accuracy of our test set
-accuracy = fit_KNN.score(test_set, 
+accuracy = fit_knn.score(test_set, 
 	test_class_set['diagnosis'])
 
 test_error_rate = 1 - accuracy
@@ -53,17 +57,17 @@ fpr, tpr, _ = roc_curve(predictions,
 auc_knn = auc(fpr, tpr)
 
 # Uncomment to save your model as a pickle object!
-# joblib.dump(fit_KNN, 'pickle_models/model_knn.pkl')
+# joblib.dump(fit_knn, 'pickle_models/model_knn.pkl')
 
 if __name__ == '__main__':
 	print('''
 		#################################
-		## FITTING MODEL KNN USING k=7 ##
+		## FITTING MODEL KNN USING k=3 ##
 		#################################
 		'''
 		)
 		
-	print(fit_KNN)
+	print(fit_knn)
 	
 	print('''
 		###############
@@ -108,7 +112,7 @@ if __name__ == '__main__':
 		colnames=['Actual Values']))
 		
 	print("Here is our accuracy for our training set:\n {0: .3f}"\
-		.format(accuracyTrain))
+		.format(accuracy_train))
 	
 	print("The train error rate for our model is:\n {0: .3f}"\
 		.format(train_error_rate))
@@ -120,7 +124,7 @@ if __name__ == '__main__':
 		'''
 		)
 	
-	crossVD(fit_KNN, training_set, class_set['diagnosis'], 
+	cross_val_metrics(fit_knn, training_set, class_set['diagnosis'], 
 		print_results = True)
 			
 	print('''
@@ -148,15 +152,19 @@ if __name__ == '__main__':
 	# NOTE: These functions were created in the helperFunctions.py 
 	# script to reduce lines of code
 	# refer to helper.py for additional information
-	plotROC(fpr, tpr, auc_knn, 0)
+	plot_roc_curve(fpr, tpr, auc_knn, 'knn')
 	
 	# Zoomed in ROC Curve
-	plotROCZoom(fpr, tpr, auc_knn, 0)
+	plot_roc_curve(fpr, tpr, auc_knn, 'knn',
+		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_knn():
+		'''
+		Function to output values created in script 
+		'''
 		return fpr, tpr, auc_knn, predictions, test_error_rate
 
-	mean_cv_knn, std_cv_knn = crossVD(fit_KNN, 
+	mean_cv_knn, std_error_knn = cross_val_metrics(fit_knn, 
 		training_set, 
 		class_set['diagnosis'],
 		print_results = False)

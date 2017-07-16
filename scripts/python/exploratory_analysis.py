@@ -21,13 +21,13 @@ print('''
 	''')
 
 print("Here's the dimensions of our data frame:\n", 
-	breastCancer.shape)
+	breast_cancer.shape)
 
 print("Here's the data types of our columns:\n", 
-	breastCancer.dtypes)	
+	breast_cancer.dtypes)	
 
 print("Some more statistics for our data frame: \n", 
-	breastCancer.describe())
+	breast_cancer.describe())
 
 print('''
 ##########################################
@@ -36,12 +36,12 @@ print('''
 ''')
 
 # Let's look at the count of the new representations of our Dx's
-print("Count of the Dx:\n", breastCancer['diagnosis']\
+print("Count of the Dx:\n", breast_cancer['diagnosis']\
 	.value_counts())
 
 # Next let's use the helper function to show distribution
 # of our data frame
-classImbalance(breastCancer, 'diagnosis')
+calc_diag_percent(breast_cancer, 'diagnosis')
 
 # Scatterplot Matrix
 # Variables chosen from Random Forest modeling.
@@ -50,7 +50,7 @@ cols = ['concave_points_worst', 'concavity_mean',
 	'perimeter_worst', 'radius_worst', 
 	'area_worst', 'diagnosis']
 
-sns.pairplot(breastCancer,
+sns.pairplot(breast_cancer,
 	x_vars = cols,
 	y_vars = cols,
 	hue = 'diagnosis', 
@@ -62,7 +62,7 @@ plt.show()
 plt.close()
 
 # Pearson Correlation Matrix
-corr = breastCancer.corr(method = 'pearson') # Correlation Matrix	
+corr = breast_cancer.corr(method = 'pearson') # Correlation Matrix	
 f, ax = plt.subplots(figsize=(11, 9))
 
 # Generate a custom diverging colormap
@@ -85,10 +85,10 @@ plt.show()
 plt.close()
 
 # BoxPlot
-pltBoxPlot(-.05, 50, breastCancer, 'Pre-Processed')
+plot_box_plot(breast_cancer, 'Pre-Processed', (-.05, 50))
 
 # Normalizing data 
-breastCancerNorm = normalize_df(breastCancer)
+breast_cancer_norm = normalize_data_frame(breast_cancer)
 
 # Visuals relating to normalized data to show significant difference
 print('''
@@ -97,6 +97,6 @@ print('''
 #################################
 ''')
 
-print(breastCancerNorm.describe())
+print(breast_cancer_norm.describe())
 
-pltBoxPlot(-.05, 1.05, breastCancerNorm, 'Transformed')
+plot_box_plot(breast_cancer_norm, 'Transformed', (-.05, 1.05))

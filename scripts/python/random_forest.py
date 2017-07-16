@@ -16,11 +16,11 @@ Random Forest Classification
 import time
 import sys, os
 from helper_functions import *
-from sklearn.model_selection import KFold, cross_val_score # Cross validation
-from sklearn.ensemble import RandomForestClassifier # Random Forest
+from sklearn.model_selection import KFold, cross_val_score 
+from sklearn.ensemble import RandomForestClassifier 
 from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.metrics import roc_curve # ROC Curves
-from sklearn.metrics import auc # Calculating Area Under Curve for ROC's!
+from sklearn.metrics import roc_curve 
+from sklearn.metrics import auc 
 from sklearn.externals import joblib
 
 # Fitting Random Forest
@@ -30,19 +30,20 @@ fit_RF = RandomForestClassifier(random_state = 42,
 	criterion='entropy',
 	n_estimators = 500)
 
+# Training Model
 fit_RF.fit(training_set, 
 	class_set['diagnosis'])
 
-importancesRF = fit_RF.feature_importances_
+# Extracting feature importance
+import_rf = fit_RF.feature_importances_
 
 # Create indices for importance of features
-indicesRF = np.argsort(importancesRF)[::-1]
+ind_rf = np.argsort(import_rf)[::-1]
 
 # Sort by Decreasing order
-indRf = sorted(importancesRF) 
+import_rf_desc = sorted(import_rf) 	
 
-index = np.arange(30)	
-
+# Predictions for test set
 predictions_RF = fit_RF.predict(test_set)	
 accuracy_RF = fit_RF.score(test_set, test_class_set['diagnosis'])
 
@@ -58,18 +59,14 @@ auc_rf = auc(fpr2, tpr2)
 # Uncomment to save your model as a pickle object!
 # joblib.dump(fit_RF, 'pickle_models/model_rf.pkl')
 
-# Fitting model 
 if __name__=='__main__':
+	# Print model parameters
 	print(fit_RF)
 
-	varImport(namesInd, importancesRF, indicesRF)
+	variable_importance(import_rf, ind_rf)
 	
-	feature_space = []
-	for i in range(29, -1, -1):
-		feature_space.append(namesInd[indicesRF[i]])
-	
-	varImportPlot(index, feature_space, indRf)
-	
+	variable_importance_plot(import_rf_desc, ind_rf)
+
 	print('''
 	############################################
 	##      HYPERPARAMETER OPTIMIZATION       ##
@@ -103,8 +100,8 @@ if __name__=='__main__':
 		'''
 		)
 	
-	# CROSS VALIDATION
-	crossVD(fit_RF, training_set, class_set['diagnosis'], 
+	# Cross validation 
+	cross_val_metrics(fit_RF, training_set, class_set['diagnosis'], 
 		print_results = True)
 	
 	print('''
@@ -126,14 +123,18 @@ if __name__=='__main__':
 		.format(test_error_rate_RF))
 		
 	# ROC Curve
-	plotROC(fpr2, tpr2, auc_rf, 1)
-		# Zoomed in ROC Curve
-	plotROCZoom(fpr2, tpr2, auc_rf, 1)
+	plot_roc_curve(fpr2, tpr2, auc_rf, 'rf')
+	# Zoomed in ROC Curve
+	plot_roc_curve(fpr2, tpr2, auc_rf, 'rf', 
+		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_rf():
+		'''
+		Function to output values created in script 
+		'''
 		return fpr2, tpr2, auc_rf, predictions_RF, test_error_rate_RF
 
-	mean_cv_rf, std_cv_rf = crossVD(fit_RF, 
+	mean_cv_rf, std_error_rf = cross_val_metrics(fit_RF, 
 		training_set, 
 		class_set['diagnosis'], 
 		print_results = False)
