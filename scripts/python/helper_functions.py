@@ -284,8 +284,7 @@ def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
 def cross_val_metrics(fit, training_set, class_set, print_results = True):
 	'''
 	Arguments:
-	* fpr:	Array returned from sklearn.metrics.roc_curve for increasing 
-			false positive rates
+	* fit:	Fitted model 
 	* training_set: 	Dataframe containing 80% of original dataframe
 	* class_set: 	Dataframe containing the respective target vaues 
 					for the training_set
