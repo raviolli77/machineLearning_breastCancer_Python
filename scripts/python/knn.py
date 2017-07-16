@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-	#####################################################
-	##    WISCONSIN BREAST CANCER MACHINE LEARNING     ##
-	#####################################################
-
+#####################################################
+##    WISCONSIN BREAST CANCER MACHINE LEARNING     ##
+#####################################################
+#
 # Project by Raul Eulogio
-
+#
 # Project found at: https://www.inertia7.com/projects/3
-
+#
 
 """
 Kth Nearest Neighbor Classification
