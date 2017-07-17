@@ -30,18 +30,22 @@ fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn =nn.return_nn()
 
 if __name__ == '__main__':
 	# Populate list for human readable table from terminal line
-	table_data = [[ 'Model/Algorithm', 'Test Error Rate', 
+	table_data = [
+		[ 'Model/Algorithm', 'Test Error Rate', 
 		'False Negative for Test Set', 'Area under the Curve for ROC', 
 		'Cross Validation Score'],
 		['Kth Nearest Neighbor',  round(test_error_rate, 3), 5, 
 		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(knn.mean_cv_knn, knn.std_error_knn)],
+				.format(knn.mean_cv_knn, knn.std_error_knn)
+		],
 		[ 'Random Forest', round(test_error_rate_rf, 3), 3, 
 		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(rf.mean_cv_rf, rf.std_error_rf)], 
+				.format(rf.mean_cv_rf, rf.std_error_rf)
+		], 
 		[ 'Neural Networks' ,  round(test_error_rate_nn, 3),  1, 
 		round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(nn.mean_cv_nn, nn.std_error_nn)]]
+				.format(nn.mean_cv_nn, nn.std_error_nn)
+		]]
 	
 	# convert to AsciiTable from terminaltables package
 	table = AsciiTable(table_data)	
