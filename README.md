@@ -3,7 +3,7 @@
 **Contributor**:
 + Raul Eulogio
 
-I created this repo as a way to get better acquainted with **Python** as a language and as a tool for data analysis. But it eventually became in exercise in utilizing various programming languages for machine learning applications. 
+I created this repo as a way to get better acquainted with **Python** (Specifically 3.5.2) as a language and as a tool for data analysis. But it eventually became in exercise in utilizing various programming languages for machine learning applications. 
 
 I employed four **Machine Learning** techniques:
 + **Kth Nearest Neighbor**
