@@ -53,32 +53,32 @@ breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
 namesInd = names[2:]
 
 def calc_diag_percent(data_frame, col):
-    '''
-    Purpose
-    ----------
-    Creates counters for each respective diagnoses
-    and prints the percentage of each unique instance
+	'''
+	Purpose
+	----------
+	Creates counters for each respective diagnoses
+	and prints the percentage of each unique instance
 
 	Parameters
 	----------
 	* data_frame :	Name of pandas.dataframe 
 	* col :	Name of column within previous mentioned dataframe
-    '''
-    i = 0
-    n = 0
-    perc_mal = 0 
-    perc_beg = 0
-    for col in data_frame[col]:
-        if (col == 1):
-            i += 1
-        elif (col == 0):
-            n += 1
-    perc_mal = (i/len(data_frame)) * 100
-    perc_beg = (n/len(data_frame)) * 100
-    print("The percentage of Malignant Diagnoses is: {0:.3f}%"\
-    	.format(perc_mal)) 
-    print("The percentage of Begnin Diagnoses is: {0:.3f}%"\
-    	.format(perc_beg))
+	 '''
+	i = 0
+	n = 0
+	perc_mal = 0 
+	perc_beg = 0
+	for col in data_frame[col]:
+	if (col == 1):
+		i += 1
+	elif (col == 0):
+		n += 1
+	perc_mal = (i/len(data_frame)) * 100
+	perc_beg = (n/len(data_frame)) * 100
+	print("The percentage of Malignant Diagnoses is: {0:.3f}%"\
+	      .format(perc_mal))
+	print("The percentage of Begnin Diagnoses is: {0:.3f}%"\
+	      .format(perc_beg))
 
 
 def plot_box_plot(data_frame, data_set, xlim=None):
