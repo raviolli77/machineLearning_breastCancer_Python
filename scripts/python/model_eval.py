@@ -14,12 +14,19 @@ Model Evaluation
 """
 
 import matplotlib.pyplot as plt 
-from helper_functions import test_class_set, test_class_set_scaled
+from helper_functions import test_class_set, test_class_set_scaled, print_class_report
 import random_forest as rf
 import knn
 import neural_networks as nn
 from terminaltables import AsciiTable
 from sklearn.metrics import classification_report
+
+# Creating useful dicts or lists
+pred_dict = {
+	'predictions': 'Kth Nearest Neighbor', 
+	'predictions_rf': 'Random Forest', 
+	'predictions_nn': 'Neural Networks'
+	}
 
 # Calling up metrics from the model scripts
 fpr, tpr, auc_knn, predictions, test_error_rate = knn.return_knn()
@@ -52,20 +59,10 @@ if __name__ == '__main__':
 	
 	target_names = ['Benign', 'Malignant']
 	
-	print('Classification Report for Kth Nearest Neighbor:')
-	print(classification_report(predictions, 
-		test_class_set['diagnosis'], 
-		target_names = target_names))
-	
-	print('Classification Report for Random Forest:')
-	print(classification_report(predictions_rf, 
-		test_class_set['diagnosis'], 
-		target_names = target_names))
-	
-	print('Classification Report for Neural Networks:')
-	print(classification_report(predictions_nn, 
-		test_class_set_scaled['diagnosis'], 
-		target_names = target_names))
+	for key, value in pred_dict.items():
+		if (key == predictions):
+			hf.print_class_report(key, value)
+
 	
 	print("Comparison of different logistics relating to model evaluation:")
 	print(table.table)
