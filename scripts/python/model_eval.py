@@ -60,8 +60,7 @@ if __name__ == '__main__':
 	target_names = ['Benign', 'Malignant']
 	
 	for key, value in pred_dict.items():
-		if (key == predictions):
-			hf.print_class_report(key, value)
+		hf.print_class_report(key, value)
 
 	
 	print("Comparison of different logistics relating to model evaluation:")
