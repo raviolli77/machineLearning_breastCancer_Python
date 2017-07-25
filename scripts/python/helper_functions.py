@@ -69,10 +69,10 @@ def calc_diag_percent(data_frame, col):
 	perc_mal = 0 
 	perc_beg = 0
 	for col in data_frame[col]:
-	if (col == 1):
-		i += 1
-	elif (col == 0):
-		n += 1
+		if (col == 1):
+			i += 1
+		elif (col == 0):
+			n += 1
 	perc_mal = (i/len(data_frame)) * 100
 	perc_beg = (n/len(data_frame)) * 100
 	print("The percentage of Malignant Diagnoses is: {0:.3f}%"\
