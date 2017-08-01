@@ -10,7 +10,15 @@ I employed four **Machine Learning** techniques:
 + **Random Forest**
 + **Neural Networks**
 
-If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for algorithms and processes. 
+If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for algorithms and processes.
+
+### Context
+
+The famous data set describes characteristics of cell nuclei, due to the nature of this data set (read more on the UCI Machine Learning Repository) real world applications/conclusions can't be drawn but this is a useful data set to help teach one machine learning process with binary classification.
+
+Here is some context to the data set using a visual (created in *R*) using what are called joy plots on the entire feature space. 
+
+<img src="images/joy_plot.png" style="width: 100px;"/>
 
 The repository includes the *scripts* folder which contains scripts for these programming languages (in order of most detailed):
 + *Python*
