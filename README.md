@@ -14,9 +14,9 @@ If you would like to see a walk through of the analysis on [inertia7](https://ww
 
 ### Context
 
-The famous data set describes characteristics of cell nuclei, due to the nature of this data set (read more on the UCI Machine Learning Repository) real world applications/conclusions can't be drawn but this is a useful data set to help teach one machine learning process with binary classification.
+The famous data set describes characteristics of cell nuclei, due to the nature of this data set (read more on the UCI Machine Learning Repository) real world applications/conclusions can't be drawn but this is a useful data set to help teach one machine learning process with simple binary classification.
 
-Here is some context to the data set using a visual (created in *R*) using what are called joy plots on the entire feature space. 
+Here is some context to the data set using a visual (created in *R*) using what are called joy plots on the entire *normalized* feature space. 
 
 <img src="images/joy_plot.png" style="width: 100px;"/>
 
