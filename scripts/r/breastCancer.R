@@ -1,16 +1,17 @@
 # LOAD PACKAGES
 setwd('set/approp/wd')
 
-require(data.table)
-require(caret)
-require(ggcorrplot)
-require(GGally)
-require(class)
-require(randomForest)
-require(nnet)
-require(e1071)
-require(pROC)
-require(class)
+library(data.table)
+library(caret)
+library(ggcorrplot)
+library(GGally)
+library(class)
+library(randomForest)
+library(nnet)
+library(e1071)
+library(pROC)
+library(class)
+library(ggjoy)
 
 # EXPLORATORY ANALYSIS
 breastCancer <- read.csv('wdbc.data.txt', header = TRUE)
@@ -66,6 +67,23 @@ breastCancerNorm <- predict(preprocessparams, breastCancer[, 3:31])
 breastCancerNorm <- data.table(breastCancerNorm, diangosis = breastCancer$diagnosis)
 
 summary(breastCancerNorm)
+
+# JOY PLOT
+# Transform the data frame to make plotting easier
+joy_df <- reshape::melt(breastCancerNorm, id.vars='diagnosis')
+
+ggplot(joy_df, aes(value, variable)) + 
+  geom_joy(rel_min_height = 0.01,
+           alpha=0.75, 
+           aes(fill=diagnosis)) + 
+  theme_minimal() + 
+  scale_fill_manual(name='Diagnosis',
+                    labels=c('Benign', 'Malignant'),
+                    values=c("red", "#875FDB")) + 
+  labs(x = 'Value', y = 'Feature Space', 
+       title='Joy Plot of Feature Space',
+       subtitle='Normalized Wisconisin Breast Cancer Data Set')
+
 # Box Plot of Normalized data
 ggplot(data = stack(breastCancerNorm), 
        aes(x = ind, y = values)) + 
