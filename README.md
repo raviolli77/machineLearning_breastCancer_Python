@@ -87,3 +87,4 @@ Things to do:
 + Add unit testing if appropriate after research 
 + Update inertia7 project
 + More detailed conclusion 
++ Recreate joy plot in *Python*
