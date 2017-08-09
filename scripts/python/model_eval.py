@@ -14,7 +14,7 @@ Model Evaluation
 """
 
 import matplotlib.pyplot as plt 
-from helper_functions import test_class_set, test_class_set_scaled, print_class_report
+from helper_functions import test_class_set, print_class_report
 import random_forest as rf
 import knn
 import neural_networks as nn
