@@ -109,7 +109,7 @@ def plot_box_plot(data_frame, data_set, xlim=None):
 	plt.show()
 	plt.close()
 
-def normalize_data_frame(data_frame):
+def normalize_data_frame(data_frame, test_set = True, *args):
 	'''
 	Purpose
 	----------
@@ -118,23 +118,29 @@ def normalize_data_frame(data_frame):
 	and append the non-float types. Application is very specific 
 	to this dataset, can be changed to include integer types in the 
 	normalization.
-
 	Parameters
 	----------
 	* data_frame: 	Name of pandas.dataframe 
-
-
+	* test_set: if True then take in parameters from training set to avoid data leakage when normalizing test set
 	Returns
 	----------
 	* data_frame_norm:	Normalized dataframe values ranging (0, 1)
 	'''
 	data_frame_norm = pd.DataFrame()
-	for col in data_frame:
-		if col in data_frame.select_dtypes(include=[np.float]):
-			data_frame_norm[col]=((data_frame[col] - data_frame[col].min()) / 
-			(data_frame[col].max() - data_frame[col].min()))
-		else: 
-			data_frame_norm[col] = data_frame[col]
+	if test_set:
+		for col in data_frame:
+			if col in data_frame.select_dtypes(include=[np.float]):
+				data_frame_norm[col]=((data_frame[col] - min_value) / 
+				(max_value - min_value))
+			else: 
+				data_frame_norm[col] = data_frame[col]
+	else:
+		for col in data_frame:
+			if col in data_frame.select_dtypes(include=[np.float]):
+				data_frame_norm[col]=((data_frame[col] - data_frame[col].min()) / 
+				(data_frame[col].max() - data_frame[col].min()))
+			else: 
+				data_frame_norm[col] = data_frame[col]
 	return data_frame_norm
 
 def create_train_test_sets(data_frame):
@@ -178,10 +184,10 @@ training_set, class_set, \
 test_set, test_class_set = create_train_test_sets(breast_cancer)
 
 # Scaling dataframe
-breast_cancer_norm = normalize_data_frame(breast_cancer)
+training_set_scaled = normalize_data_frame(training_set)
 
-training_set_scaled, class_set_scaled, test_set_scaled, \
-test_class_set_scaled = create_train_test_sets(breast_cancer_norm)
+test_set_scaled = normalize_data_frame(test_set, test_set=True, 
+	min_value=training_set.min(), max_value=training_set.max())
 
 def variable_importance(importance, indices):
 	'''
