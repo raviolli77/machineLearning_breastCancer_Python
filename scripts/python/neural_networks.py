@@ -17,8 +17,8 @@ import time
 import sys, os
 import pandas as pd
 import helper_functions as hf
-from helper_functions import training_set_scaled, class_set_scaled
-from helper_functions import test_set_scaled, test_class_set_scaled
+from helper_functions import training_set_scaled, class_set
+from helper_functions import test_set_scaled, test_class_set
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold, cross_val_score 
 from sklearn.model_selection import KFold, GridSearchCV
@@ -35,18 +35,18 @@ fit_nn = MLPClassifier(solver='lbfgs',
 
 # Train model on training set
 fit_nn.fit(training_set_scaled, 
-	class_set_scaled['diagnosis'])	
+	class_set['diagnosis'])	
 
 predictions_nn = fit_nn.predict(test_set_scaled)
 
 accuracy_nn = fit_nn.score(test_set_scaled, 
-	test_class_set_scaled['diagnosis'])
+	test_class_set['diagnosis'])
 
 # Here we calculate the test error rate!
 test_error_rate_nn = 1 - accuracy_nn
 
 # ROC Curve stuff
-fpr3, tpr3, _ = roc_curve(predictions_nn, test_class_set_scaled)
+fpr3, tpr3, _ = roc_curve(predictions_nn, test_class_set)
 
 auc_nn = auc(fpr3, tpr3)
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
 	)	
 
 	test_thing = hf.cross_val_metrics(fit_nn, training_set_scaled, 
-		class_set_scaled['diagnosis'], 
+		class_set['diagnosis'], 
 		print_results = True)	
 
 	print('''
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 	'''
 	)	
 	print(pd.crosstab(predictions_nn, 
-		test_class_set_scaled['diagnosis'], 
+		test_class_set['diagnosis'], 
 		rownames=['Predicted Values'], 
 		colnames=['Actual Values']))
 
@@ -127,5 +127,5 @@ else:
 	# Keep Cross validation metrics 
 	mean_cv_nn, std_error_nn = hf.cross_val_metrics(fit_nn, 
 		training_set_scaled, 
-		class_set_scaled['diagnosis'], 
+		class_set['diagnosis'], 
 		print_results = False)
