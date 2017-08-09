@@ -184,7 +184,7 @@ training_set, class_set, \
 test_set, test_class_set = create_train_test_sets(breast_cancer)
 
 # Scaling dataframe
-training_set_scaled = normalize_data_frame(training_set)
+training_set_scaled = normalize_data_frame(training_set, test_set=False)
 
 test_set_scaled = normalize_data_frame(test_set, test_set=True, 
 	min_value=training_set.min(), max_value=training_set.max())
