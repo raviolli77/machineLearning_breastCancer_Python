@@ -92,7 +92,7 @@ plt.close()
 hf.plot_box_plot(breast_cancer, 'Pre-Processed', (-.05, 50))
 
 # Normalizing data 
-breast_cancer_norm = hf.normalize_data_frame(breast_cancer)
+breast_cancer_norm = hf.training_set_scaled
 
 # Visuals relating to normalized data to show significant difference
 print('''
@@ -100,7 +100,5 @@ print('''
 ## Transformed Data Statistics ##
 #################################
 ''')
-
-print(breast_cancer_norm.describe())
 
 hf.plot_box_plot(breast_cancer_norm, 'Transformed', (-.05, 1.05))

@@ -15,9 +15,11 @@ Helper Functions Script
 # Import modules
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split 
 import matplotlib.pyplot as plt 
 import seaborn as sns 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler 
+from sklearn.metrics import classification_report
 from sklearn.model_selection import KFold 
 from sklearn.model_selection import cross_val_score 
 from urllib.request import urlopen 
@@ -109,39 +111,6 @@ def plot_box_plot(data_frame, data_set, xlim=None):
 	plt.show()
 	plt.close()
 
-def normalize_data_frame(data_frame, test_set = True, *args):
-	'''
-	Purpose
-	----------
-	Function created to normalize data set.
-	Intializes an empty data frame which will normalize all floats types
-	and append the non-float types. Application is very specific 
-	to this dataset, can be changed to include integer types in the 
-	normalization.
-	Parameters
-	----------
-	* data_frame: 	Name of pandas.dataframe 
-	* test_set: if True then take in parameters from training set to avoid data leakage when normalizing test set
-	Returns
-	----------
-	* data_frame_norm:	Normalized dataframe values ranging (0, 1)
-	'''
-	data_frame_norm = pd.DataFrame()
-	if test_set:
-		for col in data_frame:
-			if col in data_frame.select_dtypes(include=[np.float]):
-				data_frame_norm[col]=((data_frame[col] - min_value) / 
-				(max_value - min_value))
-			else: 
-				data_frame_norm[col] = data_frame[col]
-	else:
-		for col in data_frame:
-			if col in data_frame.select_dtypes(include=[np.float]):
-				data_frame_norm[col]=((data_frame[col] - data_frame[col].min()) / 
-				(data_frame[col].max() - data_frame[col].min()))
-			else: 
-				data_frame_norm[col] = data_frame[col]
-	return data_frame_norm
 
 def create_train_test_sets(data_frame):
 	'''
@@ -184,10 +153,11 @@ training_set, class_set, \
 test_set, test_class_set = create_train_test_sets(breast_cancer)
 
 # Scaling dataframe
-training_set_scaled = normalize_data_frame(training_set, test_set=False)
+scaler = MinMaxScaler().fit(training_set)
 
-test_set_scaled = normalize_data_frame(test_set, test_set=True, 
-	min_value=training_set.min(), max_value=training_set.max())
+training_set_scaled = scaler.fit_transform(training_set)
+
+test_set_scaled =  scaler.transform(test_set)
 
 def variable_importance(importance, indices):
 	'''
@@ -349,10 +319,7 @@ def print_class_report(predictions, alg_name):
 	* alg_name: 	String containing the name of the algorithm used
 	'''
 	target_names = ['Benign', 'Malignant']
-	try:
-		print('Classification Report for {0}:'.format(alg_name))
-		print(classification_report(predictions, 
+	print('Classification Report for {0}:'.format(alg_name))
+	print(classification_report(predictions, 
 			test_class_set['diagnosis'], 
 			target_names = target_names))
-	except:
-		print('Value entered not within the scope of the algorithms used!')
