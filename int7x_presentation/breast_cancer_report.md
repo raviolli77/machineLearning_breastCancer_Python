@@ -21,12 +21,10 @@ import numpy as np
 import pandas as pd # Data frames
 import matplotlib.pyplot as plt # Visuals
 import seaborn as sns # Danker visuals
-from helperFunctions import *
+from helper_functions import *
 from sklearn.model_selection import train_test_split 
 from sklearn.model_selection import KFold, cross_val_score 
 from sklearn.neighbors import KNeighborsClassifier 
-from sklearn.tree import DecisionTreeClassifier 
-from sklearn.tree import export_graphviz 
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.neural_network import MLPClassifier 
 from sklearn.metrics import roc_curve # ROC Curves
@@ -69,10 +67,10 @@ names = ['id_number', 'diagnosis', 'radius_mean',
          'concave_points_worst', 'symmetry_worst', 
          'fractal_dimension_worst'] 
 
-breastCancer = pd.read_csv(urlopen(UCI_data_URL), names=names)
+breast_cancer = pd.read_csv(urlopen(UCI_data_URL), names=names)
 
 # Setting 'id_number' as our index
-breastCancer.set_index(['id_number'], inplace = True) 
+breast_cancer.set_index(['id_number'], inplace = True) 
 namesInd = names[2:] # FOR CART MODELS LATER
 ```
 
@@ -86,7 +84,7 @@ We use the function `head()` which is essentially the same as the `head` functio
 
 
 ```python
-breastCancer.head()
+breast_cancer.head()
 ```
 <!-- Missing output -->
 
@@ -106,9 +104,9 @@ An common error that can happen say a variable is *discrete* (or *categorical*),
 
 ```python
 print("Here's the dimensions of our data frame:\n", 
-     breastCancer.shape)
+     breast_cancer.shape)
 print("Here's the data types of our columns:\n",
-     breastCancer.dtypes)
+     breast_cancer.dtypes)
 ```
 ### Terminal Output 
 
@@ -163,11 +161,11 @@ which then converts the previous string representations of the Dx to the **binar
 
 ```python
 # Converted to binary to help later on with models and plots
-breastCancer['diagnosis'] = breastCancer['diagnosis']\
+breast_cancer['diagnosis'] = breast_cancer['diagnosis']\
   .map({'M':1, 'B':0})
 
 # Let's look at the count of the new representations of our Dx's
-breastCancer['diagnosis'].value_counts()
+breast_cancer['diagnosis'].value_counts()
 ```
 ### Terminal Output 
 
@@ -191,39 +189,45 @@ However for this data set, its pretty obvious that we don't suffer from this, bu
 **NOTE**: If your data set suffers from *class imbalance* I suggest reading documentation on *upsampling* and *downsampling*. 
 
 ```python
-def classImbalance(item):
+def calc_diag_percent(data_frame, col):
     '''
-    Goal of this function:
-    Loops through the Dx to print percentage of class distributions 
-    w.r.t. the length of the data set
-    '''
+    Purpose
+    ----------
+    Creates counters for each respective diagnoses
+    and prints the percentage of each unique instance
+    Parameters
+    ----------
+    * data_frame :  Name of pandas.dataframe 
+    * col : Name of column within previous mentioned dataframe
+     '''
     i = 0
     n = 0
-    perMal = 0 
-    perBeg = 0
-    for item in breastCancer[item]:
-        if (item == 1):
+    perc_mal = 0 
+    perc_beg = 0
+    for col in data_frame[col]:
+        if (col == 1):
             i += 1
-        elif (item == 0):
+        elif (col == 0):
             n += 1
-    perMal = (i/len(breastCancer)) * 100
-    perBeg = (n/len(breastCancer)) * 100
-    print("The percentage of Malignant Dx is: {0:.2f}%"\
-      .format(perMal)) 
-    print("The percentage of Begnin Dx is: {0:.2f}%"\
-      .format(perBeg))
+    perc_mal = (i/len(data_frame)) * 100
+    perc_beg = (n/len(data_frame)) * 100
+    print("The percentage of Malignant Diagnoses is: {0:.3f}%"\
+          .format(perc_mal))
+    print("The percentage of Begnin Diagnoses is: {0:.3f}%"\
+          .format(perc_beg))
 ```
 
-Let's check if this worked. I'm sure there's more effective ways of doing this process, but this is me doing brute-force attempts to defining/creating working functions. Don't worry I'll get better with practice :)
+Let's check if this worked. I'm sure there's more effective ways of doing this process, but this is me doing brute-force attempts to defining/creating working functions.
 
 ```python
-classImbalance('diagnosis')
+calc_diag_percent(breast_cancer, 'diagnosis')
 ```
 ### Terminal Output 
 
-    The percentage of Malignant Dx is: 37.26%
-    The percentage of Begnin Dx is: 62.74%
-
+```
+The percentage of Malignant Diagnoses is: 37.258%
+The percentage of Begnin Diagnoses is: 62.742%
+```
 
 As we can see here our data set is not suffering from *class imbalance* so we can proceed with our analysis. 
 
@@ -233,7 +237,7 @@ So I started by using the `.describe()` function to give some basic statistics r
 
 
 ```python
-breastCancer.describe()
+breast_cancer.describe()
 ```
 <!-- Missing Output -->
 
@@ -253,7 +257,7 @@ cols = ['concave_points_worst', 'concavity_mean',
         'perimeter_worst', 'radius_worst', 
         'area_worst', 'diagnosis']
 
-sns.pairplot(breastCancer,
+sns.pairplot(breast_cancer,
              x_vars = cols,
              y_vars = cols,
              hue = 'diagnosis', 
@@ -287,7 +291,7 @@ When two features (or more) are almost perfectly correlated in a *Machine Learni
 
 
 ```python
-corr = breastCancer.corr(method = 'pearson') # Correlation Matrix
+corr = breast_cancer.corr(method = 'pearson') # Correlation Matrix
 
 f, ax = plt.subplots(figsize=(11, 9))
 
@@ -315,7 +319,7 @@ ax.set_axis_bgcolor('#fafafa')
 ax.set(xlim=(-.05, 50))
 plt.ylabel('Dependent Variables')
 plt.title("Box Plot of Pre-Processed Data Set")
-ax = sns.boxplot(data = breastCancer, 
+ax = sns.boxplot(data = breast_cancer, 
   orient = 'h', 
   palette = 'Set2')
 ```
@@ -324,7 +328,9 @@ ax = sns.boxplot(data = breastCancer,
 
 Not the best picture but this is a good segue into the next step in our *Machine learning* process.
 
-Here I used a function I created in my python script. Refer to `helperFunction.py` to understand the process but I'm setting the minimum of 0 and maximum of 1 to help with some machine learning applications later on in this report. 
+Here I used a function I created in my python script. Refer to `helperFunction.py` to understand the process but I'm setting the minimum of 0 and maximum of 1 to help with some machine learning applications later on in this report. Notice that I will use this function only for the visualization of my data set. Important to note because if I were to use this transformation, during my machine learning process I would be guilty of the process called, *data leakage*, more on this later in the *neural networks* section. 
+
+
 ```
 # From helperFunction script 
 def normalize_df(frame):
@@ -335,19 +341,19 @@ def normalize_df(frame):
 	and just append the non-float types 
 	so basically the class in our data frame
 	'''
-	breastCancerNorm = pd.DataFrame()
+	breast_cancerNorm = pd.DataFrame()
 	for item in frame:
 		if item in frame.select_dtypes(include=[np.float]):
-			breastCancerNorm[item] = ((frame[item] - frame[item].min()) / 
+			breast_cancerNorm[item] = ((frame[item] - frame[item].min()) / 
 			(frame[item].max() - frame[item].min()))
 		else: 
-			breastCancerNorm[item] = frame[item]
-	return breastCancerNorm
+			breast_cancerNorm[item] = frame[item]
+	return breast_cancerNorm
 ```
 Next we utilize the function on our dataframe. 
 
 ```python
-breastCancerNorm = normalize_df(breastCancer)
+breast_cancerNorm = normalize_df(breast_cancer)
 ```
 Note that we won't use this dataframe until we start fitting *Neural Networks*. 
 
@@ -356,7 +362,7 @@ Let's try the `.describe()` function again and you'll see that all variables hav
 
 
 ```python
-breastCancerNorm.describe()
+breast_cancerNorm.describe()
 ```
 <!-- Missing Output -->
 
@@ -371,7 +377,7 @@ f, ax = plt.subplots(figsize=(11, 15))
 ax.set_axis_bgcolor('#fafafa')
 plt.title("Box Plot of Transformed Data Set (Breast Cancer Wisconsin Data Set)")
 ax.set(xlim=(-.05, 1.05))
-ax = sns.boxplot(data = breastCancerNorm[1:29], 
+ax = sns.boxplot(data = breast_cancerNorm[1:29], 
   orient = 'h', 
   palette = 'Set2')
 ```
@@ -401,7 +407,7 @@ We split the data set into our training and test sets which will be (pseudo) ran
 
 ```python
 # Here we do a 80-20 split for our training and test set
-train, test = train_test_split(breastCancer, 
+train, test = train_test_split(breast_cancer, 
                                test_size = 0.20, 
                                random_state = 42)
 
@@ -421,12 +427,37 @@ test_class_set = test.ix[:, test.columns == 'diagnosis']
 
 A popular algorithm within classification, *kth nearest neighbor* employs a majority votes methodology using *Euclidean Distance* (a.k.a straight-line distance between two points) based on the specificied *k*. 
 
-So within context of my data set, I employ *k=7* so the algorithm looks for the 7 neighbors closest to the value its trying to classify (again closest measured using [Euclidean Distance](https://mathworld.wolfram.com/Distance.html)). This algorithm is known as a *lazy algorithm* and is considered one of the simpler algorithms in *Machine Learning*. 
+So within context of my data set, I employ *k=3* so the algorithm looks for the 3 neighbors closest to the value its trying to classify (again closest measured using [Euclidean Distance](https://mathworld.wolfram.com/Distance.html)). This algorithm is known as a *lazy algorithm* and is considered one of the simpler algorithms in *Machine Learning*. 
 
 
 One can often find that *K-nn* will perform better than more complicated methods, recall *Occam's Razor* when going about data analysis. 
 
 **Important to Note**: The biggest drawback for *K-NN* is the [Curse of Dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality)  
+
+### Set up the Algorithm
+I will be employing `scikit-learn` algorithms for this process of my project, but in the future I would be interested in building the algorithms from "scratch". I'm not there yet with my learning though. 
+
+
+```python
+fit_knn = KNeighborsClassifier(n_neighbors=3)
+```
+
+### Train the Model
+
+Next we train the model on our *training set* and the *class set*. The other models follow a similar pattern, so its worth noting here I had to call up the `'diagnosis'` column in my `class_set` otherwise I got an error code. 
+
+
+```python
+fit_knn.fit(training_set, class_set['diagnosis'])
+```
+
+### Terminal Output 
+
+```
+KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+           metric_params=None, n_jobs=1, n_neighbors=3, p=2,
+           weights='uniform')
+```
 
 ## Determining Optimal k 
 Determining the best *k* can be done mathematically by creating a `for-loop` that searches through multiple *k* values, we collect the `cross_val` scores which we then see which was the lowest *mean squared error* and receive the corresponding *k*. 
@@ -452,77 +483,59 @@ MSE = [1 - x for x in cross_vals]
 optimal_k = myKs[MSE.index(min(MSE))]
 print("Optimal K is {0}".format(optimal_k))
 ```
+
 ### Terminal Output
 
-	Optimal K is 7
-
-### Set up the Algorithm
-I will be employing `scikit-learn` algorithms for this process of my project, but in the future I would be interested in building the algorithms from "scratch". I'm not there yet with my learning though. 
-
-
-```python
-fit_KNN = KNeighborsClassifier(n_neighbors=7)
 ```
-
-### Train the Model
-
-Next we train the model on our *training set* and the *class set*. The other models follow a similar pattern, so its worth noting here I had to call up the `'diagnosis'` column in my `class_set` otherwise I got an error code. 
-
-
-```python
-fit_KNN.fit(training_set, class_set['diagnosis'])
+Optimal K is 3
 ```
-
-### Terminal Output 
-
-
-    KNeighborsClassifier(algorithm='auto', leaf_size=30, 
-               metric='minkowski',
-               metric_params=None, n_jobs=1, n_neighbors=7, p=2,
-               weights='uniform')
-
-
 
 ### Training Set Calculations
-For this set, we calculate the accuracy based on the training set. I decided to include this to give context, but within *Machine Learning* processes we aren't concerned with the *training error rate* since it can suffer from high *bias* and over-fitting. 
+For this set, we calculate the accuracy based on the training set. I decided to include this to give context, but within *Machine Learning* processes we aren't concerned with the *training error rate* since it can suffer from high *bias* and *over-fitting*. 
 
 As I stated previously we're more concerned in seeing how our model does against data it hasn't seen before. 
 
 
 ```python
 # We predict the class for our training set
-predictionsTrain = fit_KNN.predict(training_set) 
+predictions_train = fit_knn.predict(training_set) 
 
 # Here we create a matrix comparing the actual values vs. the predicted values
-print(pd.crosstab(predictionsTrain, 
+print(pd.crosstab(predictions_train, 
                   class_set['diagnosis'], 
                   rownames=['Predicted Values'], 
                   colnames=['Actual Values']))
 
 # Measure the accuracy based on the trianing set
-accuracyTrain = fit_KNN.score(training_set, class_set['diagnosis'])
+accuracy = fit_knn.score(training_set, class_set['diagnosis'])
 
 print("Here is our accuracy for our training set: {0: .3f} "\
-  .format(accuracyTrain))
+  .format(accuracy))
 ```
 ### Terminal Output 
 
-    Actual Values       0    1
-    Predicted Values          
-    0                 279   20
-    1                   7  149
-    Here is our accuracy for our training set:  0.941 
+```
+Actual Values       0    1
+Predicted Values          
+0                 281   18
+1                   5  151
+Here is our accuracy for our training set:
+  0.949
+```
 
 
 Here we get the training set error from the `.score()` function where test set calculations will follow a similar workflow. 
 ```python
-train_error_rate = 1 - accuracyTrain   
+train_error_rate = 1 - accuracy   
 print("The train error rate for our model is: {0: .3f}"\
 .format(train_error_rate))
 ```
 ### Terminal Output 
 
-    The train error rate for our model is:  0.059
+```
+    The train error rate for our model is:
+  0.051
+```
 
 
 ## Cross Validation 
@@ -540,7 +553,7 @@ We could have done *Cross Validation* on our entire data set, but when it comes 
 ```python
 n = KFold(n_splits=10)
 
-scores = cross_val_score(fit_KNN, 
+scores = cross_val_score(fit_knn, 
                          test_set, 
                          test_class_set['diagnosis'], 
                          cv = n)
@@ -550,7 +563,9 @@ print("Accuracy: {0: 0.2f} (+/- {1: 0.2f})"\
 
 ### Terminal Output 
 
-    0.966 (+/- 0.021)
+```
+    Accuracy:  0.925 (+/-  0.025)
+```
 
 
 ## Test Set Evaluations
@@ -562,7 +577,7 @@ We could have simply over-fitted our model, but since the model hasn't seen the 
 
 ```python
 # First we predict the Dx for the test set and call it predictions
-predictions = fit_KNN.predict(test_set)
+predictions = fit_knn.predict(test_set)
 
 # Let's compare the predictions vs. the actual values
 print(pd.crosstab(predictions, 
@@ -571,7 +586,7 @@ print(pd.crosstab(predictions,
                   colnames=['Actual Values']))
 
 # Let's get the accuracy of our test set
-accuracy = fit_KNN.score(test_set, test_class_set['diagnosis'])
+accuracy = fit_knn.score(test_set, test_class_set['diagnosis'])
 
 # TEST ERROR RATE!!
 print("Here is our accuracy for our test set: {0: .3f}"\
@@ -580,11 +595,12 @@ print("Here is our accuracy for our test set: {0: .3f}"\
 
 ### Terminal Output 
 
-    Actual Values      0   1
-    Predicted Values        
-    0                 70   4
-    1                  1  39
-    Here is our accuracy for our test set:  0.956
+```
+Actual Values      0   1
+Predicted Values        
+0                 68   5
+1                  3  38
+```
 
 
 
@@ -596,7 +612,10 @@ print("The test error rate for our model is: {0: .3f}"\
 ```
 ### Terminal Output 
 
-    The test error rate for our model is:  0.044
+```
+    The test error rate for our model is:
+  0.070
+```
 
 
 ### Conclusion for K-NN
@@ -647,9 +666,10 @@ For this next process we will be grabbing the index of these features, then usin
 
 ```python
 fit_RF = RandomForestClassifier(random_state = 42, 
-                                criterion='gini',
-                                n_estimators = 500,
-                                max_features = 5)
+    bootstrap=True,
+    max_depth=4,
+    criterion='entropy',
+    n_estimators = 500)
 ```
 
 
@@ -659,13 +679,14 @@ fit_RF.fit(training_set, class_set['diagnosis'])
 
 ### Terminal Output 
 
-
-    RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
-                max_depth=None, max_features=5, max_leaf_nodes=None,
-                min_impurity_split=1e-07, min_samples_leaf=1,
-                min_samples_split=2, min_weight_fraction_leaf=0.0,
-                n_estimators=500, n_jobs=1, oob_score=False, random_state=42,
-                verbose=0, warm_start=False)
+```
+    RandomForestClassifier(bootstrap=True, class_weight=None, criterion='entropy',
+            max_depth=4, max_features='auto', max_leaf_nodes=None,
+            min_impurity_split=1e-07, min_samples_leaf=1,
+            min_samples_split=2, min_weight_fraction_leaf=0.0,
+            n_estimators=500, n_jobs=1, oob_score=False, random_state=42,
+            verbose=0, warm_start=False)
+```
 
 
 
@@ -702,38 +723,39 @@ for f in range(30):
 
 ### Terminal Output 
 
-    Feature ranking:
-    1. The feature 'concave_points_worst' has an Information Gain of 0.139713
-    2. The feature 'area_worst' has an Information Gain of 0.122448
-    3. The feature 'concave_points_mean' has an Information Gain of 0.115332
-    4. The feature 'perimeter_worst' has an Information Gain of 0.114410
-    5. The feature 'radius_worst' has an Information Gain of 0.082506
-    6. The feature 'concavity_mean' has an Information Gain of 0.051091
-    7. The feature 'radius_mean' has an Information Gain of 0.047065
-    8. The feature 'perimeter_mean' has an Information Gain of 0.041769
-    9. The feature 'area_mean' has an Information Gain of 0.040207
-    10. The feature 'concavity_worst' has an Information Gain of 0.038435
-    11. The feature 'area_se' has an Information Gain of 0.029797
-    12. The feature 'texture_worst' has an Information Gain of 0.021006
-    13. The feature 'radius_se' has an Information Gain of 0.016963
-    14. The feature 'texture_mean' has an Information Gain of 0.016359
-    15. The feature 'compactness_worst' has an Information Gain of 0.015939
-    16. The feature 'symmetry_worst' has an Information Gain of 0.013319
-    17. The feature 'smoothness_worst' has an Information Gain of 0.013109
-    18. The feature 'compactness_mean' has an Information Gain of 0.012102
-    19. The feature 'perimeter_se' has an Information Gain of 0.010395
-    20. The feature 'concavity_se' has an Information Gain of 0.007546
-    21. The feature 'smoothness_mean' has an Information Gain of 0.007518
-    22. The feature 'fractal_dimension_se' has an Information Gain of 0.006149
-    23. The feature 'fractal_dimension_worst' has an Information Gain of 0.005899
-    24. The feature 'compactness_se' has an Information Gain of 0.005324
-    25. The feature 'symmetry_se' has an Information Gain of 0.004980
-    26. The feature 'fractal_dimension_mean' has an Information Gain of 0.004723
-    27. The feature 'concave_points_se' has an Information Gain of 0.004516
-    28. The feature 'texture_se' has an Information Gain of 0.004405
-    29. The feature 'symmetry_mean' has an Information Gain of 0.003570
-    30. The feature 'smoothness_se' has an Information Gain of 0.003402
-
+```
+Feature ranking:
+1. The feature 'concave_points_worst' has a Information Gain of 0.143349
+2. The feature 'area_worst' has a Information Gain of 0.123030
+3. The feature 'perimeter_worst' has a Information Gain of 0.121727
+4. The feature 'concave_points_mean' has a Information Gain of 0.110016
+5. The feature 'radius_worst' has a Information Gain of 0.083120
+6. The feature 'concavity_mean' has a Information Gain of 0.053719
+7. The feature 'concavity_worst' has a Information Gain of 0.044348
+8. The feature 'radius_mean' has a Information Gain of 0.044206
+9. The feature 'perimeter_mean' has a Information Gain of 0.039387
+10. The feature 'area_mean' has a Information Gain of 0.038195
+11. The feature 'area_se' has a Information Gain of 0.030992
+12. The feature 'texture_worst' has a Information Gain of 0.026350
+13. The feature 'texture_mean' has a Information Gain of 0.018334
+14. The feature 'radius_se' has a Information Gain of 0.015580
+15. The feature 'compactness_worst' has a Information Gain of 0.012579
+16. The feature 'symmetry_worst' has a Information Gain of 0.012515
+17. The feature 'compactness_mean' has a Information Gain of 0.011184
+18. The feature 'smoothness_worst' has a Information Gain of 0.010990
+19. The feature 'perimeter_se' has a Information Gain of 0.009370
+20. The feature 'concavity_se' has a Information Gain of 0.007509
+21. The feature 'fractal_dimension_worst' has a Information Gain of 0.007260
+22. The feature 'smoothness_mean' has a Information Gain of 0.005731
+23. The feature 'fractal_dimension_se' has a Information Gain of 0.004470
+24. The feature 'symmetry_se' has a Information Gain of 0.004147
+25. The feature 'concave_points_se' has a Information Gain of 0.004140
+26. The feature 'fractal_dimension_mean' has a Information Gain of 0.003991
+27. The feature 'compactness_se' has a Information Gain of 0.003982
+28. The feature 'texture_se' has a Information Gain of 0.003522
+29. The feature 'smoothness_se' has a Information Gain of 0.003234
+30. The feature 'symmetry_mean' has a Information Gain of 0.003022
+```
 
 The same process can be done for any **CART** when looking at the *Variable Importance*.
 
@@ -778,7 +800,7 @@ plt.barh(index, indRf,
 plt.yticks(index, feature_space)
 plt.ylim(-1, 30)
 plt.xlim(0, 0.15)
-plt.xlabel('Gini Importance')
+plt.xlabel('Information Gain')
 plt.ylabel('Feature')
 
 plt.show()
@@ -800,7 +822,9 @@ print("Accuracy: {0: 0.2f} (+/- {1: 0.2f})"\
 ```
 ### Terminal Output 
 
-    Accuracy:  0.96 (+/-  0.03)
+```
+Accuracy:  0.963 (+/-  0.013)
+```
 
 
 ## Test Set Evaluations
@@ -819,10 +843,12 @@ print(pd.crosstab(predictions_RF,
 ```
 ### Terminal Output 
 
-    Actual Values      0   1
-    Predicted Values        
-    0                 70   3
-    1                  1  40
+```
+Actual Values      0   1
+Predicted Values        
+0                 70   3
+1                  1  40
+```
 
 
 
@@ -838,6 +864,7 @@ print("Here is our mean accuracy on the test set:\n {0:.3f}"\
      0.965
 
 
+And now our test error rate.
 
 ```python
 # Here we calculate the test error rate!
@@ -871,6 +898,7 @@ Our *Random Forest* performed pretty well, I have a personal preference to tree 
 That can be an exercise for later on to see if choosing a subset of the data set will help in prediction power. For now I am content with using the entire data set for instructive purposes. 
 
 Important to note, is that the *random forest* performed better in terms of *false negatives*, only slightly though. 
+
 # Neural Network <a name='neurnetwork'></a>
 Our last model is a harder concept to understand. *Neural Networks* are considered *black box models*, meaning that we don't know what goes on under the hood, we feed the model our data and it outputs the predictions without giving us insight into how our model works. 
 
@@ -886,13 +914,29 @@ Here you can see a visual representation of a simple *neural network*:
 
 <img src='http://cs231n.github.io/assets/nn1/neural_net.jpeg'>
 
-We use the normalized dataframe that we created earlier to fit the *Neural Network*. Important to note is that *neural networks* require a lot of pre-processing in order for them to be effective models. The standard is to standardize your dataframe, or else the model will perform noticeably poor. 
+## Data Leakage
+
+A hidden pitfall in machine learning is a process known, as *Data Leakage*, data leakage is the process of letting information into your algorithm that it would otherwise not know. 
+
+A concrete example using this data set, would be if I pre-maturely normalized my data set(which I did), but the leakage comes if I were to create my *training* and *test sets* through using the `normalize_data_frame` function I created. 
+
+This is because the *training set* would see information about the test set that it should not have, thereby producing data leakage. Luckily for us, `sklearn.preprocessing` has classes that avoid this issue, but it is important to state.  
+
+Important to note is that *neural networks* require a lot of pre-processing in order for them to be effective models. The standard is to standardize your dataframe, or else the model will perform noticeably poor. 
 
 So here we are creating a new *training* and *test set* to input into our *neural network*. 
 
 ```python
-training_set_norm, class_set_norm, test_set_norm, test_class_set_norm = splitSets(breastCancerNorm)
+# Scaling dataframe
+scaler = MinMaxScaler().fit(training_set)
+
+training_set_scaled = scaler.fit_transform(training_set)
+
+test_set_scaled =  scaler.transform(test_set)
+
 ```
+
+
 Here we create our *neural network* utilizing 5 hidden layers, the logisitic activiation function, and 
 We won't be using *Gradient Descent* in this model instead we will be utilizing `lbfgs` which is an optimizer from quasi-Newton methods family, which according to the documentation:
 
@@ -916,15 +960,15 @@ fit_NN.fit(training_set_norm,
 ### Terminal Output 
 
 
-
-    MLPClassifier(activation='logistic', alpha=0.0001, batch_size='auto',
-           beta_1=0.9, beta_2=0.999, early_stopping=False, epsilon=1e-08,
-           hidden_layer_sizes=(5,), learning_rate='constant',
-           learning_rate_init=0.001, max_iter=200, momentum=0.9,
-           nesterovs_momentum=True, power_t=0.5, random_state=7, 
-           shuffle=True, solver='lbfgs', tol=0.0001, 
-           validation_fraction=0.1, verbose=False,
-           warm_start=False)
+```
+MLPClassifier(activation='tanh', alpha=0.0001, batch_size='auto', beta_1=0.9,
+       beta_2=0.999, early_stopping=False, epsilon=1e-08,
+       hidden_layer_sizes=(12,), learning_rate='constant',
+       learning_rate_init=0.05, max_iter=200, momentum=0.9,
+       nesterovs_momentum=True, power_t=0.5, random_state=42, shuffle=True,
+       solver='lbfgs', tol=0.0001, validation_fraction=0.1, verbose=False,
+       warm_start=False)
+```
 
 
 ## Cross Validation 
@@ -942,7 +986,7 @@ print("Accuracy: {0: 0.2f} (+/- {1: 0.2f})"\
 ```
 ### Terminal Output 
 
-    Accuracy:  0.93 (+/-  0.03)
+    Accuracy:  0.976 (+/-  0.013)
 
 
 Our model performed significantly worse then the other two models. Let's calculate the *test error rate* to compare its performance. 
@@ -961,8 +1005,9 @@ print(pd.crosstab(predictions_NN, test_class_set_norm['diagnosis'],
 ```
 Actual Values      0   1
 Predicted Values        
-0                 68   1
-1                  3  42
+0                 70   2
+1                  1  41
+
 ```
 The *Neural Network* model performed better in terms of *false negative*!
  
@@ -974,9 +1019,10 @@ print("Here is our mean accuracy on the test set:\n{0: .2f} "\
 ```
 ### Terminal Output 
 
-    Here is our mean accuracy on the test set:
-     0.965
-
+```
+Here is our mean accuracy on the test set:
+  0.974
+```
 
 
 ```python
@@ -987,10 +1033,12 @@ print("The test error rate for our model is:\n {0: .3f}"\
 ```
 ### Terminal Output 
 
-    The test error rate for our model is:
-       0.035 
+```
+The test error rate for our model is:
+  0.026
+```
 
-
+Next we do more *ROC* curve calculations. 
 
 ```python
 fpr3, tpr3, _ = roc_curve(predictions_NN, test_class_set)
@@ -1046,7 +1094,7 @@ plt.show()
 ```
 
 
-<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/rocCurve.png">
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc.png">
 
 Let's zoom in to get a better picture!
 
@@ -1088,7 +1136,7 @@ plt.show()
 ```
 
 
-<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/rocZoom.png">
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc_zoomed.png">
 
 Visually examining the plot, *Random Forest* and *Kth Nearest Neighbor* are noticeable more elevated than *Neural Networks* which is indicative of a good prediction tool, using this form of diagnositcs. 
 
@@ -1101,11 +1149,40 @@ This project is an iterative process, so I will be working to reach a final cons
 
 ### Diagnostics for Data Set
 
-| Model/Algorithm 	| Test Error Rate 	| False Negative for Test Set 	| Area under the Curve for ROC | Cross Validation Score | Hyperparameter Optimization | 
-|-----------------|-----------------|-------------------------------|----------------------------|-----------|------|
-| Kth Nearest Neighbor | 0.035 |	2 |	0.963 | 0.966 (+/-  0.021) | Optimal **k** = 7 |
-| Random Forest 	|  0.035	| 3 	| 0.9673 |  0.955 (+/-  0.022) |  {'bootstrap': True, 'criterion': 'entropy', 'max_depth': 4} | 
-| Neural Networks 	| 0.035 	| 1 	| 0.952 |  0.947 (+/-  0.030) |  {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} | 
+| Model/Algorithm      | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC | Cross Validation Score        |
+|----------------------|-----------------|-----------------------------|------------------------------|-------------------------------|
+| Kth Nearest Neighbor | 0.07            | 5                           | 0.929                        | Accuracy:  0.925 (+/-  0.025) |
+| Random Forest        | 0.035           | 3                           | 0.967                        | Accuracy:  0.963 (+/-  0.013) |
+| Neural Networks      | 0.026           | 1                           | 0.974                        | Accuracy:  0.976 (+/-  0.013) |
+
+
+## Classification Report
+
+#### Classification Report for Kth Nearest Neighbor:
+
+|              | precision  |   recall |  f1-score |   support | 
+|--------------|------------|----------|-----------|-----------|
+|      Benign  |      0.96  |     0.93 |      0.94 |        73 | 
+|   Malignant  |      0.88  |     0.93 |      0.90 |        41 | 
+| avg / total  |      0.93  |     0.93 |      0.93 |       114 | 
+
+#### Classification Report for Random Forest:
+
+|             | precision  |  recall | f1-score  | support | 
+|--------------|------------|----------|-----------|-----------|
+|      Benign |      0.99  |    0.96 |     0.97  |      73 | 
+|   Malignant |      0.93  |    0.98 |     0.95  |      41 | 
+| avg / total |      0.97  |    0.96 |     0.97  |     114 | 
+
+#### Classification Report for Neural Networks:
+
+|             | precision |    recall |  f1-score |   support |
+|-------------|-----------|-----------|-----------|-----------|
+|      Benign |      0.99 |      0.97 |      0.98 |        72 |
+|   Malignant |      0.95 |      0.98 |      0.96 |        42 |
+| avg / total |      0.97 |      0.97 |      0.97 |       114 |
+
+
 
 
 # Sources Cited
