@@ -1,7 +1,6 @@
 
-Project originally posted on [inertia7](https://www.inertia7.com/projects/95)
-
-[GitHub Repo](https://github.com/raviolli77/machineLearning_breastCancer_Python)
++ Project originally posted on [inertia7](https://www.inertia7.com/projects/95)
++ [GitHub Repo](https://github.com/raviolli77/machineLearning_breastCancer_Python)
 
 # Introduction to Random Forest
 
@@ -27,15 +26,15 @@ Decision trees tend to have high variance when utilizing different training and 
 
 ## Bootstrap Aggregating Trees
 
-Through a process known as **B**ootstrap **Agg**regat**ing** (or Bagging), we create an ensemble (forest) of trees where multiple training sets are generated with replacement (meaning observations can be repeated). Once the training sets are created a CART model is trained on each subsample. 
+Through a process known as **B**ootstrap **Agg**regat**ing** (or Bagging), we create an ensemble (forest) of trees where multiple training sets are generated with replacement (meaning data instances or in our case patients can be repeated). Once the training sets are created a CART model is trained on each subsample. 
 
-This approach helps reduce variance by averaging the ensemble's results, creating a majority votes model. Another imoprtant feature to Bagging trees is that the model uses the entire feature space when considering node splits.
+This approach helps reduce variance by averaging the ensemble's results, creating a majority votes model. Another important feature of Bagging trees is that the model uses the entire feature space when considering node splits. Bagging trees allow the trees to grow without pruning (reducing the tree depth sizes. See [this article](https://www.displayr.com/machine-learning-pruning-decision-trees/) for more details) resulting in high variance but lower bias, which can help in improving predictive power. 
 
-However, a downside to this process is due to the sampling with replacement and utliziation of the entire feature space there is a risk of having correlation between trees increasing bias in our model.
+However, a downside to this process is utliziation of the entire feature space since there is a risk of having correlation between trees increasing bias in our model.
 
 ### Limitation to Bagging Trees
 
-As stated earlier since each new subsample can include repeated observations we can over-fit our model on the training set. Bagging trees allow the trees to grow without pruning (reducing the tree depth sizes. See [this article](https://www.displayr.com/machine-learning-pruning-decision-trees/) for more details) resulting in high variance but lower bias, which can help in improving predictive power. 
+As stated earlier since each new subsample can include repeated observations we can over-fit our model on the training set. 
 
 The main limitation of Bagging Trees is the use of the entire feature space when creating splits in the trees. If some variables within our feature space are indicative of certain predictions we run the risk of having a forest of correlated trees, thereby increasing bias and reducing variance.  
 
@@ -45,7 +44,9 @@ A simple tweak of Bagging Trees methodology proves advantageous to our models pr
 
 Random Forest aims to reduce the previously mentioned correlation by choosing only a subsample of the feature space at each split. Essentially aiming to make the trees de-correlated, along with pruning of trees by setting a stopping criteria for node splits (more on this later). 
 
-After this tutorial you will be familiar with how to implement (in python):
+The processes outlined in this project are typical of a machine learning project, so I've given an outline of what will be done throughout the tutorial. 
+
+After this tutorial you will be familiar with how to implement (in `python`):
 
 + Basic exploratory analysis
 + Training and test set creation
@@ -70,7 +71,7 @@ Random Forest can be used for a plethora of data circumstances including but not
 
 # Load Packages
 
-We load our modules into our python environment. In my case I am employing a `Jupyter Notebook` while running inside a `virtualenv` environment (the `requirements.txt` file associated with this repo contains the module information for reproducibility). 
+We load our modules into our python environment. I am employing a `Jupyter Notebook` while running inside a `virtualenv` environment (the `requirements.txt` file associated with this repo contains the module information for reproducibility). 
 
 We will be primarily using the [SciPy](https://www.scipy.org/stackspec.html) stack focusing on `pandas`, `matplotlib`, `seaborn` and `sklearn` for this tutorial. 
 
@@ -98,12 +99,10 @@ pd.set_option('display.max_columns', 500)
 ```
 
 # Load Data
-For this section, I'll load the data into a **Pandas** dataframe using `urlopen` from the `urllib.request` module. 
+For this section, I'll load the data into a `Pandas` dataframe using `urlopen` from the `urllib.request` module. 
 
-Instead of downloading a **csv**, I started implementing this method(Inspired by this [Python Tutorials](https://github.com/JasonFreeberg/PythonTutorials)) where I grab the data straight from the [UCI Machine Learning Database](https://archive.ics.uci.edu/ml/datasets.html) using an http request. 
+Instead of downloading a `csv`, I started implementing this method (inspired by this [Python Tutorials](https://github.com/JasonFreeberg/PythonTutorials)) where I grab the data straight from the [UCI Machine Learning Database](https://archive.ics.uci.edu/ml/datasets.html) using an http request. 
 
-
-**NOTE**: Original Data set can also be found [here](https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data)
 
 
 ```python
@@ -114,7 +113,7 @@ UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
 
 I do recommend on keeping a static file for your dataset as well.
 
-Next, I created a list with the appropriate names and set them as the column names, once I load them unto a `pandas` data frame 
+Next, I created a list with the appropriate names and set them as the data frame's column names, then I load them unto a `pandas` data frame 
 
 
 ```python
@@ -532,7 +531,7 @@ print_dx_perc(breast_cancer, 'diagnosis')
     Malignant accounts for 37.26% of the diagnosis class
 
 
-Fortunatly, this data set does not suffer from *class imbalance*. 
+Fortunately, this data set does not suffer from *class imbalance*. 
 
 Next we will use a useful function that gives us standard descriptive statistics for each feature including mean, standard deviation, minimum value, maximum value, and range intervals. 
 
@@ -883,7 +882,7 @@ We can see through the maximum row that our data varies in distribution, this wi
 
 We split the data set into our *training* and *test sets* which will be (pseudo) randomly selected having a 80-20% splt. We will use the training set to train our model along with some optimization, and use our test set as the unseen data that will be a useful final metric to let us know how well our model does. 
 
-When using this method for machine learning always be weary of utilizing your test set when creating models. The issue of data leakage is a grave and serious issue that is common in practice and can result in over-fitting. More on data leakage can be found in this [Kaggle article](https://www.kaggle.com/wiki/Leakage)
+When using this method for machine learning always be weary of utilizing your test set when creating models. The issue of data leakage is a serious issue that is common in practice and can result in over-fitting. More on data leakage can be found in this [Kaggle article](https://www.kaggle.com/wiki/Leakage)
 
 
 ```python
@@ -908,7 +907,7 @@ test_class_set = test_class_set.values.ravel()
 
 # Fitting Random Forest
 
-Now we will create the model stating no parameter tuning aside from the random seed generator. 
+Now we will create the model no parameter tuning aside from the random seed generator. 
 
 What I mean when I say parameter tuning is different machine learning models utilize various parameters which have to be tuned by the person implementing the algorithm. Here I'll give a brief overview of the parameters I will be tuning in this tutorial:
 
@@ -917,6 +916,7 @@ What I mean when I say parameter tuning is different machine learning models uti
 + max_features: the maximum number of features that will be used in the node splitting (the main difference previously mentioned between Bagging trees and Random Forest). Typically we want a value that is less than p, where p is all features in our dataset. 
 + criterion: this is the metric used to asses the stopping criteria for the Decision trees, more on this later 
 
+Once we've instantiated our model we will go ahead and tune our parameters. 
 
 
 ```python
@@ -926,10 +926,10 @@ fit_rf = RandomForestClassifier(random_state=42)
 
 # Hyperparameters Optimization 
 
-Utilizing the `GridSearchCV` functionality, I create a dictionary with parameters I am looking to optimize to create the best model for our data. Setting the `n_jobs` to 3 tells the grid search to run 3 jobs in parallel reducing the time the function will take to compute the best parameters. I included the timer to help see how long different jobs took, ultimately deciding on using 3. 
+Utilizing the `GridSearchCV` functionality, I create a dictionary with parameters I am looking to optimize to create the best model for our data. Setting the `n_jobs` to 3 tells the grid search to run 3 jobs in parallel reducing the time the function will take to compute the best parameters. I included the timer to help see how long different jobs took, ultimately deciding on using 3 parallel jobs. 
 
 
-This will help set parameters which I will then use to tune one more paramter; the number of trees. 
+This will help set parameters which I will then use to tune one final paramter; the number of trees in my forest. 
 
 
 ```python
@@ -953,13 +953,13 @@ print('Time taken in grid search: {0: .2f}'.format(end - start))
 ```
 
     Best Parameters using grid search: 
-     {'max_features': 'log2', 'criterion': 'gini', 'bootstrap': True, 'max_depth': 3}
-    Time taken in grid search:  9.71
+     {'max_features': 'log2', 'max_depth': 3, 'bootstrap': True, 'criterion': 'gini'}
+    Time taken in grid search:  9.20
 
 
-Once we are given the best parameters, we set the parameters to our model. 
+Once we are given the best parameter combination, we set the parameters to our model. 
 
-Notice how we didn't utilize the `bootstrap: True` parameter, this will be because of the following section. 
+Notice how we didn't utilize the `bootstrap: True` parameter, this will make sense in the following section. 
 
 
 ```python
@@ -983,13 +983,15 @@ fit_rf.set_params(criterion = 'gini',
 
 # Out of Bag Error Rate
 
-Another useful feature of Random Forest is the concept of Out of Bag Error Rate or OOB error rate. When creating the forest, typically only 2/3 of the data is used to train the trees, this gives us 1/3 of unseen data that we can then utilize in a way that is advantageos to our accuracy metrics withou being computationally expensive like cross validation. 
+Another useful feature of Random Forest is the concept of Out of Bag Error Rate or OOB error rate. When creating the forest, typically only 2/3 of the data is used to train each tree, this gives us 1/3 of unseen data that we can then utilize in a way that is advantageos to our accuracy metrics withou being computationally expensive like cross validation. 
 
 When calculating OOB, two parameters have to be changed as outlined below. Also utilizing a `for-loop` across a multitude of forest sizes, we can calculate the OOB Error rate and use this to asses how many trees are appropriate for our model!
 
+**NOTE**: When calculating the oob score, setting `bootstrap=True` will produce errors, but is necessary for oob_score calculation as stated on this [example](http://scikit-learn.org/stable/auto_examples/ensemble/plot_ensemble_oob.html)
+
 
 ```python
-fit_rf.set_params(warm_start=True, 
+For the original analysis I compared *Kth Nearest Neighbor*, *Random Forest*, and *Neural Networks*, so most of the analysis was done to compare across different models. fit_rf.set_params(warm_start=True, 
                   oob_score=True)
 
 min_estimators = 15
@@ -1026,14 +1028,14 @@ plt.axhline(0.05,
             color='#875FDB',
            linestyle='--')
 plt.xlabel('n_estimators')
-plt.ylabel('OOB Error')
-plt.title('OOB Error Across Trees \n(From 15 to 1000 trees)')
+plt.ylabel('OOB Error Rate')
+plt.title('OOB Error Rate Across various Forest sizes \n(From 15 to 1000 trees)')
 ```
 
 
 
 
-    <matplotlib.text.Text at 0x7f4376c95d30>
+    <matplotlib.text.Text at 0x7f4c51431b00>
 
 
 
@@ -1041,7 +1043,7 @@ plt.title('OOB Error Across Trees \n(From 15 to 1000 trees)')
 ![png](random_forest_files/random_forest_36_1.png)
 
 
-The OOB error starts to oscilate at around 400 trees, so I will go ahead and use my judgement to use 400 trees in my forest. Using the `pandas` series object I can easily find the OOB error rate for the estimator as follows:
+The OOB error rate starts to oscilate at around 400 trees, so I will go ahead and use my judgement to use 400 trees in my forest. Using the `pandas` series object I can easily find the OOB error rate for the estimator as follows:
 
 
 ```python
@@ -1051,7 +1053,7 @@ print('OOB Error rate for 400 trees is: {0:.5f}'.format(oob_series[400]))
     OOB Error rate for 400 trees is: 0.04835
 
 
-Utilizing the OOB error rate that was created gives us an unbiased error rate. This can be helpful when cross validating and/or hyperparameter optimization prove to be too computationally expensive. 
+Utilizing the OOB error rate that was created with the model gives us an unbiased error rate. This can be helpful when cross validating and/or hyperparameter optimization prove to be too computationally expensive, since oob can be calculated with the model estimation. 
 
 For the sake of this tutorial I will go over the other traditional methods for machine learning including the training and test error route, along with cross validation metrics.
 
@@ -1117,7 +1119,9 @@ $$Entropy = \sum_i -p_i * \log_2 p_i$$
 
 where $p_i$ is defined as the proportion of subsamples that belong to a certain target class. 
 
-We are able to access the feature importance of the model and using a helper function output the importance of our variables in descending order. 
+Since we are utilizing the *Gini Impurity*, the impurity measure reaches 0 when all target class labels are the same. 
+
+We are able to access the feature importance of the model and using a helper function to output the importance of our variables in descending order. 
 
 
 ```python
@@ -1427,7 +1431,7 @@ Receiver Operating Characteristc Curve, calculates the False Positive Rates and 
 
 We will now graph these calculations, and being located the top left corner of the plot indicates a really ideal model, i.e. a False Positive Rate of 0 and True Positive Rate of 1, whereas an ROC curve that is at a 45 degree is indicative of a model that is essentially randomly guessing. 
 
-We also calculated the Area under the Curve or AUC, the AUC is used as a metric to differentiate the predicion power for those with the disease and those without it. Typically a value closer to one means that our model was able to differentiate correctly from a random sample of the two target classes of two patients which had and which didn't have the disease.    
+We also calculated the Area under the Curve or AUC, the AUC is used as a metric to differentiate the predicion power for those with the disease and those without it. Typically a value closer to one means that our model was able to differentiate correctly from a random sample of the two target classes of two patients with and without the disease.    
 
 
 ```python
@@ -1577,7 +1581,7 @@ class_report = print_class_report(predictions_rf, 'Random Forest')
 
 ## Metrics for Random Forest
 
-Here I've accumulated the various metrics we used through this tutorial in a simple table! For the original analysis I compared *Kth Nearest Neighbor*, *Random Forest*, and *Neural Networks*, so most of the analysis was done to compare across different models. 
+Here I've accumulated the various metrics we used through this tutorial in a simple table! Showcasing the power and effectiveness of Random Forest Modeling. 
 
 | Model | OOB Error Rate | Test Error Rate | Cross Validation Score | AUC | 
 |-------|----------------|------------------------|-----------------|-----|
