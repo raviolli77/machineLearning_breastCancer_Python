@@ -1,4 +1,8 @@
 
+Project originally posted on [inertia7](https://www.inertia7.com/projects/95)
+
+[GitHub Repo](https://github.com/raviolli77/machineLearning_breastCancer_Python)
+
 # Introduction to Random Forest
 
 A Random Forest (also known as Random Decision Forest) is a popular supervised classification method used for predictive modeling both for classification and regression problems (for this tutorial, we will be going over Random Forest in the classification context). Essentially a Random Forest is an entire forest of random uncorrelated decision trees, classified as an ensemble method.  
