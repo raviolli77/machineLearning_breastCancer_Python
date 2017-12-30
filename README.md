@@ -8,7 +8,7 @@ I created this repo as a way to get better acquainted with **Python** as a langu
 I employed four **Machine Learning** techniques:
 + **Kth Nearest Neighbor**
 + **Random Forest**
-+ **Neural Networks**: **WARNING** - Not working right now
++ **Neural Networks**: **WARNING** - Not working right now, will fix soon. 
 
 If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for algorithms and processes.
 
@@ -59,16 +59,16 @@ Once I employed all these methods, we can get a better feel for the data. Each m
 | Model/Algorithm      | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC | Cross Validation Score        | Hyperparameter Optimization |
 |----------------------|-----------------|-----------------------------|------------------------------|-------------------------------|-----------------------|
 | Kth Nearest Neighbor | 0.07  | 5 | 0.929 | Accuracy:  0.925 (+/-  0.025) | Optimal *K* is 3 |
-| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.963 (+/-  0.013) | {'bootstrap': True, 'criterion': 'entropy', 'max_depth': 4}	|
+| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.963 (+/-  0.013) | {'max_features': 'log2', 'max_depth': 3, 'bootstrap': True, 'criterion': 'gini'}	|
 | Neural Networks      | 0.035 | 1 | 0.959 | Accuracy:  0.967 (+/-  0.011) | {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} |
 
 
 
 #### ROC Curves for Data Set
-<img src="images/roc_curve.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc.png" style="width: 100px;"/>
 
 #### ROC Curves zoomed in
-<img src="images/roc_curve_zoom.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc_zoomed.png" style="width: 100px;"/>
 
 The ROC Curves are more telling of **Random Forest** being a better model for predicting.
 
