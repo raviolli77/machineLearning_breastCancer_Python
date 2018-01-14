@@ -10,7 +10,7 @@ I employed four **Machine Learning** techniques:
 + **Random Forest**
 + **Neural Networks**:  
 
-If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for exploratory analysis. This [project](https://www.inertia7.com/projects/95) contains an overview of *random forest*, explanations for other algorithms in the works. 
+If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for exploratory analysis. This [project](https://www.inertia7.com/projects/95) contains an overview of *random forest*, explanations for other algorithms in the works.
 
 The repository includes the *scripts* folder which contains scripts for these programming languages (in order of most detailed):
 + *Python*
