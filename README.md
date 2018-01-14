@@ -3,21 +3,21 @@
 **Contributor**:
 + Raul Eulogio
 
-I created this repo as a way to get better acquainted with **Python** as a language and as a tool for data analysis. But it eventually became in exercise in utilizing various programming languages for machine learning applications. 
+I created this repo as a way to get better acquainted with **Python** as a language and as a tool for data analysis. But it eventually became in exercise in utilizing various programming languages for machine learning applications.
 
 I employed four **Machine Learning** techniques:
 + **Kth Nearest Neighbor**
 + **Random Forest**
-+ **Neural Networks**
++ **Neural Networks**:  
 
-If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for algorithms and processes. 
+If you would like to see a walk through of the analysis on [inertia7](https://www.inertia7.com/projects/3) includes running code as well as explanations for exploratory analysis. This [project](https://www.inertia7.com/projects/95) contains an overview of *random forest*, explanations for other algorithms in the works. 
 
 The repository includes the *scripts* folder which contains scripts for these programming languages (in order of most detailed):
 + *Python*
 + *R*
 + *PySpark*
 
-This repo is primarily concerned with the *python* iteration. 
+This repo is primarily concerned with the *python* iteration.
 
 The multiple *python* script is broken into 5 sections (done by creating a scipt for each section) in the following order:
 + **Exploratory Analysis**
@@ -25,6 +25,8 @@ The multiple *python* script is broken into 5 sections (done by creating a scipt
 + **Random Forest**
 + **Neural Networks**
 + **Comparing Models**
+
+**NOTE**: The `helper_functions.py` script automates a lot of the processes and is used heavily in the other scripts. So if you want to see how my user made functions work, definitely check it out.  
 
 ## Running .py Script
 It goes without saying that a `virtualenv` is needed where you will download the necessary packages from the `requirements.txt` using:
@@ -54,23 +56,26 @@ Once I employed all these methods, we can get a better feel for the data. Each m
 ### Diagnostics for Data Set
 
 
-| Model/Algorithm      | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC | Cross Validation Score        | Hyperparameter Optimization | 
+| Model/Algorithm      | Test Error Rate | False Negative for Test Set | Area under the Curve for ROC | Cross Validation Score        | Hyperparameter Optimization |
 |----------------------|-----------------|-----------------------------|------------------------------|-------------------------------|-----------------------|
-| Kth Nearest Neighbor | 0.035 | 2 | 0.963 | Accuracy:  0.965 (+/-  0.010) | Optimal *K* is 7 | 
-| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.963 (+/-  0.013) | {'bootstrap': True, 'criterion': 'entropy', 	'max_depth': 4}	|
-| Neural Networks      | 0.035 | 1 | 0.959 | Accuracy:  0.967 (+/-  0.011) | {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} | 
+| Kth Nearest Neighbor | 0.07  | 5 | 0.929 | Accuracy:  0.925 (+/-  0.025) | Optimal *K* is 3 |
+| Random Forest        | 0.035 | 3 | 0.967 | Accuracy:  0.963 (+/-  0.013) | {'max_features': 'log2', 'max_depth': 3, 'bootstrap': True, 'criterion': 'gini'}	|
+| Neural Networks      | 0.035 | 1 | 0.959 | Accuracy:  0.967 (+/-  0.011) | {'hidden_layer_sizes': 12, 'activation': 'tanh', 'learning_rate_init': 0.05} |
 
 
 
 #### ROC Curves for Data Set
-<img src="images/rocCurve.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc.png" style="width: 100px;"/>
 
 #### ROC Curves zoomed in
-<img src="images/rocZoom.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc_zoomed.png" style="width: 100px;"/>
 
-The ROC Curves are more telling of **Random Forest** being a better model for predicting. 
+The ROC Curves are more telling of **Random Forest** being a better model for predicting.
 
 Any feedback is welcomed!
 
 Things to do:
 + Create new **Jupter Notebook** to reflect changes made since newest iteration (7/14/2017)
++ Add unit testing if appropriate after research
++ Update inertia7 project
++ More detailed conclusion
