@@ -65,10 +65,10 @@ Once I employed all these methods, we can get a better feel for the data. Each m
 
 
 #### ROC Curves for Data Set
-<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/reports/images/roc_curve.png" style="width: 100px;"/>
 
 #### ROC Curves zoomed in
-<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/images/roc_zoomed.png" style="width: 100px;"/>
+<img src="https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/reports/images/roc_curve_zoom.png" style="width: 100px;"/>
 
 The ROC Curves are more telling of **Random Forest** being a better model for predicting.
 
