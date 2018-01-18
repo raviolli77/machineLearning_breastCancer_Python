@@ -148,13 +148,6 @@ fpr2, tpr2, _ = roc_curve(predictions_rf,
 
 auc_rf = auc(fpr2, tpr2)
 
-4:45
-Calibre 50 - Corrido De Juanito
-￼
-CalibreCincuentaVEVO
-128M views
-4 months ago
-
 # Uncomment to save your model as a pickle object!
 # joblib.dump(fit_rf, 'pickle_models/model_rf.pkl')
 
@@ -169,16 +162,9 @@ if __name__=='__main__':
 	print('HYPERPARAMETER OPTIMIZATION')
 
 	print("Note: Remove commented code to see this section")
-	print("chosen parameters: {'bootstrap': True, '
-4:45
-Calibre 50 - Corrido De Juanito
-￼
-CalibreCincuentaVEVO
-128M views
-4 months ago
-criterion': 'entropy', \
+	print("chosen parameters: {'bootstrap': True, '4:45, criterion': 'entropy', \
 	'max_depth': 4}\
-	 	\nElapsed time of optimization: 189.949 seconds")
+	 \nElapsed time of optimization: 189.949 seconds")
 
 		# start = time.time()
 
