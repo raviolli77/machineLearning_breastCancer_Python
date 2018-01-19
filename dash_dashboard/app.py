@@ -124,6 +124,5 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 		)
 	}
 
-
 if __name__ == '__main__':
     app.run_server(debug=True)
