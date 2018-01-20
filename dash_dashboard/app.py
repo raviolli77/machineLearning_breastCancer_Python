@@ -170,8 +170,8 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 
 @app.callback(
 	dash.dependencies.Output('hist_first_var', 'figure'),
-    [dash.dependencies.Input('first_input', 'value')]
-    )
+	[dash.dependencies.Input('first_input', 'value')]
+	)
 def update_hist_1(first_input_name):
 	traces_hist = []
 	for i in breast_cancer.diagnosis.unique():
@@ -207,8 +207,8 @@ def update_hist_1(first_input_name):
 
 @app.callback(
 	dash.dependencies.Output('hist_sec_var', 'figure'),
-    [dash.dependencies.Input('second_input', 'value')]
-    )
+   	[dash.dependencies.Input('second_input', 'value')]
+   	)
 def update_hist_2(second_input):
 	traces_hist = []
 	for i in breast_cancer.diagnosis.unique():
@@ -244,8 +244,8 @@ def update_hist_2(second_input):
 
 @app.callback(
 	dash.dependencies.Output('hist_third_var', 'figure'),
-    [dash.dependencies.Input('third_input', 'value')]
-    )
+	[dash.dependencies.Input('third_input', 'value')]
+	)
 def update_hist_3(third_input):
 	traces_hist = []
 	for i in breast_cancer.diagnosis.unique():
