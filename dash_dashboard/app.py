@@ -38,78 +38,103 @@ breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
 app.layout = html.Div([
 	html.Div([
         html.H2("Breast Cancer Dashboard"),
-        ], className='banner'), 
-	html.H3(children = '''
+        ], className='banner'),
+	html.H2(children = '''
 		An interactive dashboard created by Raul Eulogio
 		''',
         style={
-        'padding': '0px 30px 15px 30px'}),
-	
+        'padding': '0px 30px 15px 30px',
+        'color': '#24515d'}),
+    html.Div([
+        html.H3(children = '''
+            Exploratory Analysis
+            ''',
+            style={
+            'padding': '0px 30px 15px 30px',
+            'color': '#24515d'})
+        ]),
 	html.Div([
 			html.Div([
-				html.Label('Choose the different parameters'), 
+					html.P("""
+						Move the multi-select options to see the 3d scatter plot and histograms change respectively.
+						And play with the interactive 3d scatter plot to see how variables interact.
+
+						"""),
+					dcc.Graph(
+						id='scatter_plot_3d'),
+					html.Label('Choose the different parameters'),
 					dcc.Dropdown(
-						id='first_input', 
+						id='first_input',
 						options=[
 						{'label': i, 'value': i} for i in names[2:]
-						], 
+						],
 						value = 'area_worst'
-						), 
+                        ),
 					dcc.Dropdown(
-						id='second_input', 
+						id='second_input',
 						options=[
 						{'label': i, 'value': i} for i in names[2:]
-						], 
+						],
 						value = 'perimeter_worst'
 						),
 					dcc.Dropdown(
-						id='third_input', 
+						id='third_input',
 						options=[
 						{'label': i, 'value': i} for i in names[2:]
-						], 
+						],
 						value = 'concave_points_worst'
 						),
-					dcc.Graph(
-						id='scatter_plot_3d'),
-					html.P("""
-						Move the multi-select options to see the 3d scatter plot and histograms change respectively. 
-						And play with the interactive 3d scatter plot to see how variables interact.  
-
-						""")
+					html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
+                html.Div([
+                    html.H3("""
+                    Machine Learning
+                    """),
+                    html.Label('Choose a Machine Learning Model'),
+    					dcc.Dropdown(
+    						id='machine_learning',
+    						options=[
+    						{'label': 'Kth Nearest Neighor', 'value': 'knn'},
+                            {'label': 'Random Forest', 'value': 'rf'},
+                            {'label': 'Neural Network', 'value': 'nn'}
+    						],
+    						value = 'knn'
+    						)
+                            ])
 					],
-					style={'width': '45%',
-					'height': '125%',
+					style={'width': '40%',
+                    'height': '50%',
 					'float': 'left',
 					'padding': '0px 40px 40px 40px'}),
-			# End Left Side Div 
+			# End Left Side Div
 			# Right Side Div
 			html.Div([
 				dcc.Graph(
 					id='hist_first_var',
-					style={'height': '15%'}
+					style={'height': '25%'}
 					),
 				dcc.Graph(
 					id='hist_sec_var',
-					style={'height': '15%'}
+					style={'height': '25%'}
 					),
 				dcc.Graph(
 					id='hist_third_var',
-					style={'height': '15%'}
+					style={'height': '25%'}
 					)
-				], 
-				style={'width': '45%',
-				'height': '75%',
-				'float': 'right',
+				],
+				style={'width': '40%',
+                #'height': '100%',
+                'float': 'right',
 				'padding': '0px 40px 40px 40px'})
-			# End Right Side Div 
+            # End Right Side Div
 			],
 			style={'width': '100%',
-			'height': '125%',
-			'display': 'flex'})
+			'height': '100%',
+			'display': 'flex'}),
 	],
 	style={
-	'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)',
-	'height': '2000px', 
+	'margin': '0px -10px 10px',
 	'backgroundColor': '#ebeff5',
 	'fontfamily': 'font-family: "Courier New", Courier'}
 	)
@@ -141,7 +166,7 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 				name='Malignant'
 		))
 
-		else: 
+		else:
 			traces.append(go.Scatter3d(
 				x=breast_cancer_dx[first_input_name],
 				y=breast_cancer_dx[second_input_name],
@@ -157,7 +182,7 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 				name='Benign'
 				))
 	return {
-	'data': traces, 
+	'data': traces,
 	'layout': go.Layout(
 		xaxis={'title': first_input_name},
 		yaxis={'title': second_input_name},
@@ -195,8 +220,8 @@ def update_hist_1(first_input_name):
 				name='Benign',
 				))
 	return {
-	'data': traces_hist, 
-	'layout': go.Layout( 
+	'data': traces_hist,
+	'layout': go.Layout(
 		xaxis={'title': first_input_name},
 		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
 		legend={'x': 0, 'y': 1},
@@ -232,7 +257,7 @@ def update_hist_2(second_input):
 				name='Benign',
 				))
 	return {
-	'data': traces_hist, 
+	'data': traces_hist,
 	'layout': go.Layout(
 		xaxis={'title': second_input},
 		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
@@ -269,7 +294,7 @@ def update_hist_3(third_input):
 				name='Benign',
 				))
 	return {
-	'data': traces_hist, 
+	'data': traces_hist,
 	'layout': go.Layout(
 		xaxis={'title': third_input},
 		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
