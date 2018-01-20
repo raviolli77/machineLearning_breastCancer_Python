@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -6,6 +7,12 @@ import pandas as pd
 from urllib.request import urlopen
 
 app = dash.Dash()
+
+colors = {
+    'background': '#ebeff5',
+    'text': '#7FDBFF'
+}
+
 
 # Loading data and cleaning dataset
 UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
@@ -34,10 +41,13 @@ breast_cancer.set_index(['id_number'], inplace = True)
 # Converted to binary to help later on with models and plots
 breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
 
-#for col in breast_cancer:
-	#pd.to_numeric(col, errors='coerce')
 
-app.layout = html.Div(children=[
+#style={},
+app.layout = html.Div(
+	children=[
+	html.Div([
+        html.H2("Wind Speed Streaming"),
+        ], className='banner'), 
 	html.H1(children='Breast Cancer Dashboard'),
 
 	html.Div(children='''
@@ -70,7 +80,11 @@ app.layout = html.Div(children=[
 	dcc.Graph(
 			id='scatter_plot_3d' 
 		)
-	])
+	],
+	style={'padding': '0px 10px 15px 10px',
+	'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
+	'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)',
+	'backgroundColor':colors['background']})
 
 @app.callback(
 	dash.dependencies.Output('scatter_plot_3d', 'figure'),
@@ -123,6 +137,16 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 		hovermode='closest'
 		)
 	}
+
+# Append externally hosted CSS Stylesheet
+my_css_urls = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
+"https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"]
+
+
+for css in my_css_urls:
+	app.css.append_css({
+	'external_url': css
+	})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
