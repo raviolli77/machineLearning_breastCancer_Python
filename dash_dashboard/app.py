@@ -8,12 +8,6 @@ from urllib.request import urlopen
 
 app = dash.Dash()
 
-colors = {
-    'background': '#ebeff5',
-    'text': '#7FDBFF'
-}
-
-
 # Loading data and cleaning dataset
 UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
 /breast-cancer-wisconsin/wdbc.data'
@@ -41,50 +35,86 @@ breast_cancer.set_index(['id_number'], inplace = True)
 # Converted to binary to help later on with models and plots
 breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
 
+copy_pasta = 'What the fuck did you just fucking say about me, you little bitch? I’ll have you know I graduated top of my class in the Navy Seals, and I’ve been involved in numerous secret raids on Al-Quaeda, and I have over 300 confirmed kills. I am trained in gorilla warfare and I’m the top sniper in the entire US armed forces. You are nothing to me but just another target. I will wipe you the fuck out with precision the likes of which has never been seen before on this Earth, mark my fucking words. You think you can get away with saying that shit to me over the Internet? Think again, fucker. As we speak I am contacting my secret network of spies across the USA and your IP is being traced right now so you better prepare for the storm, maggot. The storm that wipes out the pathetic little thing you call your life. You’re fucking dead, kid. I can be anywhere, anytime, and I can kill you in over seven hundred ways, and that’s just with my bare hands. Not only am I extensively trained in unarmed combat, but I have access to the entire arsenal of the United States Marine Corps and I will use it to its full extent to wipe your miserable ass off the face of the continent, you little shit. If only you could have known what unholy retribution your little “clever” comment was about to bring down upon you, maybe you would have held your fucking tongue. But you couldn’t, you didn’t, and now you’re paying the price, you goddamn idiot. I will shit fury all over you and you will drown in it. You’re fucking dead, kiddo.'
 
-#style={},
-app.layout = html.Div(
-	children=[
+app.layout = html.Div([
 	html.Div([
-        html.H2("Wind Speed Streaming"),
+        html.H2("Breast Cancer Dashboard"),
         ], className='banner'), 
-	html.H1(children='Breast Cancer Dashboard'),
-
-	html.Div(children='''
+	html.H3(children = '''
 		An interactive dashboard created by Raul Eulogio
-		'''),
+		''',
+        style={
+        'padding': '0px 30px 15px 30px'}),
+	
 	html.Div([
-			html.Label('Choose the different parameters'), 
-			dcc.Dropdown(
-				id='first_input', 
-				options=[
-				{'label': i, 'value': i} for i in names[2:]
+			html.Div([
+				html.Label('Choose the different parameters'), 
+					dcc.Dropdown(
+						id='first_input', 
+						options=[
+						{'label': i, 'value': i} for i in names[2:]
+						], 
+						value = 'area_worst'
+						), 
+					dcc.Dropdown(
+						id='second_input', 
+						options=[
+						{'label': i, 'value': i} for i in names[2:]
+						], 
+						value = 'perimeter_worst'
+						),
+					dcc.Dropdown(
+						id='third_input', 
+						options=[
+						{'label': i, 'value': i} for i in names[2:]
+						], 
+						value = 'concave_points_worst'
+						),
+					dcc.Graph(
+						id='scatter_plot_3d'),
+					html.P("""
+						Move the multi-select options to see the 3d scatter plot and histograms change respectively. 
+						And play with the interactive 3d scatter plot to see how variables interact.  
+
+						""")
+					],
+					style={'width': '45%',
+					'height': '125%',
+					'float': 'left',
+					'padding': '0px 40px 40px 40px'}),
+			# End Left Side Div 
+			# Right Side Div
+			html.Div([
+				dcc.Graph(
+					id='hist_first_var',
+					style={'height': '15%'}
+					),
+				dcc.Graph(
+					id='hist_sec_var',
+					style={'height': '15%'}
+					),
+				dcc.Graph(
+					id='hist_third_var',
+					style={'height': '15%'}
+					)
 				], 
-				value = 'area_worst'
-				), 
-			dcc.Dropdown(
-				id='second_input', 
-				options=[
-				{'label': i, 'value': i} for i in names[2:]
-				], 
-				value = 'perimeter_worst'
-				),
-			dcc.Dropdown(
-				id='third_input', 
-				options=[
-				{'label': i, 'value': i} for i in names[2:]
-				], 
-				value = 'concave_points_worst'
-				)],
-		style={'width': '25%', 'display': 'inline-block'}),
-	dcc.Graph(
-			id='scatter_plot_3d' 
-		)
+				style={'width': '45%',
+				'height': '75%',
+				'float': 'right',
+				'padding': '0px 40px 40px 40px'})
+			# End Right Side Div 
+			],
+			style={'width': '100%',
+			'height': '125%',
+			'display': 'flex'})
 	],
-	style={'padding': '0px 10px 15px 10px',
-	'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
+	style={
 	'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)',
-	'backgroundColor':colors['background']})
+	'height': '2000px', 
+	'backgroundColor': '#ebeff5',
+	'fontfamily': 'font-family: "Courier New", Courier'}
+	)
 
 @app.callback(
 	dash.dependencies.Output('scatter_plot_3d', 'figure'),
@@ -112,6 +142,7 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 				},
 				name='Malignant'
 		))
+
 		else: 
 			traces.append(go.Scatter3d(
 				x=breast_cancer_dx[first_input_name],
@@ -138,14 +169,125 @@ def update_figure(first_input_name, second_input_name, third_input_name):
 		)
 	}
 
+
+@app.callback(
+	dash.dependencies.Output('hist_first_var', 'figure'),
+    [dash.dependencies.Input('first_input', 'value')]
+    )
+def update_hist_1(first_input_name):
+	traces_hist = []
+	for i in breast_cancer.diagnosis.unique():
+		breast_cancer_dx = breast_cancer[breast_cancer['diagnosis'] == i]
+		if (i == 0):
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[first_input_name],
+				opacity=0.60,
+				marker={
+				'color': 'red'
+				},
+				name='Malignant'
+				))
+		else:
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[first_input_name],
+				opacity=0.60,
+				marker={
+				'color': '#875FDB'
+				},
+				name='Benign',
+				))
+	return {
+	'data': traces_hist, 
+	'layout': go.Layout( 
+		xaxis={'title': first_input_name},
+		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
+		legend={'x': 0, 'y': 1},
+		hovermode='closest',
+		barmode='overlay'
+		)
+	}
+
+@app.callback(
+	dash.dependencies.Output('hist_sec_var', 'figure'),
+    [dash.dependencies.Input('second_input', 'value')]
+    )
+def update_hist_2(second_input):
+	traces_hist = []
+	for i in breast_cancer.diagnosis.unique():
+		breast_cancer_dx = breast_cancer[breast_cancer['diagnosis'] == i]
+		if (i == 0):
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[second_input],
+				opacity=0.60,
+				marker={
+				'color': 'red'
+				},
+				name='Malignant'
+				))
+		else:
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[second_input],
+				opacity=0.60,
+				marker={
+				'color': '#875FDB'
+				},
+				name='Benign',
+				))
+	return {
+	'data': traces_hist, 
+	'layout': go.Layout(
+		xaxis={'title': second_input},
+		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
+		legend={'x': 0, 'y': 1},
+		hovermode='closest',
+		barmode='overlay'
+		)
+	}
+
+@app.callback(
+	dash.dependencies.Output('hist_third_var', 'figure'),
+    [dash.dependencies.Input('third_input', 'value')]
+    )
+def update_hist_3(third_input):
+	traces_hist = []
+	for i in breast_cancer.diagnosis.unique():
+		breast_cancer_dx = breast_cancer[breast_cancer['diagnosis'] == i]
+		if (i == 0):
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[third_input],
+				opacity=0.60,
+				marker={
+				'color': 'red'
+				},
+				name='Malignant'
+				))
+		else:
+			traces_hist.append(go.Histogram(
+				x = breast_cancer_dx[third_input],
+				opacity=0.60,
+				marker={
+				'color': '#875FDB'
+				},
+				name='Benign',
+				))
+	return {
+	'data': traces_hist, 
+	'layout': go.Layout(
+		xaxis={'title': third_input},
+		margin={'l': 50, 'b': 40, 't': 10, 'r': 10},
+		legend={'x': 0, 'y': 1},
+		hovermode='closest',
+		barmode='overlay'
+		)
+	}
+
 # Append externally hosted CSS Stylesheet
-my_css_urls = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
-"https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"]
+my_css_urls = [
+'https://cdn.rawgit.com/raviolli77/machineLearning_breastCancer_Python/dash_branch/dash_dashboard/dash_breast_cancer.css']
 
 
-for css in my_css_urls:
-	app.css.append_css({
-	'external_url': css
+app.css.append_css({
+	'external_url': my_css_urls
 	})
 
 if __name__ == '__main__':
