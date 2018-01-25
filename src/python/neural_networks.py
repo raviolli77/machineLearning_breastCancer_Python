@@ -39,6 +39,15 @@ fit_nn.fit(training_set_scaled,
 
 predictions_nn = fit_nn.predict(test_set_scaled)
 
+# Test Set Metrics
+test_crosstb_comp = pd.crosstab(index = test_class_set,
+                           columns = predictions_nn)
+
+# More human readable
+test_crosstb = test_crosstb_comp.rename(columns= {0: 'Benign', 1: 'Malignant'})
+test_crosstb.index = ['Benign', 'Malignant']
+test_crosstb.columns.name = 'n = 114'
+
 accuracy_nn = fit_nn.score(test_set_scaled,
 	test_class_set)
 
@@ -100,10 +109,7 @@ if __name__ == '__main__':
 	###############################
 	'''
 	)
-	print(pd.crosstab(predictions_nn,
-		test_class_set,
-		rownames=['Predicted Values'],
-		colnames=['Actual Values']))
+	print(test_crosstb)
 
 	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
 		.format(accuracy_nn))

@@ -4,15 +4,6 @@ import pandas as pd
 from sklearn.externals import joblib
 from urllib.request import urlopen
 
-sys.path.append('../models/pickle_models/')
-
-#print(sys.path[-1])
-rf_path = sys.path[-1] + 'model_rf.pkl'
-
-knn_path = sys.path[-1] + 'model_knn.pkl'
-
-nn_path = sys.path[-1] + 'model_nn.pkl'
-
 sys.path.insert(0, '../src/python/')
 from helper_functions import test_set
 import random_forest as rf
@@ -23,6 +14,18 @@ sys.path.pop(0)
 fpr, tpr, auc_knn, _, _ = knn.return_knn()
 fpr2, tpr2, auc_rf, _, _ = rf.return_rf()
 fpr3, tpr3, auc_nn, _, _ = nn.return_nn()
+
+cross_tab_knn = knn.test_crosstb
+cross_tab_knn.reset_index(level=0, inplace=True)
+cross_tab_knn.rename(columns ={'index': 'Actual (rows) Vs. Predicted (columns)'}, inplace=True)
+
+cross_tab_rf = rf.test_crosstb
+cross_tab_rf.reset_index(level=0, inplace=True)
+cross_tab_rf.rename(columns ={'index': 'Actual (rows) Vs. Predicted (columns)'}, inplace=True)  
+
+cross_tab_nn = nn.test_crosstb
+cross_tab_nn.reset_index(level=0, inplace=True)
+cross_tab_nn.rename(columns ={'index': 'Actual (rows) Vs. Predicted (columns)'}, inplace=True)
 
 # Loading data and cleaning dataset
 UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
@@ -50,12 +53,3 @@ breast_cancer.set_index(['id_number'], inplace = True)
 
 # Converted to binary to help later on with models and plots
 breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
-
-# Kth Nearest Neighbor 
-fit_knn = joblib.load(knn_path)
-
-# Random Forest 
-fit_rf = joblib.load(rf_path)
-
-# Neural Networks
-fit_nn = joblib.load(nn_path)

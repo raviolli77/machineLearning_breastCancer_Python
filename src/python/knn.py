@@ -46,6 +46,15 @@ train_error_rate = 1 - accuracy_train
 # First we predict the Dx for the test set and call it predictions
 predictions = fit_knn.predict(test_set)	
 
+# Test Set Metrics
+test_crosstb_comp = pd.crosstab(index = test_class_set,
+                           columns = predictions)
+
+# More human readable
+test_crosstb = test_crosstb_comp.rename(columns= {0: 'Benign', 1: 'Malignant'})
+test_crosstb.index = ['Benign', 'Malignant']
+test_crosstb.columns.name = 'n = 114'
+
 # Let's get the accuracy of our test set
 accuracy = fit_knn.score(test_set, 
 	test_class_set)
@@ -137,10 +146,7 @@ if __name__ == '__main__':
 		)
 		
 	# Let's compare the predictions vs. the actual values
-	print(pd.crosstab(predictions, 
-		test_class_set, 
-		rownames=['Predicted Values'], 
-		colnames=['Actual Values']))
+	print(test_crosstb)
 		
 	# TEST ERROR RATE!!
 	print("Here is our accuracy for our test set:\n {0: .3f}"\

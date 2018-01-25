@@ -4,9 +4,25 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import global_vars as gv
+import pandas as pd
 
 breast_cancer = gv.breast_cancer
 names = gv.names
+
+cross_tab_knn = gv.cross_tab_knn
+cross_tab_rf = gv.cross_tab_rf
+cross_tab_nn = gv.cross_tab_nn
+
+def generate_table(dataframe, max_rows=10):
+	return html.Table(
+		# Header
+		[html.Tr([html.Th(col) for col in dataframe.columns])] +
+
+        # Body
+		[html.Tr([
+			html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+		]) for i in range(min(len(dataframe), max_rows))]
+	)
 
 app = dash.Dash()
 
@@ -103,8 +119,21 @@ app.layout = html.Div([
 					style={'height': '16.4%'}
 					),
 				html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
+				html.Div(html.P(' .')),
+				html.Div(html.P(' .')),
+				html.Div(html.P(' .')),
+				html.Div(
+					html.H4("""
+					Test Set Metrics
+					""",
+					style={'color': '#24515d'})),
+				html.Div([html.Div(id='table_crosstb')],
+					style={
+					'background-color': '#f2f2f2',
+					'border-collapse': 'collapse', 
+					'border': '1px solid black'
+					})
+				
 				],
 				style={'width': '40%',
 				'float': 'right',
@@ -296,44 +325,58 @@ def update_roc(machine_learning):
 	if (machine_learning == 'knn'):
 		trace1 = go.Scatter(
 			x = gv.fpr, y = gv.tpr,
-			mode='lines', 
+			mode='lines',
 			line=dict(color='deeppink', width=lw),
 			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_knn))
 	if (machine_learning == 'rf'):
 		trace1 = go.Scatter(
 			x = gv.fpr2, y = gv.tpr2,
-			mode='lines', 
+			mode='lines',
 			line=dict(color='red', width=lw),
 			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_rf))
 	if (machine_learning == 'nn'):
 		trace1 = go.Scatter(
 			x = gv.fpr3, y = gv.tpr3,
-			mode='lines', 
+			mode='lines',
 			line=dict(color='purple', width=lw),
 			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_nn))
-	trace2 = go.Scatter(x=[0, 1], y=[0, 1], 
-			mode='lines', 
+	trace2 = go.Scatter(x=[0, 1], y=[0, 1],
+			mode='lines',
 			line=dict(color='black', width=lw, dash='dash'),
 			showlegend=False)
-	trace3 = go.Scatter(x=[0, 0], y=[1, 0], 
-			mode='lines', 
+	trace3 = go.Scatter(x=[0, 0], y=[1, 0],
+			mode='lines',
 			line=dict(color='black', width=lw, dash='dash'),
 			showlegend=False)
-	trace4 = go.Scatter(x=[1, 0], y=[1, 1], 
-			mode='lines', 
+	trace4 = go.Scatter(x=[1, 0], y=[1, 1],
+			mode='lines',
 			line=dict(color='black', width=lw, dash='dash'),
 			showlegend=False)
 	return {
-	'data': [trace1, trace2, trace3, trace4], 
+	'data': [trace1, trace2, trace3, trace4],
 	'layout': go.Layout(
 		title='Receiver Operating Characteristic Plot',
         xaxis={'title': 'False Positive Rate'},
         yaxis={'title': 'True Positive Rate'},
-        legend={'x': 0.8, 'y': 0.15},
+        legend={'x': 0.7, 'y': 0.15},
         #height=400
         )
 	}
-	
+
+@app.callback(
+	dash.dependencies.Output('table_crosstb', 'children'),
+    [dash.dependencies.Input('machine_learning', 'value')
+    ])
+def update_table(machine_learning):
+	final_cross_tab = pd.DataFrame()
+	if (machine_learning == 'knn'):
+		final_cross_tab = cross_tab_knn
+	if (machine_learning == 'rf'):
+		final_cross_tab = cross_tab_rf
+	if (machine_learning == 'nn'):
+		final_cross_tab = cross_tab_nn
+	return generate_table(dataframe = final_cross_tab)
+
 
 # Append externally hosted CSS Stylesheet
 my_css_urls = [
