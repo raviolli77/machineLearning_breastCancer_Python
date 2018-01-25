@@ -3,37 +3,12 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import pandas as pd
-from urllib.request import urlopen
+import global_vars as gv
+
+breast_cancer = gv.breast_cancer
+names = gv.names
 
 app = dash.Dash()
-
-# Loading data and cleaning dataset
-UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
-/breast-cancer-wisconsin/wdbc.data'
-
-names = ['id_number', 'diagnosis', 'radius_mean',
-         'texture_mean', 'perimeter_mean', 'area_mean',
-         'smoothness_mean', 'compactness_mean',
-         'concavity_mean','concave_points_mean',
-         'symmetry_mean', 'fractal_dimension_mean',
-         'radius_se', 'texture_se', 'perimeter_se',
-         'area_se', 'smoothness_se', 'compactness_se',
-         'concavity_se', 'concave_points_se',
-         'symmetry_se', 'fractal_dimension_se',
-         'radius_worst', 'texture_worst',
-         'perimeter_worst', 'area_worst',
-         'smoothness_worst', 'compactness_worst',
-         'concavity_worst', 'concave_points_worst',
-         'symmetry_worst', 'fractal_dimension_worst']
-
-breast_cancer = pd.read_csv(urlopen(UCI_data_URL), names=names)
-
-# Setting 'id_number' as our index
-breast_cancer.set_index(['id_number'], inplace = True)
-
-# Converted to binary to help later on with models and plots
-breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
 
 app.layout = html.Div([
 	html.Div([
@@ -69,7 +44,7 @@ app.layout = html.Div([
 						{'label': i, 'value': i} for i in names[2:]
 						],
 						value = 'area_worst'
-                        ),
+						),
 					dcc.Dropdown(
 						id='second_input',
 						options=[
@@ -87,12 +62,14 @@ app.layout = html.Div([
 					html.Div(html.P(' .')),
 					html.Div(html.P(' .')),
 					html.Div(html.P(' .')),
-                html.Div([
-                    html.H3("""
-                    Machine Learning
-                    """),
-                    html.Label('Choose a Machine Learning Model'),
-    					dcc.Dropdown(
+				html.Div([
+					html.H3("""
+					Machine Learning
+					""",
+					style={
+					'color': '#24515d'}),
+					html.Label('Choose a Machine Learning Model'),
+						dcc.Dropdown(
     						id='machine_learning',
     						options=[
     						{'label': 'Kth Nearest Neighor', 'value': 'knn'},
@@ -100,7 +77,10 @@ app.layout = html.Div([
                             {'label': 'Neural Network', 'value': 'nn'}
     						],
     						value = 'knn'
-    						)
+    						),
+						dcc.Graph(
+							id='roc_curve'
+							)
                             ])
 					],
 					style={'width': '40%',
@@ -112,30 +92,31 @@ app.layout = html.Div([
 			html.Div([
 				dcc.Graph(
 					id='hist_first_var',
-					style={'height': '25%'}
+					style={'height': '16.5%'}
 					),
 				dcc.Graph(
 					id='hist_sec_var',
-					style={'height': '25%'}
+					style={'height': '16.5%'}
 					),
 				dcc.Graph(
 					id='hist_third_var',
-					style={'height': '25%'}
-					)
+					style={'height': '16.4%'}
+					),
+				html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
 				],
 				style={'width': '40%',
-                #'height': '100%',
-                'float': 'right',
-				'padding': '0px 40px 40px 40px'})
-            # End Right Side Div
+				'float': 'right',
+				'padding': '0px 40px 40px 40px'},
+				)
+			# End Right Side Div
 			],
 			style={'width': '100%',
 			'height': '100%',
 			'display': 'flex'}),
 	],
 	style={
-	'margin': '0px -10px 10px',
-	'backgroundColor': '#ebeff5',
 	'fontfamily': 'font-family: "Courier New", Courier'}
 	)
 
@@ -303,6 +284,56 @@ def update_hist_3(third_input):
 		barmode='overlay'
 		)
 	}
+
+
+@app.callback(
+	dash.dependencies.Output('roc_curve', 'figure'),
+    [dash.dependencies.Input('machine_learning', 'value')
+    ])
+
+def update_roc(machine_learning):
+	lw = 2
+	if (machine_learning == 'knn'):
+		trace1 = go.Scatter(
+			x = gv.fpr, y = gv.tpr,
+			mode='lines', 
+			line=dict(color='deeppink', width=lw),
+			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_knn))
+	if (machine_learning == 'rf'):
+		trace1 = go.Scatter(
+			x = gv.fpr2, y = gv.tpr2,
+			mode='lines', 
+			line=dict(color='red', width=lw),
+			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_rf))
+	if (machine_learning == 'nn'):
+		trace1 = go.Scatter(
+			x = gv.fpr3, y = gv.tpr3,
+			mode='lines', 
+			line=dict(color='purple', width=lw),
+			name='ROC curve (AUC = {0: 0.3f})'.format(gv.auc_nn))
+	trace2 = go.Scatter(x=[0, 1], y=[0, 1], 
+			mode='lines', 
+			line=dict(color='black', width=lw, dash='dash'),
+			showlegend=False)
+	trace3 = go.Scatter(x=[0, 0], y=[1, 0], 
+			mode='lines', 
+			line=dict(color='black', width=lw, dash='dash'),
+			showlegend=False)
+	trace4 = go.Scatter(x=[1, 0], y=[1, 1], 
+			mode='lines', 
+			line=dict(color='black', width=lw, dash='dash'),
+			showlegend=False)
+	return {
+	'data': [trace1, trace2, trace3, trace4], 
+	'layout': go.Layout(
+		title='Receiver Operating Characteristic Plot',
+        xaxis={'title': 'False Positive Rate'},
+        yaxis={'title': 'True Positive Rate'},
+        legend={'x': 0.8, 'y': 0.15},
+        #height=400
+        )
+	}
+	
 
 # Append externally hosted CSS Stylesheet
 my_css_urls = [

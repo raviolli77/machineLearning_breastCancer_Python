@@ -30,7 +30,7 @@ fit_knn = KNeighborsClassifier(n_neighbors=3)
 
 # Training model
 fit_knn.fit(training_set, 
-	class_set['diagnosis'])
+	class_set)
 
 # Since KNN was first algorithm I included training set metrics
 # to give context  
@@ -39,7 +39,7 @@ predictionsTrain = fit_knn.predict(training_set)
 	
 # Measure the accuracy based on the training set
 accuracy_train = fit_knn.score(training_set, 
-	class_set['diagnosis'])
+	class_set)
 
 train_error_rate = 1 - accuracy_train  
 
@@ -48,7 +48,7 @@ predictions = fit_knn.predict(test_set)
 
 # Let's get the accuracy of our test set
 accuracy = fit_knn.score(test_set, 
-	test_class_set['diagnosis'])
+	test_class_set)
 
 test_error_rate = 1 - accuracy
 
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 		knn = KNeighborsClassifier(n_neighbors=k)
 		scores = cross_val_score(knn,
 			training_set, 
-			class_set['diagnosis'], 
+			class_set, 
 			cv = 10, 
 			scoring='accuracy')
 		cross_vals.append(scores.mean())
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 	# Here we create a matrix comparing the actual values 
 	# vs. the predicted values
 	print(pd.crosstab(predictionsTrain, 
-		class_set['diagnosis'], 
+		class_set, 
 		rownames=['Predicted Values'], 
 		colnames=['Actual Values']))
 		
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 		'''
 		)
 	
-	hf.cross_val_metrics(fit_knn, training_set, class_set['diagnosis'], 
+	hf.cross_val_metrics(fit_knn, training_set, class_set, 
 		print_results = True)
 			
 	print('''
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 		
 	# Let's compare the predictions vs. the actual values
 	print(pd.crosstab(predictions, 
-		test_class_set['diagnosis'], 
+		test_class_set, 
 		rownames=['Predicted Values'], 
 		colnames=['Actual Values']))
 		
@@ -168,5 +168,5 @@ else:
 
 	mean_cv_knn, std_error_knn = hf.cross_val_metrics(fit_knn, 
 		training_set, 
-		class_set['diagnosis'],
+		class_set,
 		print_results = False)
