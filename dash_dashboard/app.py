@@ -131,7 +131,7 @@ app.layout = html.Div([
 					Test Set Metrics
 					"""
 					)),
-				dcc.Markdown("+ See [Classification Section of inertia7 project](https://www.inertia7.com/projects/95) for more information."), 
+				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information."), 
 				html.Div([html.Div(id='table_crosstb')
 					],
 					style={'width': '100%'}),
@@ -140,7 +140,7 @@ app.layout = html.Div([
 					Classification Report
 					"""
 					)),
-				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information. "), 
+				dcc.Markdown("+ See [Classification Report Section of inertia7 project](https://www.inertia7.com/projects/95) for more information. "), 
 				html.Div([html.Div(id='table_class_rep')
 					],
 					style={'width': '100%'})
