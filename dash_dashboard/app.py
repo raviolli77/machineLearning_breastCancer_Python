@@ -381,8 +381,11 @@ def update_table(machine_learning):
 
 # Append externally hosted CSS Stylesheet
 my_css_urls = [
-'https://cdn.rawgit.com/raviolli77/machineLearning_breastCancer_Python/master/dash_dashboard/dash_breast_cancer.css']
-
+# For dev:
+'https://rawgit.com/raviolli77/machineLearning_breastCancer_Python/master/dash_dashboard/dash_breast_cancer.css',
+# For prod
+#'https://cdn.rawgit.com/raviolli77/machineLearning_breastCancer_Python/master/dash_dashboard/dash_breast_cancer.css'
+]
 
 app.css.append_css({
 	'external_url': my_css_urls
