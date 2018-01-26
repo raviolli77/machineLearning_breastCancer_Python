@@ -128,11 +128,12 @@ app.layout = html.Div([
 					""",
 					style={'color': '#24515d'})),
 				html.Div([html.Div(id='table_crosstb')],
-					style={
-					'background-color': '#f2f2f2',
-					'border-collapse': 'collapse', 
-					'border': '1px solid black'
-					})
+					#style={
+					#'background-color': '#f2f2f2',
+					#'border-collapse': 'collapse', 
+					#'border': '1px solid black'
+					#}
+					)
 				
 				],
 				style={'width': '40%',
