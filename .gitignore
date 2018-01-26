@@ -7,6 +7,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Icebox stuff
+ice_box/
+
 # Distribution / packaging
 .Python
 build/

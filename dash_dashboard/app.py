@@ -9,9 +9,16 @@ import pandas as pd
 breast_cancer = gv.breast_cancer
 names = gv.names
 
+# Test set metrics
 cross_tab_knn = gv.cross_tab_knn
 cross_tab_rf = gv.cross_tab_rf
 cross_tab_nn = gv.cross_tab_nn
+
+# Classification Reports 
+
+class_rep_knn = gv.class_rep_knn
+class_rep_rf = gv.class_rep_rf
+class_rep_nn = gv.class_rep_nn
 
 def generate_table(dataframe, max_rows=10):
 	return html.Table(
@@ -34,21 +41,19 @@ app.layout = html.Div([
 		An interactive dashboard created by Raul Eulogio
 		''',
         style={
-        'padding': '0px 30px 15px 30px',
-        'color': '#24515d'}),
+        'padding': '0px 30px 15px 30px'}),
     html.Div([
         html.H3(children = '''
             Exploratory Analysis
             ''',
             style={
-            'padding': '0px 30px 15px 30px',
-            'color': '#24515d'})
+            'padding': '0px 30px 15px 30px'})
         ]),
 	html.Div([
 			html.Div([
 					html.P("""
 						Move the multi-select options to see the 3d scatter plot and histograms change respectively.
-						And play with the interactive 3d scatter plot to see how variables interact.
+						And play with the interactive 3d scatter plot to see how variables interact!
 
 						"""),
 					dcc.Graph(
@@ -81,9 +86,9 @@ app.layout = html.Div([
 				html.Div([
 					html.H3("""
 					Machine Learning
-					""",
-					style={
-					'color': '#24515d'}),
+					"""),
+					dcc.Markdown('Here are some metrics relating to how well each model did.'), 
+					dcc.Markdown('+ See [this article](https://lukeoakdenrayner.wordpress.com/2017/12/06/do-machines-actually-beat-doctors-roc-curves-and-performance-metrics/) for more information about *ROC Curves* '),
 					html.Label('Choose a Machine Learning Model'),
 						dcc.Dropdown(
     						id='machine_learning',
@@ -95,9 +100,8 @@ app.layout = html.Div([
     						value = 'knn'
     						),
 						dcc.Graph(
-							id='roc_curve'
-							)
-                            ])
+							id='roc_curve')
+						])
 					],
 					style={'width': '40%',
                     'height': '50%',
@@ -125,16 +129,21 @@ app.layout = html.Div([
 				html.Div(
 					html.H4("""
 					Test Set Metrics
-					""",
-					style={'color': '#24515d'})),
-				html.Div([html.Div(id='table_crosstb')],
-					#style={
-					#'background-color': '#f2f2f2',
-					#'border-collapse': 'collapse', 
-					#'border': '1px solid black'
-					#}
-					)
-				
+					"""
+					)),
+				dcc.Markdown("+ See [Classification Section of inertia7 project](https://www.inertia7.com/projects/95) for more information."), 
+				html.Div([html.Div(id='table_crosstb')
+					],
+					style={'width': '100%'}),
+				html.Div(
+					html.H4("""
+					Classification Report
+					"""
+					)),
+				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information. "), 
+				html.Div([html.Div(id='table_class_rep')
+					],
+					style={'width': '100%'})
 				],
 				style={'width': '40%',
 				'float': 'right',
@@ -145,10 +154,7 @@ app.layout = html.Div([
 			style={'width': '100%',
 			'height': '100%',
 			'display': 'flex'}),
-	],
-	style={
-	'fontfamily': 'font-family: "Courier New", Courier'}
-	)
+	])
 
 @app.callback(
 	dash.dependencies.Output('scatter_plot_3d', 'figure'),
@@ -376,6 +382,21 @@ def update_table(machine_learning):
 		final_cross_tab = cross_tab_rf
 	if (machine_learning == 'nn'):
 		final_cross_tab = cross_tab_nn
+	return generate_table(dataframe = final_cross_tab)
+
+
+@app.callback(
+	dash.dependencies.Output('table_class_rep', 'children'),
+    [dash.dependencies.Input('machine_learning', 'value')
+    ])
+def update_table(machine_learning):
+	final_cross_tab = pd.DataFrame()
+	if (machine_learning == 'knn'):
+		final_cross_tab = class_rep_knn
+	if (machine_learning == 'rf'):
+		final_cross_tab = class_rep_rf
+	if (machine_learning == 'nn'):
+		final_cross_tab = class_rep_nn
 	return generate_table(dataframe = final_cross_tab)
 
 
