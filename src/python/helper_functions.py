@@ -42,6 +42,8 @@ names = ['id_number', 'diagnosis', 'radius_mean',
          'concavity_worst', 'concave_points_worst',
          'symmetry_worst', 'fractal_dimension_worst']
 
+dx = ['Malignant', 'Benign']
+
 breast_cancer = pd.read_csv(urlopen(UCI_data_URL), names=names)
 
 # Setting 'id_number' as our index

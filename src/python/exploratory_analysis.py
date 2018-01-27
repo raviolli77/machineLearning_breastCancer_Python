@@ -45,7 +45,7 @@ print("Count of the Dx:\n", breast_cancer['diagnosis']\
 
 # Next let's use the helper function to show distribution
 # of our data frame
-hf.calc_diag_percent(breast_cancer, 'diagnosis')
+hf.print_dx_perc(breast_cancer, 'diagnosis')
 
 # Scatterplot Matrix
 # Variables chosen from Random Forest modeling.
