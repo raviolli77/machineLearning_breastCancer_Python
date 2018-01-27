@@ -1,5 +1,6 @@
 # Rstuff
 src/r/packrat/lib*/
+src/r/packrat/src/*
 
 rsconnect/
 
