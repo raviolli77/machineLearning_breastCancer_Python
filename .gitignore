@@ -1,3 +1,8 @@
+# Rstuff
+packrat/lib*/
+
+rsconnect/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -108,3 +113,4 @@ venv.bak/
 .mypy_cache/
 # R Stuff
 .Rhistory
+.Rproj.user
