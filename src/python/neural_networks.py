@@ -54,8 +54,11 @@ accuracy_nn = fit_nn.score(test_set_scaled,
 # Here we calculate the test error rate!
 test_error_rate_nn = 1 - accuracy_nn
 
+predictions_prob_nn = fit_nn.predict_proba(test_set_scaled)[:, 1]
+
 # ROC Curve stuff
-fpr3, tpr3, _ = roc_curve(predictions_nn, test_class_set)
+fpr3, tpr3, _ = roc_curve(test_class_set, 
+	predictions_prob_nn)
 
 auc_nn = auc(fpr3, tpr3)
 

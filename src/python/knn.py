@@ -61,9 +61,11 @@ accuracy = fit_knn.score(test_set,
 
 test_error_rate = 1 - accuracy
 
+predictions_prob_knn = fit_knn.predict_proba(test_set)[:, 1]
+
 # ROC Curve and AUC Calculations
-fpr, tpr, _ = roc_curve(predictions, 
-	test_class_set)
+fpr, tpr, _ = roc_curve(test_class_set, 
+	predictions_prob_knn)
 
 auc_knn = auc(fpr, tpr)
 

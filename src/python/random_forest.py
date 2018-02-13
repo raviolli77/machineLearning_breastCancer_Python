@@ -31,74 +31,12 @@ from sklearn.externals import joblib
 # Set the random state for reproducibility
 fit_rf = RandomForestClassifier(random_state=42)
 
-
-# Hyperparamter optimization
-#np.random.seed(42)
-#start = time.time()
-#
-#param_dist = {'max_depth': [2, 3, 4],
-              #'bootstrap': [True, False],
-              #'max_features': ['auto', 'sqrt', 'log2', None],
-              #'criterion': ['gini', 'entropy']}
-#
-#cv_rf = GridSearchCV(fit_rf, cv = 10,
-                     #param_grid=param_dist,
-                     #n_jobs = 3)
-#
-#cv_rf.fit(training_set, class_set)
-#print('Best Parameters using grid search: \n',
-      #cv_rf.best_params_,
-      #'\n')
-#end = time.time()
-#print('Time taken in grid search: {0: .2f}\n'.format(end - start))
 ## Set best parameters given by grid search
 fit_rf.set_params(criterion = 'gini',
                   max_features = 'log2',
                   max_depth = 3,
                   n_estimators=400,
                   oob_score=True)
-#
-## Estimating Number of Trees
-#min_estimators = 15
-#max_estimators = 1000
-#
-#error_rate = {}
-#
-#for i in range(min_estimators, max_estimators + 1):
-    #fit_rf.set_params(n_estimators=i)
-    #fit_rf.fit(training_set, class_set)
-#
-    #oob_error = 1 - fit_rf.oob_score_
-    #error_rate[i] = oob_error
-#
-## Convert dictionary to a pandas series for easy plotting
-#oob_series = pd.Series(error_rate)
-#
-#fig, ax = plt.subplots(figsize=(10, 10))
-#
-#ax.set_axis_bgcolor('#fafafa')
-#
-#oob_series.plot(kind='line',
-                #color = 'red')
-#plt.axhline(0.055,
-            #color='#875FDB',
-           #linestyle='--')
-#plt.axhline(0.05,
-            #color='#875FDB',
-           #linestyle='--')
-#plt.xlabel('n_estimators')
-#plt.ylabel('OOB Error Rate')
-#plt.title('OOB Error Rate Across various Forest sizes \n(From 15 to 1000 trees)')
-#plt.show()
-#
-#print('OOB Error rate for 400 trees is: {0:.5f} \n'\
-#.format(oob_series[400]))
-#
-## Set final parameters
-#fit_rf.set_params(n_estimators=400,
-                  #bootstrap = True,
-                  #warm_start=False,
-                  #oob_score=False)
 
 # Training Model
 fit_rf.fit(training_set,
@@ -128,9 +66,11 @@ accuracy_rf = fit_rf.score(test_set, test_class_set)
 # Here we calculate the test error rate!
 test_error_rate_rf = 1 - accuracy_rf
 
+predictions_prob = fit_rf.predict_proba(test_set)[:, 1]
+
 # ROC Curve stuff
-fpr2, tpr2, _ = roc_curve(predictions_rf,
-	test_class_set)
+fpr2, tpr2, _ = roc_curve(test_class_set,
+	predictions_prob)
 
 auc_rf = auc(fpr2, tpr2)
 
@@ -145,29 +85,6 @@ if __name__=='__main__':
 	print(fit_rf)
 
 	hf.variable_importance(importances_rf, indices_rf)
-
-	hf.variable_importance_plot(importances_rf, indices_rf)
-
-	print('HYPERPARAMETER OPTIMIZATION')
-
-	print("Note: Remove commented code to see this section")
-	print("chosen parameters: {'bootstrap': True, '4:45, criterion': 'entropy', \
-	'max_depth': 4}\
-	 \nElapsed time of optimization: 189.949 seconds")
-
-		# start = time.time()
-
-		# param_dist = {"max_depth": [2, 3, 4],
-		# "bootstrap": [True, False],
-		# "criterion": ["gini", "entropy"]}
-
-		# gs_rf = GridSearchCV(fit_rf, cv = 10,
-			# param_grid=param_dist)
-
-		# gs_rf.fit(training_set, class_set)
-		# print(gs_rf.best_params_)
-		# end = time.time()
-		# print(end - start)
 
 	print('CROSS VALIDATION')
 
@@ -187,12 +104,6 @@ if __name__=='__main__':
 
 	print("The test error rate for our model is:\n {0: .3f}"\
 		.format(test_error_rate_rf))
-
-	# ROC Curve
-	hf.plot_roc_curve(fpr2, tpr2, auc_rf, 'rf')
-	# Zoomed in ROC Curve
-	hf.plot_roc_curve(fpr2, tpr2, auc_rf, 'rf',
-		(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_rf():
 		'''
