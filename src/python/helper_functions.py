@@ -266,6 +266,8 @@ def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
 	plt.ylabel('True Positive Rate')
 	plt.show()
 	plt.close()
+	plt.savefig('{0}.png'.format(mod))
+
 
 def cross_val_metrics(fit, training_set, class_set, print_results = True):
 	"""
