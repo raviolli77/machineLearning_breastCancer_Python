@@ -95,7 +95,6 @@ if __name__ == '__main__':
 	plt.title('ROC Curve Comparison For All Models')
 	plt.legend(loc="lower right")
 	plt.show()
-	plt.savefig('../../roc_curve.png')
 
 	# Zoomed in
 	f, ax = plt.subplots(figsize=(10, 10))
