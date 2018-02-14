@@ -124,6 +124,5 @@ if __name__ == '__main__':
 	plt.title('ROC Curve Comparison For All Models (Zoomed)')
 	plt.legend(loc="lower right")
 	plt.show()
-	plt.savefig('../../roc_curve_zoom.png')
 
 	print('fin \n:)')
