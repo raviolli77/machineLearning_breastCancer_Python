@@ -118,11 +118,11 @@ if __name__ == '__main__':
 		.format(test_error_rate_nn))
 
 	# ROC Curve
-	hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn')
+	#hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn')
 
 	# Zoomed in ROC Curve
-	hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn',
-		(-0.001, 0.2), (0.7, 1.05))
+	#hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn',
+	#	(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_nn():
 		'''

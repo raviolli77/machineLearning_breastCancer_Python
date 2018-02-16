@@ -159,11 +159,11 @@ if __name__ == '__main__':
 	# NOTE: These functions were created in the helperFunctions.py 
 	# script to reduce lines of code
 	# refer to helper.py for additional information
-	hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn')
+	#hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn')
 	
 	# Zoomed in ROC Curve
-	hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn',
-		(-0.001, 0.2), (0.7, 1.05))
+	#hf.plot_roc_curve(fpr, tpr, auc_knn, 'knn',
+		#(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_knn():
 		'''
