@@ -43,10 +43,7 @@ predictions_nn = fit_nn.predict(test_set_scaled)
 test_crosstb_comp = pd.crosstab(index = test_class_set,
                            columns = predictions_nn)
 
-# More human readable
-test_crosstb = test_crosstb_comp.rename(columns= {0: 'Benign', 1: 'Malignant'})
-test_crosstb.index = ['Benign', 'Malignant']
-test_crosstb.columns.name = 'n = 114'
+test_crosstb = test_crosstb_comp.as_matrix()
 
 accuracy_nn = fit_nn.score(test_set_scaled,
 	test_class_set)

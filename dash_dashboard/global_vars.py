@@ -16,17 +16,11 @@ fpr, tpr, auc_knn, _, _ = knn.return_knn()
 fpr2, tpr2, auc_rf, _, _ = rf.return_rf()
 fpr3, tpr3, auc_nn, _, _ = nn.return_nn()
 
-def clean_crosstab(cross_tab):
-   cross_tab_new = cross_tab
-   cross_tab_new.reset_index(level=0, inplace=True)
-   cross_tab_new.rename(columns ={'index': 'Actual (rows) Vs. Predicted (columns)'}, inplace=True)
-   return cross_tab_new
+cross_tab_knn = knn.test_crosstb
 
-cross_tab_knn = clean_crosstab(knn.test_crosstb)
+cross_tab_rf = rf.test_crosstb
 
-cross_tab_rf = clean_crosstab(rf.test_crosstb)
-
-cross_tab_nn = clean_crosstab(nn.test_crosstb)
+cross_tab_nn = nn.test_crosstb
 
 # Classification Report Stuff
 

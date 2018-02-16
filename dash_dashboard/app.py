@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import numpy as np
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -15,7 +16,6 @@ cross_tab_rf = gv.cross_tab_rf
 cross_tab_nn = gv.cross_tab_nn
 
 # Classification Reports 
-
 class_rep_knn = gv.class_rep_knn
 class_rep_rf = gv.class_rep_rf
 class_rep_nn = gv.class_rep_nn
@@ -83,6 +83,8 @@ app.layout = html.Div([
 					html.Div(html.P(' .')),
 					html.Div(html.P(' .')),
 					html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
+					html.Div(html.P(' .')),
 				html.Div([
 					html.H3("""
 					Machine Learning
@@ -112,15 +114,15 @@ app.layout = html.Div([
 			html.Div([
 				dcc.Graph(
 					id='hist_first_var',
-					style={'height': '16.5%'}
+					style={'height': '12%'}
 					),
 				dcc.Graph(
 					id='hist_sec_var',
-					style={'height': '16.5%'}
+					style={'height': '12%'}
 					),
 				dcc.Graph(
 					id='hist_third_var',
-					style={'height': '16.4%'}
+					style={'height': '12%'}
 					),
 				html.Div(html.P(' .')),
 				html.Div(html.P(' .')),
@@ -130,11 +132,15 @@ app.layout = html.Div([
 					html.H4("""
 					Test Set Metrics
 					"""
-					)),
+					)
+					),
 				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information."), 
-				html.Div([html.Div(id='table_crosstb')
-					],
-					style={'width': '100%'}),
+				html.Div(
+					dcc.Graph(
+						id="conf_mat", 
+						style={'height': '10%'}
+						)
+					),
 				html.Div(
 					html.H4("""
 					Classification Report
@@ -371,18 +377,46 @@ def update_roc(machine_learning):
 	}
 
 @app.callback(
-	dash.dependencies.Output('table_crosstb', 'children'),
+	dash.dependencies.Output('conf_mat', 'figure'),
     [dash.dependencies.Input('machine_learning', 'value')
     ])
-def update_table(machine_learning):
-	final_cross_tab = pd.DataFrame()
+
+def update_conf_mat(machine_learning):
+	lw = 2
 	if (machine_learning == 'knn'):
-		final_cross_tab = cross_tab_knn
+		trace1 = go.Heatmap(
+			z = np.roll(cross_tab_knn, 
+				1, axis=0))
 	if (machine_learning == 'rf'):
-		final_cross_tab = cross_tab_rf
+		trace1 = go.Heatmap(
+			z = np.roll(cross_tab_rf,
+				1, axis=0))
 	if (machine_learning == 'nn'):
-		final_cross_tab = cross_tab_nn
-	return generate_table(dataframe = final_cross_tab)
+		trace1 = go.Heatmap(
+			z = np.roll(cross_tab_nn,
+				1, axis=0))
+	return {
+	'data': [trace1],
+	'layout': go.Layout(
+		title='Confusion Matrix',
+        xaxis={'title': 'Predicted Values'},
+        yaxis={'title': 'Actual Values'}
+        )
+	}
+
+####################################
+#
+#
+#
+#def update_table(machine_learning):
+	#final_cross_tab = pd.DataFrame()
+	#if (machine_learning == 'knn'):
+		#final_cross_tab = cross_tab_knn
+	#if (machine_learning == 'rf'):
+		#final_cross_tab = cross_tab_rf
+	#if (machine_learning == 'nn'):
+		#final_cross_tab = cross_tab_nn
+	#return generate_table(dataframe = final_cross_tab)
 
 
 @app.callback(

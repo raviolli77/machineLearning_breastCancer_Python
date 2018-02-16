@@ -55,10 +55,7 @@ predictions_rf = fit_rf.predict(test_set)
 test_crosstb_comp = pd.crosstab(index = test_class_set,
                            columns = predictions_rf)
 
-# More human readable
-test_crosstb = test_crosstb_comp.rename(columns= {0: 'Benign', 1: 'Malignant'})
-test_crosstb.index = ['Benign', 'Malignant']
-test_crosstb.columns.name = 'n = 114'
+test_crosstb = test_crosstb_comp.as_matrix()
 
 # Accurary Score for test set predictions
 accuracy_rf = fit_rf.score(test_set, test_class_set)
