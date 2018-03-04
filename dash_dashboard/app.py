@@ -81,10 +81,6 @@ app.layout = html.Div([
 						value = 'concave_points_worst'
 						),
 					html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
-					html.Div(html.P(' .')),
 				html.Div([
 					html.H3("""
 					Machine Learning
