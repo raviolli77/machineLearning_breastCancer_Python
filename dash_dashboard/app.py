@@ -15,7 +15,7 @@ cross_tab_knn = gv.cross_tab_knn
 cross_tab_rf = gv.cross_tab_rf
 cross_tab_nn = gv.cross_tab_nn
 
-# Classification Reports 
+# Classification Reports
 class_rep_knn = gv.class_rep_knn
 class_rep_rf = gv.class_rep_rf
 class_rep_nn = gv.class_rep_nn
@@ -56,8 +56,6 @@ app.layout = html.Div([
 						And play with the interactive 3d scatter plot to see how variables interact!
 
 						"""),
-					dcc.Graph(
-						id='scatter_plot_3d'),
 					html.Label('Choose the different parameters'),
 					dcc.Dropdown(
 						id='first_input',
@@ -80,12 +78,14 @@ app.layout = html.Div([
 						],
 						value = 'concave_points_worst'
 						),
+					dcc.Graph(
+						id='scatter_plot_3d'),
 					html.Div(html.P(' .')),
 				html.Div([
 					html.H3("""
 					Machine Learning
 					"""),
-					dcc.Markdown('Here are some metrics relating to how well each model did.'), 
+					dcc.Markdown('Here are some metrics relating to how well each model did.'),
 					dcc.Markdown('+ See [this article](https://lukeoakdenrayner.wordpress.com/2017/12/06/do-machines-actually-beat-doctors-roc-curves-and-performance-metrics/) for more information about *ROC Curves* '),
 					html.Label('Choose a Machine Learning Model'),
 						dcc.Dropdown(
@@ -130,10 +130,10 @@ app.layout = html.Div([
 					"""
 					)
 					),
-				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information."), 
+				dcc.Markdown("+ See [Test Set Metrics Section of inertia7 project](https://www.inertia7.com/projects/95#test_set_met) for more information."),
 				html.Div(
 					dcc.Graph(
-						id="conf_mat", 
+						id="conf_mat",
 						style={'height': '10%'}
 						)
 					),
@@ -142,7 +142,7 @@ app.layout = html.Div([
 					Classification Report
 					"""
 					)),
-				dcc.Markdown("+ See [Classification Report Section of inertia7 project](https://www.inertia7.com/projects/95) for more information. "), 
+				dcc.Markdown("+ See [Classification Report Section of inertia7 project](https://www.inertia7.com/projects/95) for more information. "),
 				html.Div([html.Div(id='table_class_rep')
 					],
 					style={'width': '100%'})
@@ -381,7 +381,7 @@ def update_conf_mat(machine_learning):
 	lw = 2
 	if (machine_learning == 'knn'):
 		trace1 = go.Heatmap(
-			z = np.roll(cross_tab_knn, 
+			z = np.roll(cross_tab_knn,
 				1, axis=0))
 	if (machine_learning == 'rf'):
 		trace1 = go.Heatmap(

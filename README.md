@@ -29,7 +29,7 @@ The multiple *python* script is broken into 5 sections (done by creating a scipt
 **NOTE**: The `helper_functions.py` script automates a lot of the processes and is used heavily in the other scripts. So if you want to see how my user made functions work, definitely check it out.  
 
 ## Running .py Script
-It goes without saying that a `virtualenv` is needed where you will download the necessary packages from the `requirements.txt` using:
+A `virtualenv` is needed where you will download the necessary packages from the `requirements.txt` using:
 
 	pip3 install -r requirements.txt
 
@@ -51,7 +51,7 @@ then you would simply just run it (I'll use **Random Forest** as an example)
 	$ ./random_forest.py
 
 ## Conclusions
-Once I employed all these methods, we can get a better feel for the data. Each model provided useful features that are useful in real world applications. *Random forest* helps us see what variables were the most important when predicting the diagnoses, which is useful to help researchers know what variables are important and ultimately feature engineering. *Kth Nearest Neighbor* provides the best predictive power in terms of *cross validation*, which is our strongest metric when evaluating models. And *Neural Networks* provides the least false negatives which is important in this respective case study since a false negative can result in *death*.  
+Once I employed all these methods, we were able to utilize various machine learning metrics. Each model provided valuable insight. *Kth Nearest Neighbor* helped create a baseline model to compare the more complex models. *Random forest* helps us see what variables were important in the bootstrapped decision trees. And *Neural Networks* provided minimal false negatives which results in false negatives. In this context it can mean death.  
 
 ### Diagnostics for Data Set
 

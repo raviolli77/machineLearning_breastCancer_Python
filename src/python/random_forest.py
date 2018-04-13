@@ -21,8 +21,8 @@ import helper_functions as hf
 import matplotlib.pyplot as plt
 from helper_functions import training_set, class_set, test_set, test_class_set
 from sklearn.model_selection import KFold, cross_val_score
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 from sklearn.externals import joblib
@@ -83,7 +83,7 @@ if __name__=='__main__':
 
 	hf.variable_importance(importances_rf, indices_rf)
 
-	print('CROSS VALIDATION')
+	print('Cross Validation')
 
 	# Cross validation
 	hf.cross_val_metrics(fit_rf,
@@ -91,7 +91,7 @@ if __name__=='__main__':
                   class_set,
                   print_results = True)
 
-	print('TEST SET CALCULATIONS')
+	print('Test set calculations:')
 
 
 	print(test_crosstb)

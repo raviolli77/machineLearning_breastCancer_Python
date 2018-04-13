@@ -20,7 +20,7 @@ import helper_functions as hf
 from helper_functions import training_set_scaled, class_set
 from helper_functions import test_set_scaled, test_class_set
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import KFold, cross_val_score
+from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold, GridSearchCV
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
@@ -54,7 +54,7 @@ test_error_rate_nn = 1 - accuracy_nn
 predictions_prob_nn = fit_nn.predict_proba(test_set_scaled)[:, 1]
 
 # ROC Curve stuff
-fpr3, tpr3, _ = roc_curve(test_class_set, 
+fpr3, tpr3, _ = roc_curve(test_class_set,
 	predictions_prob_nn)
 
 auc_nn = auc(fpr3, tpr3)
@@ -63,19 +63,8 @@ auc_nn = auc(fpr3, tpr3)
 # joblib.dump(fit_nn, 'pickle_models/model_nn.pkl')
 
 if __name__ == '__main__':
-	print('''
-	##################################
-	##         FITTING MLP          ##
-	##################################
-	'''
-	)
 	print(fit_nn)
-	print('''
-	############################################
-	##       HYPERPARAMETER OPTIMIZATION      ##
-	############################################
-	'''
-	)
+	print("Hyperparameter Optimization:")
 	print("Note: Remove commented code to see this section")
 	print("chosen parameters: \n \
 	{'hidden_layer_sizes': 12, \n \
@@ -92,23 +81,12 @@ if __name__ == '__main__':
 	# print(gs.best_params_)
 	# end = time.time()
 	# print(end - start)
-	print('''
-	################################
-	##      CROSS VALIDATION      ##
-	################################
-	'''
-	)
+	print("Cross Validation")
 
 	test_thing = hf.cross_val_metrics(fit_nn, training_set_scaled,
 		class_set,
 		print_results = True)
 
-	print('''
-	###############################
-	##   TEST SET CALCULATIONS   ##
-	###############################
-	'''
-	)
 	print(test_crosstb)
 
 	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
@@ -116,13 +94,6 @@ if __name__ == '__main__':
 
 	print("The test error rate for our model is:\n {0: .3f}"\
 		.format(test_error_rate_nn))
-
-	# ROC Curve
-	#hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn')
-
-	# Zoomed in ROC Curve
-	#hf.plot_roc_curve(fpr3, tpr3, auc_nn, 'nn',
-	#	(-0.001, 0.2), (0.7, 1.05))
 else:
 	def return_nn():
 		'''
