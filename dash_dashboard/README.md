@@ -8,7 +8,7 @@ To run the application run `app.py` and you're web browser will open the dashboa
 
 This section explores 3 variable interaction with a 3d scatter plot that showcases the relationship between the variables of your choice. Along with showcasing the distribution of the data using histograms seperating the diagnoses.
 
-<img src="https://i.imgur.com/fR2Z8xO.gifv" />
+<img src="https://i.imgur.com/fR2Z8xO.gif" />
 
 ## Machine Learning
 
@@ -19,6 +19,6 @@ The metrics are as outlined:
 + Interactive Confusion Matrix
 + Classification Report - outputs the `classification_report` function from `sklearn` in an html table.
 
-<img src="https://i.imgur.com/ztbutsl.gifv" />
+<img src="https://i.imgur.com/ztbutsl.gif" />
 
 Any questions or suggestions, please let me know!
