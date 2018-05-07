@@ -8,22 +8,42 @@ from io import StringIO
 sys.path.insert(0, '../src/python/')
 from helper_functions import test_set
 import random_forest as rf
-import knn 
+import knn
 import neural_networks as nn
 sys.path.pop(0)
 
-fpr, tpr, auc_knn, _, _ = knn.return_knn()
-fpr2, tpr2, auc_rf, _, _ = rf.return_rf()
-fpr3, tpr3, auc_nn, _, _ = nn.return_nn()
+# Calling up metrics from the model scripts
+# KNN ---------------------------------------
+metrics_knn = knn.return_knn()
+fpr = metrics_knn['fpr']
+tpr = metrics_knn['tpr']
+auc_knn = metrics_knn['auc']
+predictions = metrics_knn['predictions']
+test_error_rate = metrics_knn['test_error']
 
 cross_tab_knn = knn.test_crosstb
 
+# RF ----------------------------------------
+metrics_rf = rf.return_rf()
+fpr2 = metrics_rf['fpr']
+tpr2 = metrics_rf['tpr']
+auc_rf = metrics_rf['auc']
+predictions_rf = metrics_rf['predictions']
+test_error_rate_rf = metrics_rf['test_error']
+
 cross_tab_rf = rf.test_crosstb
+
+# NN ----------------------------------------
+metrics_rf = nn.return_nn()
+fpr3 = metrics_rf['fpr']
+tpr3 = metrics_rf['tpr']
+auc_nn = metrics_rf['auc']
+predictions_nn = metrics_rf['predictions']
+test_error_rate_nn = metrics_rf['test_error']
 
 cross_tab_nn = nn.test_crosstb
 
 # Classification Report Stuff
-
 def create_class_report(class_report_string):
    class_report_mod = StringIO(class_report_string)
    class_report = pd.read_csv(class_report_mod, ',')

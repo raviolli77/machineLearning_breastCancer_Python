@@ -106,7 +106,11 @@ else:
 		'''
 		Function to output values created in script
 		'''
-		return fpr2, tpr2, auc_rf, predictions_rf, test_error_rate_rf
+		return {'fpr': fpr2,
+        'tpr': tpr2, 
+        'auc': auc_rf,
+        'predictions': predictions_rf,
+        'test_error': test_error_rate_rf}
 
 	mean_cv_rf, std_error_rf = hf.cross_val_metrics(fit_rf,
 		training_set, class_set,

@@ -12,7 +12,7 @@
 """
 Model Evaluation
 """
-
+# Import Packages ----------------------------
 import matplotlib.pyplot as plt
 from helper_functions import test_class_set
 import random_forest as rf
@@ -22,12 +22,31 @@ from terminaltables import AsciiTable
 from sklearn.metrics import classification_report
 
 # Calling up metrics from the model scripts
-fpr, tpr, auc_knn, predictions, test_error_rate = knn.return_knn()
+# KNN ---------------------------------------
+metrics_knn = knn.return_knn()
+fpr = metrics_knn['fpr']
+tpr = metrics_knn['tpr']
+auc_knn = metrics_knn['auc']
+predictions = metrics_knn['predictions']
+test_error_rate = metrics_knn['test_error']
 
-fpr2, tpr2, auc_rf, predictions_rf, test_error_rate_rf = rf.return_rf()
+# RF ----------------------------------------
+metrics_rf = rf.return_rf()
+fpr2 = metrics_rf['fpr']
+tpr2 = metrics_rf['tpr']
+auc_rf = metrics_rf['auc']
+predictions_rf = metrics_rf['predictions']
+test_error_rate_rf = metrics_rf['test_error']
 
-fpr3, tpr3, auc_nn, predictions_nn, test_error_rate_nn =nn.return_nn()
+# NN ----------------------------------------
+metrics_rf = nn.return_nn()
+fpr3 = metrics_rf['fpr']
+tpr3 = metrics_rf['tpr']
+auc_nn = metrics_rf['auc']
+predictions_nn = metrics_rf['predictions']
+test_error_rate_nn = metrics_rf['test_error']
 
+# Main --------------------------------------
 if __name__ == '__main__':
 	# Populate list for human readable table from terminal line
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate',
