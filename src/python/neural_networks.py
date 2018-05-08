@@ -12,20 +12,16 @@
 """
 Neural Networks Classification
 """
-
-import time
+# Import Packages -----------------------------------------------
 import sys, os
 import pandas as pd
 import helper_functions as hf
-from helper_functions import training_set_scaled, class_set
-from helper_functions import test_set_scaled, test_class_set
+from data_extraction import training_set_scaled, class_set
+from data_extraction import test_set_scaled, test_class_set
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import KFold, GridSearchCV
-from sklearn.metrics import roc_curve
-from sklearn.metrics import auc
-from sklearn.externals import joblib
+from produce_model_metrics import produce_model_metrics
 
+# Fitting Neural Network ----------------------------------------
 # Fit model
 fit_nn = MLPClassifier(solver='lbfgs',
 	hidden_layer_sizes = (12, ),
@@ -37,40 +33,28 @@ fit_nn = MLPClassifier(solver='lbfgs',
 fit_nn.fit(training_set_scaled,
 	class_set)
 
-predictions_nn = fit_nn.predict(test_set_scaled)
-
-# Test Set Metrics
-test_crosstb_comp = pd.crosstab(index = test_class_set,
-                           columns = predictions_nn)
-
-test_crosstb = test_crosstb_comp.as_matrix()
-
-accuracy_nn = fit_nn.score(test_set_scaled,
-	test_class_set)
-
-# Here we calculate the test error rate!
-test_error_rate_nn = 1 - accuracy_nn
-
-predictions_prob_nn = fit_nn.predict_proba(test_set_scaled)[:, 1]
-
-# ROC Curve stuff
-fpr3, tpr3, _ = roc_curve(test_class_set,
-	predictions_prob_nn)
-
-auc_nn = auc(fpr3, tpr3)
-
-# Uncomment to save your model as a pickle object!
-# joblib.dump(fit_nn, 'pickle_models/model_nn.pkl')
-
 if __name__ == '__main__':
-	print(fit_nn)
+	# Print model parameters ------------------------------------
+	print(fit_nn, '\n')
+
+	# Initialize function for metrics ---------------------------
+	fit_dict_nn = produce_model_metrics(fit_nn, test_set_scaled,
+	test_class_set, 'neural_network')
+	# Extract each piece from dictionary
+	predictions_nn = fit_dict_nn['predictions']
+	accuracy_nn = fit_dict_nn['accuracy']
+	auc_nn = fit_dict_nn['auc']
+
+
 	print("Hyperparameter Optimization:")
-	print("Note: Remove commented code to see this section")
 	print("chosen parameters: \n \
 	{'hidden_layer_sizes': 12, \n \
 	'activation': 'tanh', \n \
-	'learning_rate_init': 0.05} \
-		\nEstimated time: 31.019 seconds")
+	'learning_rate_init': 0.05}")
+	print("Note: Remove commented code to see this section \n")
+
+	# from sklearn.model_selection import GridSearchCV
+	# import time
 	# start = time.time()
 	# gs = GridSearchCV(fit_nn, cv = 10,
 		# param_grid={
@@ -81,32 +65,28 @@ if __name__ == '__main__':
 	# print(gs.best_params_)
 	# end = time.time()
 	# print(end - start)
-	print("Cross Validation")
 
-	test_thing = hf.cross_val_metrics(fit_nn, training_set_scaled,
-		class_set,
-		print_results = True)
+	# Test Set Calculations -------------------------------------
+	# Test error rate
+	test_error_rate_nn = 1 - accuracy_nn
 
-	print(test_crosstb)
+	# Confusion Matrix
+	test_crosstb = hf.create_conf_mat(test_class_set,
+		predictions_nn)
+
+	# Cross validation
+	print("Cross Validation:")
+
+	hf.cross_val_metrics(fit_nn,
+	training_set_scaled,
+	class_set,
+	print_results = True)
+
+	print('Confusion Matrix:')
+	print(test_crosstb, '\n')
 
 	print("Here is our mean accuracy on the test set:\n {0: .3f}"\
 		.format(accuracy_nn))
 
 	print("The test error rate for our model is:\n {0: .3f}"\
 		.format(test_error_rate_nn))
-else:
-	def return_nn():
-		'''
-		Function to output values created in script
-		'''
-		return {'fpr': fpr3,
-        'tpr': tpr3,
-        'auc': auc_nn,
-        'predictions': predictions_nn,
-        'test_error': test_error_rate_nn}
-
-	# Keep Cross validation metrics
-	mean_cv_nn, std_error_nn = hf.cross_val_metrics(fit_nn,
-		training_set_scaled,
-		class_set,
-		print_results = False)

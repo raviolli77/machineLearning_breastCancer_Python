@@ -26,7 +26,7 @@ The multiple *python* script is broken into 5 sections (done by creating a scipt
 + **Neural Networks**
 + **Comparing Models**
 
-**NOTE**: The `helper_functions.py` script automates a lot of the processes and is used heavily in the other scripts. So if you want to see how my user made functions work, definitely check it out.  
+**NOTE**: The files `data_extraction.py`, `helper_functions.py`, and `produce_model_metrics.py` are used to abstract functions to make code easier to read. These files do a lot of the work so if you are interested in how the scripts work definitely check them out.
 
 ## Running .py Script
 A `virtualenv` is needed where you will download the necessary packages from the `requirements.txt` using:
@@ -76,3 +76,4 @@ Any feedback is welcomed!
 
 Things to do:
 + Create **Jupter Notebook** for *KNN* and *NN* (1/25/2018)
++ Unit test scripts 

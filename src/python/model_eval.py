@@ -12,55 +12,92 @@
 """
 Model Evaluation
 """
-# Import Packages ----------------------------
+# Import Packages -----------------------------------------------
 import matplotlib.pyplot as plt
-from helper_functions import test_class_set
-import random_forest as rf
-import knn
-import neural_networks as nn
+from knn import fit_knn
+from random_forest import fit_rf
+from neural_networks import fit_nn
+from data_extraction import training_set, class_set
+from data_extraction import test_set, test_class_set
+from data_extraction import training_set_scaled, test_set_scaled
+from helper_functions import cross_val_metrics
+from produce_model_metrics import produce_model_metrics
 from terminaltables import AsciiTable
 from sklearn.metrics import classification_report
 
+
+
 # Calling up metrics from the model scripts
-# KNN ---------------------------------------
-metrics_knn = knn.return_knn()
+# KNN -----------------------------------------------------------
+metrics_knn = produce_model_metrics(fit_knn, test_set,
+	test_class_set, 'kth_nearest_neighor')
+# Call each value from dictionary
+predictions_knn = metrics_knn['predictions']
+accuracy_knn = metrics_knn['accuracy']
 fpr = metrics_knn['fpr']
 tpr = metrics_knn['tpr']
 auc_knn = metrics_knn['auc']
-predictions = metrics_knn['predictions']
-test_error_rate = metrics_knn['test_error']
 
-# RF ----------------------------------------
-metrics_rf = rf.return_rf()
+# Test Error Rate
+test_error_rate_knn = 1 - accuracy_knn
+
+# Cross Validated Score
+mean_cv_knn, std_error_knn = cross_val_metrics(fit_knn,
+    training_set, class_set,
+    print_results = False)
+
+# RF ------------------------------------------------------------
+metrics_rf = produce_model_metrics(fit_rf, test_set,
+	test_class_set, 'random_forest')
+# Call each value from dictionary
+predictions_rf = metrics_rf['predictions']
+accuracy_rf = metrics_rf['accuracy']
 fpr2 = metrics_rf['fpr']
 tpr2 = metrics_rf['tpr']
 auc_rf = metrics_rf['auc']
-predictions_rf = metrics_rf['predictions']
-test_error_rate_rf = metrics_rf['test_error']
 
-# NN ----------------------------------------
-metrics_rf = nn.return_nn()
-fpr3 = metrics_rf['fpr']
-tpr3 = metrics_rf['tpr']
-auc_nn = metrics_rf['auc']
-predictions_nn = metrics_rf['predictions']
-test_error_rate_nn = metrics_rf['test_error']
+# Test Error Rate
+test_error_rate_rf = 1 - accuracy_rf
 
-# Main --------------------------------------
+# Cross Validated Score
+mean_cv_rf, std_error_rf = cross_val_metrics(fit_rf,
+    training_set, class_set,
+    print_results = False)
+
+# NN ------------------------------------------------------------
+metrics_nn = produce_model_metrics(fit_nn, test_set_scaled,
+	test_class_set, 'neural_network')
+
+# Call each value from dictionary
+predictions_nn = metrics_nn['predictions']
+accuracy_nn = metrics_nn['accuracy']
+fpr3 = metrics_nn['fpr']
+tpr3 = metrics_nn['tpr']
+auc_nn = metrics_nn['auc']
+
+# Test Error Rate
+test_error_rate_nn = 1 - accuracy_nn
+
+# Cross Validated Score
+mean_cv_nn, std_error_nn = cross_val_metrics(fit_nn,
+	training_set_scaled, class_set,
+	print_results = False)
+
+# Main ----------------------------------------------------------
 if __name__ == '__main__':
 	# Populate list for human readable table from terminal line
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate',
 		'False Negative for Test Set', 'Area under the Curve for ROC',
 		'Cross Validation Score'],
-		['Kth Nearest Neighbor',  round(test_error_rate, 3), 5,
+		['Kth Nearest Neighbor',  round(test_error_rate_knn, 3), 5,
 		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(knn.mean_cv_knn, knn.std_error_knn)],
+				.format(mean_cv_knn, std_error_knn)],
 		[ 'Random Forest', round(test_error_rate_rf, 3), 3,
 		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(rf.mean_cv_rf, rf.std_error_rf)],
+				.format(mean_cv_rf, std_error_rf)],
 		[ 'Neural Networks' ,  round(test_error_rate_nn, 3),  1,
 		round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(nn.mean_cv_nn, nn.std_error_nn)]]
+				.format(mean_cv_nn, std_error_nn)]]
 
 	# convert to AsciiTable from terminaltables package
 	table = AsciiTable(table_data)
@@ -68,7 +105,7 @@ if __name__ == '__main__':
 	target_names = ['Benign', 'Malignant']
 
 	print('Classification Report for Kth Nearest Neighbor:')
-	print(classification_report(predictions,
+	print(classification_report(predictions_knn,
 		test_class_set,
 		target_names = target_names))
 
@@ -85,7 +122,7 @@ if __name__ == '__main__':
 	print("Comparison of different logistics relating to model evaluation:")
 	print(table.table)
 
-	# Plotting ROC Curves
+	# Plotting ROC Curves----------------------------------------
 	f, ax = plt.subplots(figsize=(10, 10))
 
 	plt.plot(fpr, tpr, label='Kth Nearest Neighbor ROC Curve (area = {0: .3f})'\

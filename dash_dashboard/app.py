@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+import sys
 import numpy as np
 import dash
 import dash_core_components as dcc
@@ -7,8 +9,9 @@ import plotly.graph_objs as go
 import global_vars as gv
 import pandas as pd
 
-breast_cancer = gv.breast_cancer
-names = gv.names
+sys.path.insert(0, '../src/python/')
+from data_extraction import breast_cancer, names
+sys.path.pop(0)
 
 # Test set metrics
 cross_tab_knn = gv.cross_tab_knn

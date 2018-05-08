@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #####################################################
-##    WISCONSIN BREAST CANCER MACHINE LEARNING     ##
+##    WISCONSIN BREAST CANCER - MACHINE LEARNING   ##
 #####################################################
 #
 # Project by Raul Eulogio
@@ -12,22 +12,18 @@
 """
 Random Forest Classification
 """
-
+# Import Packages -----------------------------------------------
 import time
-import sys, os
-import numpy as np
+import sys
+from numpy import argsort
 import pandas as pd
 import helper_functions as hf
-import matplotlib.pyplot as plt
-from helper_functions import training_set, class_set, test_set, test_class_set
-from sklearn.model_selection import KFold, cross_val_score
-from sklearn.model_selection import GridSearchCV
+from data_extraction import training_set, class_set
+from data_extraction import test_set, test_class_set
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_curve
-from sklearn.metrics import auc
-from sklearn.externals import joblib
+from produce_model_metrics import produce_model_metrics
 
-# Fitting Random Forest
+# Fitting Random Forest -----------------------------------------
 # Set the random state for reproducibility
 fit_rf = RandomForestClassifier(random_state=42)
 
@@ -35,83 +31,81 @@ fit_rf = RandomForestClassifier(random_state=42)
 fit_rf.set_params(criterion = 'gini',
                   max_features = 'log2',
                   max_depth = 3,
-                  n_estimators=400,
-                  oob_score=True)
+                  n_estimators=400)
 
-# Training Model
+# Fit model on training data
 fit_rf.fit(training_set,
-	class_set)
+            class_set)
+
+# Tree Specific -------------------------------------------------
 
 # Extracting feature importance
 importances_rf = fit_rf.feature_importances_
 
 # Create indices for importance of features
-indices_rf = np.argsort(importances_rf)[::-1]
-
-# Random Forest Predictions on Test Set
-predictions_rf = fit_rf.predict(test_set)
-
-# Test Set Metrics
-test_crosstb_comp = pd.crosstab(index = test_class_set,
-                           columns = predictions_rf)
-
-test_crosstb = test_crosstb_comp.as_matrix()
-
-# Accurary Score for test set predictions
-accuracy_rf = fit_rf.score(test_set, test_class_set)
-
-# Here we calculate the test error rate!
-test_error_rate_rf = 1 - accuracy_rf
-
-predictions_prob = fit_rf.predict_proba(test_set)[:, 1]
-
-# ROC Curve stuff
-fpr2, tpr2, _ = roc_curve(test_class_set,
-	predictions_prob)
-
-auc_rf = auc(fpr2, tpr2)
-
-# Uncomment to save your model as a pickle object!
-#sys.path.append('../../models/pickle_models/model_rf.pkl')
-#path_rf = sys.path[-1]
-#
-#joblib.dump(fit_rf, path_rf)
+indices_rf = argsort(importances_rf)[::-1]
 
 if __name__=='__main__':
-	# Print model parameters
-	print(fit_rf)
+    # Print model parameters ------------------------------------
+    print(fit_rf, '\n')
 
-	hf.variable_importance(importances_rf, indices_rf)
+    # Initialize function for metrics ---------------------------
+    fit_dict_rf = produce_model_metrics(fit_rf, test_set,
+    test_class_set, 'random_forest')
 
-	print('Cross Validation')
+    # Extract each piece from dictionary
+    predictions_rf = fit_dict_rf['predictions']
+    accuracy_rf = fit_dict_rf['accuracy']
+    auc_rf = fit_dict_rf['auc']
 
-	# Cross validation
-	hf.cross_val_metrics(fit_rf,
-                  training_set,
-                  class_set,
-                  print_results = True)
+    print("Hyperparameter Optimization:")
+    print("chosen parameters: \n \
+    {'max_features': 'log2', \n \
+    'max_depth': 3, \n \
+    'bootstrap': True, \n \
+    'criterion': 'gini'}")
+    print("Note: Remove commented code to see this section \n")
 
-	print('Test set calculations:')
+	# np.random.seed(42)
+	# start = time.time()
+	# param_dist = {'max_depth': [2, 3, 4],
+	#              'bootstrap': [True, False],
+	#              'max_features': ['auto', 'sqrt',
+    # 'log2', None],
+	#              'criterion': ['gini', 'entropy']}
+	# cv_rf = GridSearchCV(fit_rf, cv = 10,
+    #	                 param_grid=param_dist,
+	#                     n_jobs = 3)
+	# cv_rf.fit(training_set, class_set)
+	# print('Best Parameters using grid search: \n',
+    #	cv_rf.best_params_)
+	# end = time.time()
+	# print('Time taken in grid search: {0: .2f}'\
+    #.format(end - start))
 
+    # Test Set Calculations -------------------------------------
+    # Test error rate
+    test_error_rate_rf = 1 - accuracy_rf
 
-	print(test_crosstb)
+    # Confusion Matrix
+    test_crosstb = hf.create_conf_mat(test_class_set,
+        predictions_rf)
 
-	print("Here is our mean accuracy on the test set:\n {0: 0.3f}"\
-		.format(accuracy_rf))
+    # Print Variable Importance
+    hf.variable_importance(importances_rf, indices_rf)
 
-	print("The test error rate for our model is:\n {0: .3f}"\
-		.format(test_error_rate_rf))
-else:
-	def return_rf():
-		'''
-		Function to output values created in script
-		'''
-		return {'fpr': fpr2,
-        'tpr': tpr2, 
-        'auc': auc_rf,
-        'predictions': predictions_rf,
-        'test_error': test_error_rate_rf}
+    # Cross validation
+    print('Cross Validation:')
+    hf.cross_val_metrics(fit_rf,
+    training_set,
+    class_set,
+    print_results = True)
 
-	mean_cv_rf, std_error_rf = hf.cross_val_metrics(fit_rf,
-		training_set, class_set,
-		print_results = False)
+    print('Confusion Matrix:')
+    print(test_crosstb, '\n')
+
+    print("Here is our mean accuracy on the test set:\n {0: 0.3f}"\
+        .format(accuracy_rf))
+
+    print("The test error rate for our model is:\n {0: .3f}"\
+        .format(test_error_rate_rf))

@@ -5,43 +5,66 @@ from sklearn.externals import joblib
 from urllib.request import urlopen
 from io import StringIO
 
+# Importing src python scripts ----------------------
 sys.path.insert(0, '../src/python/')
-from helper_functions import test_set
-import random_forest as rf
-import knn
-import neural_networks as nn
+from knn import fit_knn
+from random_forest import fit_rf
+from neural_networks import fit_nn
+from data_extraction import test_set_scaled
+from data_extraction import test_set, test_class_set
+from helper_functions import create_conf_mat
+from produce_model_metrics import produce_model_metrics
 sys.path.pop(0)
 
+# breast_cancer
+
 # Calling up metrics from the model scripts
-# KNN ---------------------------------------
-metrics_knn = knn.return_knn()
+# KNN -----------------------------------------------
+metrics_knn = produce_model_metrics(fit_knn, test_set,
+	test_class_set, 'kth_nearest_neighor')
+# Call each value from dictionary
+predictions_knn = metrics_knn['predictions']
+accuracy_knn = metrics_knn['accuracy']
 fpr = metrics_knn['fpr']
 tpr = metrics_knn['tpr']
 auc_knn = metrics_knn['auc']
-predictions = metrics_knn['predictions']
-test_error_rate = metrics_knn['test_error']
 
-cross_tab_knn = knn.test_crosstb
+test_error_rate_knn = 1 - accuracy_knn
 
-# RF ----------------------------------------
-metrics_rf = rf.return_rf()
+# Confusion Matrix
+cross_tab_knn = create_conf_mat(test_class_set,
+    predictions_knn)
+
+# RF ------------------------------------------------
+metrics_rf = produce_model_metrics(fit_rf, test_set,
+	test_class_set, 'random_forest')
+# Call each value from dictionary
+predictions_rf = metrics_rf['predictions']
+accuracy_rf = metrics_rf['accuracy']
 fpr2 = metrics_rf['fpr']
 tpr2 = metrics_rf['tpr']
 auc_rf = metrics_rf['auc']
-predictions_rf = metrics_rf['predictions']
-test_error_rate_rf = metrics_rf['test_error']
 
-cross_tab_rf = rf.test_crosstb
+test_error_rate_rf = 1 - accuracy_rf
+
+cross_tab_rf = create_conf_mat(test_class_set,
+    predictions_rf)
 
 # NN ----------------------------------------
-metrics_rf = nn.return_nn()
-fpr3 = metrics_rf['fpr']
-tpr3 = metrics_rf['tpr']
-auc_nn = metrics_rf['auc']
-predictions_nn = metrics_rf['predictions']
-test_error_rate_nn = metrics_rf['test_error']
+metrics_nn = produce_model_metrics(fit_nn, test_set_scaled,
+	test_class_set, 'neural_network')
 
-cross_tab_nn = nn.test_crosstb
+# Call each value from dictionary
+predictions_nn = metrics_nn['predictions']
+accuracy_nn = metrics_nn['accuracy']
+fpr3 = metrics_nn['fpr']
+tpr3 = metrics_nn['tpr']
+auc_nn = metrics_nn['auc']
+
+test_error_rate_nn = 1 - accuracy_nn
+
+cross_tab_nn = create_conf_mat(test_class_set,
+    predictions_nn)
 
 # Classification Report Stuff
 def create_class_report(class_report_string):
@@ -76,30 +99,3 @@ Avg/Total,  0.97, 0.97, 0.97, 114
 """
 
 class_rep_nn = create_class_report(class_rep_nn_str)
-
-# Loading data and cleaning dataset
-UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
-/breast-cancer-wisconsin/wdbc.data'
-
-names = ['id_number', 'diagnosis', 'radius_mean',
-         'texture_mean', 'perimeter_mean', 'area_mean',
-         'smoothness_mean', 'compactness_mean',
-         'concavity_mean','concave_points_mean',
-         'symmetry_mean', 'fractal_dimension_mean',
-         'radius_se', 'texture_se', 'perimeter_se',
-         'area_se', 'smoothness_se', 'compactness_se',
-         'concavity_se', 'concave_points_se',
-         'symmetry_se', 'fractal_dimension_se',
-         'radius_worst', 'texture_worst',
-         'perimeter_worst', 'area_worst',
-         'smoothness_worst', 'compactness_worst',
-         'concavity_worst', 'concave_points_worst',
-         'symmetry_worst', 'fractal_dimension_worst']
-
-breast_cancer = pd.read_csv(urlopen(UCI_data_URL), names=names)
-
-# Setting 'id_number' as our index
-breast_cancer.set_index(['id_number'], inplace = True)
-
-# Converted to binary to help later on with models and plots
-breast_cancer['diagnosis'] = breast_cancer['diagnosis'].map({'M':1, 'B':0})
