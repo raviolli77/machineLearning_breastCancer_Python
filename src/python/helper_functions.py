@@ -24,14 +24,23 @@ from sklearn.model_selection import cross_val_score
 
 def print_dx_perc(data_frame, col):
     """Function used to print class distribution for our data set"""
-    dx_vals = data_frame[col].value_counts()
-    dx_vals = dx_vals.reset_index()
-    # Create a function to output the percentage
-    f = lambda x, y: 100 * (x / sum(y))
-    for i in range(0, len(dx)):
-        print('{0} accounts for {1:.2f}% of the diagnosis class'\
-              .format(dx[i], f(dx_vals[col].iloc[i],
-                               dx_vals[col])))
+    try:
+        col_vals = data_frame[col].value_counts()
+        col_vals = col_vals.reset_index()
+        if len(col_vals['index']) > 20:
+            print('Warning: values in column are more than 20 \nPlease try a column with lower value counts!')
+        else:
+            # Create a function to output the percentage
+            f = lambda x, y: 100 * (x / sum(y))
+            for i in range(0, len(col_vals['index'])):
+                print('{0} accounts for {1:.2f}% of the {2} column'\
+                .format(col_vals['index'][i],
+                f(col_vals[col].iloc[i],
+                col_vals[col]),
+                col))
+    except KeyError as e:
+        print('{0}: Not found'.format(e))
+        print('Please choose the right column name!')
 
 def plot_box_plot(data_frame, data_set, xlim=None):
 	"""
@@ -89,13 +98,13 @@ def normalize_data_frame(data_frame):
 			data_frame_norm[col] = data_frame[col]
 	return data_frame_norm
 
-def variable_importance(importance, indices):
+
+def variable_importance(fit):
 	"""
 	Purpose
 	----------
-	Prints dependent variable names ordered from largest to smallest
-	based on information gain for CART model.
-
+	Checks if model is fitted CART model then produces variable importances
+    in dictionary. Includes the variable importance score and index of column.
 	Parameters
 	----------
 	* names: 	Name of columns included in model
@@ -104,13 +113,37 @@ def variable_importance(importance, indices):
 	* indices: 	Organized index of dataframe from largest to smallest
 				based on feature_importances_
 	"""
+	try:
+		check_is_fitted(fit, 'feature_importances_')
+	except Exception as e:
+		print(e)
+	importances = fit.feature_importances_
+	indices = np.argsort(importances)[::-1]
+	return {'importance': importances,
+    'index': indices}
+
+def print_var_importance(importance, indices, name_index):
+    """
+    Purpose
+    ----------
+    Prints dependent variable names ordered from largest to smallest
+    based on information gain for CART model.
+    Parameters
+    ----------
+    * importance: 	Array returned from feature_importances_ for CART
+    					models organized by dataframe index
+    * indices: 	Organized index of dataframe from largest to smallest
+    				based on feature_importances_
+    * name_index: 	Name of columns included in model
+    """
 	print("Feature ranking:")
 
-	for f in range(30):
+	for f in range(0, indices.shape[0]):
 		i = f
 		print("%d. The feature '%s' has a Mean Decrease in Gini of %f" % (f + 1,
 			names_index[indices[i]],
 			importance[indices[f]]))
+
 
 def variable_importance_plot(importance, indices):
     """

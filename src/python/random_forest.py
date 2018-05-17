@@ -18,6 +18,7 @@ import sys
 from numpy import argsort
 import pandas as pd
 import helper_functions as hf
+from data_extraction import names_index
 from data_extraction import training_set, class_set
 from data_extraction import test_set, test_class_set
 from sklearn.ensemble import RandomForestClassifier
@@ -40,10 +41,11 @@ fit_rf.fit(training_set,
 # Tree Specific -------------------------------------------------
 
 # Extracting feature importance
-importances_rf = fit_rf.feature_importances_
+var_imp_rf = hf.variable_importance(fit_rf)
 
-# Create indices for importance of features
-indices_rf = argsort(importances_rf)[::-1]
+importances_rf = var_imp_rf['importance']
+
+indices_rf = var_imp_rf['index']
 
 if __name__=='__main__':
     # Print model parameters ------------------------------------
@@ -92,7 +94,7 @@ if __name__=='__main__':
         predictions_rf)
 
     # Print Variable Importance
-    hf.variable_importance(importances_rf, indices_rf)
+    hf.print_var_importance(importances_rf, indices_rf, names_index)
 
     # Cross validation
     print('Cross Validation:')
