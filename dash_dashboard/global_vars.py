@@ -21,7 +21,7 @@ sys.path.pop(0)
 # Calling up metrics from the model scripts
 # KNN -----------------------------------------------
 metrics_knn = produce_model_metrics(fit_knn, test_set,
-	test_class_set, 'kth_nearest_neighor')
+	test_class_set, 'knn')
 # Call each value from dictionary
 predictions_knn = metrics_knn['predictions']
 accuracy_knn = metrics_knn['accuracy']
@@ -37,7 +37,7 @@ cross_tab_knn = create_conf_mat(test_class_set,
 
 # RF ------------------------------------------------
 metrics_rf = produce_model_metrics(fit_rf, test_set,
-	test_class_set, 'random_forest')
+	test_class_set, 'rf')
 # Call each value from dictionary
 predictions_rf = metrics_rf['predictions']
 accuracy_rf = metrics_rf['accuracy']
@@ -52,7 +52,7 @@ cross_tab_rf = create_conf_mat(test_class_set,
 
 # NN ----------------------------------------
 metrics_nn = produce_model_metrics(fit_nn, test_set_scaled,
-	test_class_set, 'neural_network')
+	test_class_set, 'nn')
 
 # Call each value from dictionary
 predictions_nn = metrics_nn['predictions']
