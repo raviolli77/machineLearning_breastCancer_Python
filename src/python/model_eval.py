@@ -30,7 +30,7 @@ from sklearn.metrics import classification_report
 # Calling up metrics from the model scripts
 # KNN -----------------------------------------------------------
 metrics_knn = produce_model_metrics(fit_knn, test_set,
-	test_class_set, 'kth_nearest_neighor')
+	test_class_set, 'knn')
 # Call each value from dictionary
 predictions_knn = metrics_knn['predictions']
 accuracy_knn = metrics_knn['accuracy']
@@ -43,12 +43,14 @@ test_error_rate_knn = 1 - accuracy_knn
 
 # Cross Validated Score
 mean_cv_knn, std_error_knn = cross_val_metrics(fit_knn,
-    training_set, class_set,
-    print_results = False)
+                                               training_set,
+                                               class_set,
+                                               'knn',
+                                               print_results = False)
 
 # RF ------------------------------------------------------------
 metrics_rf = produce_model_metrics(fit_rf, test_set,
-	test_class_set, 'random_forest')
+	test_class_set, 'rf')
 # Call each value from dictionary
 predictions_rf = metrics_rf['predictions']
 accuracy_rf = metrics_rf['accuracy']
@@ -61,12 +63,14 @@ test_error_rate_rf = 1 - accuracy_rf
 
 # Cross Validated Score
 mean_cv_rf, std_error_rf = cross_val_metrics(fit_rf,
-    training_set, class_set,
-    print_results = False)
+                                             training_set,
+                                             class_set,
+                                             'rf',
+                                             print_results = False)
 
 # NN ------------------------------------------------------------
 metrics_nn = produce_model_metrics(fit_nn, test_set_scaled,
-	test_class_set, 'neural_network')
+	test_class_set, 'nn')
 
 # Call each value from dictionary
 predictions_nn = metrics_nn['predictions']
@@ -80,23 +84,34 @@ test_error_rate_nn = 1 - accuracy_nn
 
 # Cross Validated Score
 mean_cv_nn, std_error_nn = cross_val_metrics(fit_nn,
-	training_set_scaled, class_set,
-	print_results = False)
+                                             training_set_scaled,
+                                             class_set,
+                                             'nn',
+                                             print_results = False)
 
 # Main ----------------------------------------------------------
 if __name__ == '__main__':
 	# Populate list for human readable table from terminal line
 	table_data = [[ 'Model/Algorithm', 'Test Error Rate',
-		'False Negative for Test Set', 'Area under the Curve for ROC',
-		'Cross Validation Score'],
-		['Kth Nearest Neighbor',  round(test_error_rate_knn, 3), 5,
-		round(auc_knn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-				.format(mean_cv_knn, std_error_knn)],
-		[ 'Random Forest', round(test_error_rate_rf, 3), 3,
-		round(auc_rf, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+                'False Negative for Test Set', 'Area under the Curve for ROC',
+                'Cross Validation Score'],
+               ['Kth Nearest Neighbor',
+                round(test_error_rate_knn, 3),
+                5,
+                round(auc_knn, 3),
+                "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+                .format(mean_cv_knn, std_error_knn)],
+               [ 'Random Forest',
+                round(test_error_rate_rf, 3),
+                3,
+                round(auc_rf, 3),
+                "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 				.format(mean_cv_rf, std_error_rf)],
-		[ 'Neural Networks' ,  round(test_error_rate_nn, 3),  1,
-		round(auc_nn, 3), "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+               [ 'Neural Networks' ,
+                round(test_error_rate_nn, 3),
+                1,
+                round(auc_nn, 3),
+                "Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
 				.format(mean_cv_nn, std_error_nn)]]
 
 	# convert to AsciiTable from terminaltables package

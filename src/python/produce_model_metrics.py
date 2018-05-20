@@ -6,22 +6,39 @@ from sklearn.exceptions import NotFittedError
 
 # Function for All Models to produce Metrics ---------------------
 
-def produce_model_metrics(my_fit, test_set, test_class_set, estimator):
+def produce_model_metrics(fit, test_set, test_class_set, estimator):
+    """
+    Purpose
+    ----------
+    Function that will return predictions and probability metrics for said
+    predictions.
+
+    Parameters
+    ----------
+    * fit: 	Fitted model containing the attribute feature_importances_
+    * test_set: dataframe/array containing the test set values
+    * test_class_set: array containing the target values for the test set
+    * estimator: String represenation of appropriate model, can only contain the
+    following: ['knn', 'rf', 'nn']
+
+    Returns
+    ----------
+    Box plot graph for all numeric data in data frame
+    """
     my_estimators = {
-    'random_forest': 'estimators_',
-    'neural_network': 'out_activation_',
-    'kth_nearest_neighor': '_fit_method'
+    'rf': 'estimators_',
+    'nn': 'out_activation_',
+    'knn': '_fit_method'
     }
     try:
-        check_is_fitted(my_fit, my_estimators[estimator])
+        check_is_fitted(fit, my_estimators[estimator])
     except NotFittedError as e:
-        print(e)
-        sys.exit(1)
+        return print(e)
     # Outputting predictions and prediction probability
     # for test set
-    predictions = my_fit.predict(test_set)
-    accuracy = my_fit.score(test_set, test_class_set)
-    predictions_prob = my_fit.predict_proba(test_set)[:, 1]
+    predictions = fit.predict(test_set)
+    accuracy = fit.score(test_set, test_class_set)
+    predictions_prob = fit.predict_proba(test_set)[:, 1]
     # ROC Curve stuff
     fpr, tpr, _ = roc_curve(test_class_set,
             predictions_prob)

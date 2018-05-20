@@ -20,107 +20,119 @@ import seaborn as sns
 from data_extraction import names_index
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
+from sklearn.utils.validation import check_is_fitted
+from sklearn.exceptions import NotFittedError
 
 
 def print_dx_perc(data_frame, col):
     """Function used to print class distribution for our data set"""
     try:
+        # Stores value counts
         col_vals = data_frame[col].value_counts()
+        # Resets index to make index a column in data frame
         col_vals = col_vals.reset_index()
+        # If the number of unique instances in column exceeds 20 print warning
         if len(col_vals['index']) > 20:
             print('Warning: values in column are more than 20 \nPlease try a column with lower value counts!')
+        # Else it calculates/prints percentage for each unique value in column
         else:
             # Create a function to output the percentage
             f = lambda x, y: 100 * (x / sum(y))
             for i in range(0, len(col_vals['index'])):
                 print('{0} accounts for {1:.2f}% of the {2} column'\
-                .format(col_vals['index'][i],
-                f(col_vals[col].iloc[i],
-                col_vals[col]),
-                col))
+                      .format(col_vals['index'][i],
+                              f(col_vals[col].iloc[i],
+                                col_vals[col]),
+                              col))
+    # try-except block goes here if it can't find the column in data frame
     except KeyError as e:
         print('{0}: Not found'.format(e))
         print('Please choose the right column name!')
 
 def plot_box_plot(data_frame, data_set, xlim=None):
-	"""
-	Purpose
-	----------
-	Creates a seaborn boxplot including all dependent
-	variables and includes x limit parameters
+    """
+    Purpose
+    ----------
+    Creates a seaborn boxplot including all dependent
+    variables and includes x limit parameters
 
-	Parameters
-	----------
-	* data_frame :	Name of pandas.dataframe
-	* data_set :		Name of title for the boxplot
-	* xlim : 	Set upper and lower x-limits
-	"""
-	f, ax = plt.subplots(figsize=(11, 15))
+    Parameters
+    ----------
+    * data_frame : Name of pandas.dataframe
+    * data_set : Name of title for the boxplot
+    * xlim : Set upper and lower x-limits
 
-	ax.set_axis_bgcolor('#fafafa')
-	if xlim is not None:
-		plt.xlim(*xlim)
-	plt.ylabel('Dependent Variables')
-	plt.title("Box Plot of {0} Data Set"\
-		.format(data_set))
-	ax = sns.boxplot(data = data_frame,
-		orient = 'h',
-		palette = 'Set2')
+    Returns
+    ----------
+    Box plot graph for all numeric data in data frame
+    """
+    f, ax = plt.subplots(figsize=(11, 15))
 
-	plt.show()
-	plt.close()
+    ax.set_axis_bgcolor('#fafafa')
+    if xlim is not None:
+        plt.xlim(*xlim)
+    plt.ylabel('Dependent Variables')
+    plt.title("Box Plot of {0} Data Set"\
+              .format(data_set))
+    ax = sns.boxplot(data = data_frame.select_dtypes(include = ['number']),
+                     orient = 'h')
+
+    plt.show()
+    plt.close()
 
 def normalize_data_frame(data_frame):
-	"""
-	Purpose
-	----------
-	Function created to normalize data set.
-	Intializes an empty data frame which will normalize all floats types
-	and append the non-float types. Application is very specific
-	to this dataset, can be changed to include integer types in the
-	normalization.
+    """
+    Purpose
+    ----------
+    Function created to normalize data set.
+    Intializes an empty data frame which will normalize all columns that
+    have at > 10 unique values (chosen arbitrarily since target columns
+    will have classes < 10) and append the non-float types.
+    Application can vary significantly for different data set, use with caution
+    or modify accordingly.
 
-	Parameters
-	----------
-	* data_frame: 	Name of pandas.dataframe
+    Parameters
+    ----------
+    * data_frame: 	Name of pandas.dataframe
 
-
-	Returns
-	----------
-	* data_frame_norm:	Normalized dataframe values ranging (0, 1)
-	"""
-	data_frame_norm = pd.DataFrame()
-	for col in data_frame:
-		if col in data_frame.select_dtypes(include=[np.float]):
-			data_frame_norm[col]=((data_frame[col] - data_frame[col].min()) /
-			(data_frame[col].max() - data_frame[col].min()))
-		else:
-			data_frame_norm[col] = data_frame[col]
-	return data_frame_norm
+    Returns
+    ----------
+    * data_frame_norm:	Normalized dataframe values ranging (0, 1)
+    """
+    data_frame_norm = pd.DataFrame()
+    for col in data_frame:
+        if ((len(np.unique(data_frame[col])) > 10) & (data_frame[col].dtype != 'object')):
+            data_frame_norm[col]=((data_frame[col] - data_frame[col].min()) /
+                                  (data_frame[col].max() - data_frame[col].min()))
+        else:
+            data_frame_norm[col] = data_frame[col]
+    return data_frame_norm
 
 
 def variable_importance(fit):
-	"""
-	Purpose
-	----------
-	Checks if model is fitted CART model then produces variable importances
-    in dictionary. Includes the variable importance score and index of column.
-	Parameters
-	----------
-	* names: 	Name of columns included in model
-	* importance: 	Array returned from feature_importances_ for CART
-					models organized by dataframe index
-	* indices: 	Organized index of dataframe from largest to smallest
-				based on feature_importances_
-	"""
-	try:
-		check_is_fitted(fit, 'feature_importances_')
-	except Exception as e:
-		print(e)
-	importances = fit.feature_importances_
-	indices = np.argsort(importances)[::-1]
-	return {'importance': importances,
-    'index': indices}
+    """
+    Purpose
+    ----------
+    Checks if model is fitted CART model then produces variable importance
+    and respective indices in dictionary.
+
+    Parameters
+    ----------
+    * fit: 	Fitted model containing the attribute feature_importances_
+
+    Returns
+    ----------
+    Dictionary containing arrays with importance score and index of columns
+    ordered in descending order of importance.
+    """
+    try:
+        check_is_fitted(fit, 'feature_importances_')
+    except Exception as e:
+        return print(e)
+    importances = fit.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    return {'importance': importances,
+            'index': indices}
 
 def print_var_importance(importance, indices, name_index):
     """
@@ -135,17 +147,22 @@ def print_var_importance(importance, indices, name_index):
     * indices: 	Organized index of dataframe from largest to smallest
     				based on feature_importances_
     * name_index: 	Name of columns included in model
+
+    Returns
+    ----------
+    Prints feature importance in descending order
     """
-	print("Feature ranking:")
+    print("Feature ranking:")
 
-	for f in range(0, indices.shape[0]):
-		i = f
-		print("%d. The feature '%s' has a Mean Decrease in Gini of %f" % (f + 1,
-			names_index[indices[i]],
-			importance[indices[f]]))
+    for f in range(0, indices.shape[0]):
+        i = f
+        print("{0}. The feature '{1}' has a Mean Decrease in Impurity of {2:.5f}"
+              .format(f + 1,
+                      names_index[indices[i]],
+                      importance[indices[f]]))
 
 
-def variable_importance_plot(importance, indices):
+def variable_importance_plot(importance, indices, name_index):
     """
     Purpose
     ----------
@@ -155,11 +172,12 @@ def variable_importance_plot(importance, indices):
 
     Parameters
     ----------
-    importance_desc: Array returned from feature_importances_ for CART
-                    models organized in descending order
+    * importance: 	Array returned from feature_importances_ for CART
+    					models organized by dataframe index
+    * indices: 	Organized index of dataframe from largest to smallest
+    				based on feature_importances_
+    * name_index: 	Name of columns included in model
 
-    indices: Organized index of dataframe from largest to smallest
-                    based on feature_importances_
     Returns:
     ----------
     Returns variable importance plot in descending order
@@ -168,7 +186,7 @@ def variable_importance_plot(importance, indices):
 
     importance_desc = sorted(importance)
     feature_space = []
-    for i in range(29, -1, -1):
+    for i in range(indices.shape[0], -1, -1):
         feature_space.append(names_index[indices[i]])
 
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -177,111 +195,127 @@ def variable_importance_plot(importance, indices):
     plt.title('Feature importances for Random Forest Model\
     \nBreast Cancer (Diagnostic)')
     plt.barh(index,
-         importance_desc,
-         align="center",
-         color = '#875FDB')
+             importance_desc,
+             align="center",
+             color = '#875FDB')
     plt.yticks(index,
-           feature_space)
+               feature_space)
 
     plt.ylim(-1, 30)
     plt.xlim(0, max(importance_desc) + 0.01)
-    plt.xlabel('Mean Decrease in Gini')
+    plt.xlabel('Mean Decrease in Impurity')
     plt.ylabel('Feature')
 
     plt.show()
     plt.close()
 
-def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
-	'''
-	Purpose
-	----------
-	Function creates ROC Curve for respective model given selected parameters.
-	Optional x and y limits to zoom into graph
+def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
+    """
+    Purpose
+    ----------
+    Function creates ROC Curve for respective model given selected parameters.
+    Optional x and y limits to zoom into graph
 
-	Parameters
-	----------
-	* fpr: 	Array returned from sklearn.metrics.roc_curve for increasing
-			false positive rates
-	* tpr: 	Array returned from sklearn.metrics.roc_curve for increasing
-			true positive rates
-	* auc:	Float returned from sklearn.metrics.auc (Area under Curve)
-	* mod: 	String represenation of appropriate model, can only contain the
-			following: ['knn', 'rf', 'nn']
-	* xlim:		Set upper and lower x-limits
-	* ylim:		Set upper and lower y-limits
-	'''
-	mod_list = ['knn', 'rf', 'nn']
-	method = [('Kth Nearest Neighbor', 'deeppink'), ('Random Forest', 'red'),
-	('Neural Network', 'purple')]
+    Parameters
+    ----------
+    * fpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    false positive rates
+    * tpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    true positive rates
+    * auc:	Float returned from sklearn.metrics.auc (Area under Curve)
+    * estimator: 	String represenation of appropriate model, can only contain the
+    following: ['knn', 'rf', 'nn']
+    * xlim:		Set upper and lower x-limits
+    * ylim:		Set upper and lower y-limits
+    """
+    method = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
+              'rf': ['Random Forest', 'red'],
+              'nn': ['Neural Network', 'purple']}
 
-	plot_title = ''
-	color_value = ''
-	for i in range(0, 3):
-		if mod_list[i] == mod:
-			plot_title = method[i][0]
-			color_value = method[i][1]
+    try:
+        plot_title = method[estimator][0]
+        color_value = method[estimator][1]
+    except KeyError as e:
+        print(e)
+        return print('Model specified not found in dictionary.\nAvailable options are: {0}'
+                     .format(list(method)))
 
-	fig, ax = plt.subplots(figsize=(10, 10))
-	ax.set_axis_bgcolor('#fafafa')
+    fig, ax = plt.subplots(figsize=(10, 10))
+    ax.set_axis_bgcolor('#fafafa')
 
-	plt.plot(fpr, tpr,
-		color=color_value,
-		linewidth=1)
-	plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'\
-		.format(plot_title, auc))
+    plt.plot(fpr, tpr,
+             color=color_value,
+             linewidth=1)
+    plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'\
+              .format(plot_title, auc))
 
-	plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
-	plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
-	plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
-	if xlim is not None:
-		plt.xlim(*xlim)
-	if ylim is not None:
-		plt.ylim(*ylim)
-	plt.xlabel('False Positive Rate')
-	plt.ylabel('True Positive Rate')
-	plt.show()
-	plt.close()
-	plt.savefig('{0}.png'.format(mod))
+    plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
+    plt.plot([0, 0], [1, 0], 'k--', lw=2, color = 'black')
+    plt.plot([1, 0], [1, 1], 'k--', lw=2, color = 'black')
+    if xlim is not None:
+        plt.xlim(*xlim)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.show()
+    plt.close()
 
+def cross_val_metrics(fit, training_set, class_set, estimator, print_results = True):
+    """
+    Purpose
+    ----------
+    Function helps automate cross validation processes while including
+    option to print metrics or store in variable
 
-def cross_val_metrics(fit, training_set, class_set, print_results = True):
-	"""
-	Purpose
-	----------
-	Function helps automate cross validation processes while including
-	option to print metrics or store in variable
+    Parameters
+    ----------
+    * fit:	Fitted model
+    * training_set: 	Dataframe containing 80% of original dataframe
+    * class_set: 	Dataframe containing the respective target vaues
+    for the training_set
+    * estimator: 	String represenation of appropriate model, can only contain the
+    following: ['knn', 'rf', 'nn']
+    * print_results:	If true prints the metrics, else saves metrics as
+    variables
 
-	Parameters
-	----------
-	* fit:	Fitted model
-	* training_set: 	Dataframe containing 80% of original dataframe
-	* class_set: 	Dataframe containing the respective target vaues
-					for the training_set
-	* print_results:	If true prints the metrics, else saves metrics as
-	variables
+    Returns
+    ----------
+    * scores.mean(): 	Float representing cross validation score
+    * scores.std() / 2: 	Float representing the standard error (derived
+    from cross validation score's standard deviation)
+    """
+    my_estimators = {
+    'rf': 'estimators_',
+    'nn': 'out_activation_',
+    'knn': '_fit_method'
+    }
+    try:
+        check_is_fitted(fit, my_estimators[estimator])
+    except NotFittedError as e:
+        return print(e)
 
-	Returns
-	----------
-	* scores.mean(): 	Float representing cross validation score
-	* scores.std() / 2: 	Float representing the standard error (derived
-				from cross validation score's standard deviation)
-	"""
-	n = KFold(n_splits=10)
-	scores = cross_val_score(fit,
-                         training_set,
-                         class_set,
-                         cv = n)
-	if print_results:
-		print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
-			.format(scores.mean(), scores.std() / 2))
-	else:
-		return scores.mean(), scores.std() / 2
+    n = KFold(n_splits=10)
+    scores = cross_val_score(fit,
+                             training_set,
+                             class_set,
+                             cv = n)
+    if print_results:
+        print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
+              .format(scores.mean(), scores.std() / 2))
+    else:
+        return scores.mean(), scores.std() / 2
 
 
 def create_conf_mat(test_class_set, predictions):
-    # Test Set Metrics
-	test_crosstb_comp = pd.crosstab(index = test_class_set,
-	                           columns = predictions)
-
-	test_crosstb = test_crosstb_comp.as_matrix()
-	return test_crosstb
+    """Function returns confusion matrix comparing two arrays"""
+    if (len(test_class_set.shape) != len(predictions.shape) == 1):
+        return print('Arrays entered are not 1-D.\nPlease enter the correctly sized sets.')
+    elif (test_class_set.shape != predictions.shape):
+        return print('Number of values inside the Arrays are not equal to each other.\nPlease make sure the array has the same number of instances.')
+    else:
+        # Set Metrics
+        test_crosstb_comp = pd.crosstab(index = test_class_set,
+                                        columns = predictions)
+        test_crosstb = test_crosstb_comp.as_matrix()
+        return test_crosstb

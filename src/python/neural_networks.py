@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
 	# Initialize function for metrics ---------------------------
 	fit_dict_nn = produce_model_metrics(fit_nn, test_set_scaled,
-	test_class_set, 'neural_network')
+	test_class_set, 'nn')
 	# Extract each piece from dictionary
 	predictions_nn = fit_dict_nn['predictions']
 	accuracy_nn = fit_dict_nn['accuracy']
@@ -78,9 +78,10 @@ if __name__ == '__main__':
 	print("Cross Validation:")
 
 	hf.cross_val_metrics(fit_nn,
-	training_set_scaled,
-	class_set,
-	print_results = True)
+                      training_set_scaled,
+                      class_set,
+                      'nn',
+                      print_results = True)
 
 	print('Confusion Matrix:')
 	print(test_crosstb, '\n')

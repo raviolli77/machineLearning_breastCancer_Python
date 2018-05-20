@@ -46,10 +46,10 @@ if __name__ == '__main__':
 	for k in myKs:
 		knn = KNeighborsClassifier(n_neighbors=k)
 		scores = cross_val_score(knn,
-			training_set,
-			class_set,
-			cv = 10,
-			scoring='accuracy')
+                           training_set,
+                           class_set,
+                           cv = 10,
+                           scoring='accuracy')
 		cross_vals.append(scores.mean())
 
 	MSE = [1 - x for x in cross_vals]
@@ -57,8 +57,10 @@ if __name__ == '__main__':
 	print("Optimal K is {0}".format(optimal_k), '\n')
 
 	# Initialize function for metrics ---------------------------
-	fit_dict_knn = produce_model_metrics(fit_knn, test_set,
-	test_class_set, 'kth_nearest_neighor')
+	fit_dict_knn = produce_model_metrics(fit_knn,
+                                      test_set,
+                                      test_class_set,
+                                      'knn')
 	# Extract each piece from dictionary
 	predictions_knn = fit_dict_knn['predictions']
 	accuracy_knn = fit_dict_knn['accuracy']
@@ -74,9 +76,10 @@ if __name__ == '__main__':
 
 	print('Cross Validation:')
 	hf.cross_val_metrics(fit_knn,
-	training_set,
-	class_set,
-	print_results = True)
+                      training_set,
+                      class_set,
+                      'knn', 
+                      print_results = True)
 
 	print('Confusion Matrix:')
 	print(test_crosstb, '\n')

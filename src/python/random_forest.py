@@ -52,8 +52,10 @@ if __name__=='__main__':
     print(fit_rf, '\n')
 
     # Initialize function for metrics ---------------------------
-    fit_dict_rf = produce_model_metrics(fit_rf, test_set,
-    test_class_set, 'random_forest')
+    fit_dict_rf = produce_model_metrics(fit_rf,
+                                        test_set,
+                                        test_class_set,
+                                        'rf') 
 
     # Extract each piece from dictionary
     predictions_rf = fit_dict_rf['predictions']
@@ -99,9 +101,10 @@ if __name__=='__main__':
     # Cross validation
     print('Cross Validation:')
     hf.cross_val_metrics(fit_rf,
-    training_set,
-    class_set,
-    print_results = True)
+                         training_set,
+                         class_set,
+                         'rf',
+                         print_results = True)
 
     print('Confusion Matrix:')
     print(test_crosstb, '\n')

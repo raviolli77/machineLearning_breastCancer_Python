@@ -53,9 +53,9 @@ names_index = names[2:]
 
 # Create Training and Test Set ----------------------------------
 feature_space = breast_cancer.iloc[:,
-    breast_cancer.columns != 'diagnosis']
+                                   breast_cancer.columns != 'diagnosis']
 feature_class = breast_cancer.iloc[:,
-    breast_cancer.columns == 'diagnosis']
+                                   breast_cancer.columns == 'diagnosis']
 
 
 training_set, test_set, class_set, test_class_set = train_test_split(feature_space,
