@@ -48,6 +48,7 @@ def print_dx_perc(data_frame, col):
     except KeyError as e:
         print('{0}: Not found'.format(e))
         print('Please choose the right column name!')
+        raise e(col)
 
 def plot_box_plot(data_frame, data_set, xlim=None):
     """
@@ -127,8 +128,9 @@ def variable_importance(fit):
     """
     try:
         check_is_fitted(fit, 'feature_importances_')
-    except Exception as e:
-        return print(e)
+    except (NotFittedError, TypeError) as e:
+        print(e)
+        raise e
     importances = fit.feature_importances_
     indices = np.argsort(importances)[::-1]
     return {'importance': importances,
@@ -228,17 +230,17 @@ def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
     * xlim:		Set upper and lower x-limits
     * ylim:		Set upper and lower y-limits
     """
-    method = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
+    my_estimators = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
               'rf': ['Random Forest', 'red'],
               'nn': ['Neural Network', 'purple']}
 
     try:
-        plot_title = method[estimator][0]
-        color_value = method[estimator][1]
+        plot_title = my_estimators[estimator][0]
+        color_value = my_estimators[estimator][1]
     except KeyError as e:
-        print(e)
-        return print('Model specified not found in dictionary.\nAvailable options are: {0}'
-                     .format(list(method)))
+        print('Model specified not found in dictionary.\nAvailable options are: {0}'
+              .format(list(my_estimators)))
+        raise KeyError(estimator)
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_axis_bgcolor('#fafafa')

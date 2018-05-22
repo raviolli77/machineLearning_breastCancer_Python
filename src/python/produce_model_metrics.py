@@ -26,14 +26,21 @@ def produce_model_metrics(fit, test_set, test_class_set, estimator):
     Box plot graph for all numeric data in data frame
     """
     my_estimators = {
-    'rf': 'estimators_',
-    'nn': 'out_activation_',
-    'knn': '_fit_method'
+        'rf': 'estimators_',
+        'nn': 'out_activation_',
+        'knn': '_fit_method'
     }
     try:
-        check_is_fitted(fit, my_estimators[estimator])
-    except NotFittedError as e:
-        return print(e)
+        my_estimator = my_estimators[estimator]
+    except KeyError as e:
+        print('Model specified not found in dictionary.\nAvailable options are: {0}'
+              .format(list(my_estimators)))
+        raise KeyError(estimator)
+    try:
+        check_is_fitted(fit, my_estimator)
+    except (NotFittedError, TypeError) as e:
+        print(e)
+        raise e
     # Outputting predictions and prediction probability
     # for test set
     predictions = fit.predict(test_set)
