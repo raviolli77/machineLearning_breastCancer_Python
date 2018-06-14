@@ -497,7 +497,7 @@ plt.title('OOB Error Rate Across various Forest sizes \n(From 15 to 1000 trees)'
 
 
 
-![png](output_36_1.png)
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_36_1.png)
 
 
 The OOB error rate starts to oscilate at around 400 trees, so I will go ahead and use my judgement to use 400 trees in my forest. Using the `pandas` series object I can easily find the OOB error rate for the estimator as follows:
@@ -753,7 +753,7 @@ variable_importance_plot(importances_rf, indices_rf, names_index)
 ```
 
 
-![png](output_50_0.png)
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_50_0.png)
 
 
 The visual helps drive the point of variable importance, since you can clearly see the difference in importance of variables for the ensemble method. Certain cutoff points can be made to reduce the inclusion of features and can help in the accuracy of the model, since we'll be removing what is considered noise within our feature space.
@@ -897,7 +897,7 @@ plt.show()
 ```
 
 
-![png](output_58_0.png)
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_58_0.png)
 
 
 
@@ -1014,7 +1014,7 @@ plot_roc_curve(fpr2, tpr2, auc_rf, 'rf',
 ```
 
 
-![png](output_65_0.png)
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_65_0.png)
 
 
 Our model did exceptional with an AUC over .90, now we do a zoomed in view to showcase the closeness our ROC Curve is relative to the ideal ROC Curve. 
@@ -1027,7 +1027,7 @@ plot_roc_curve(fpr2, tpr2, auc_rf, 'rf',
 ```
 
 
-![png](output_67_0.png)
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_67_0.png)
 
 
 # Classification Report

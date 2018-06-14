@@ -17,45 +17,74 @@
 
 # <a name='intro'></a>Introduction
 
-Random forests, also known as random decision forests, are a popular ensemble method that can be used to build predictive models for both classification and regression problems. Ensemble methods use multiple learning models to gain better predictive results — in the case of a random forest, the model creates an entire forest of random uncorrelated decision trees to arrive at the best possible answer.
+A Random Forest (also known as Random Decision Forest) is a popular supervised classification method used for predictive modeling both for classification and regression problems (for this tutorial, we will be going over Random Forest in the classification context). Essentially a Random Forest is an entire forest of random uncorrelated decision trees, classified as an ensemble method.  
 
-To demonstrate how this works in practice — specifically in a classification context — I’ll be walking you through an example using a famous data set from the University of California, Irvine (UCI) Machine Learning Repository. The data set, called the Breast Cancer Wisconsin (Diagnostic) Data Set, deals with binary classification and includes features computed from digitized images of biopsies. The data set can be downloaded [here](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29).
+Ensemble methods is the use of multiple learning models to gain better predictive results. For Random Forest, the model creates multiple Decision Trees.
 
-To follow this tutorial, you will need some familiarity with classification and regression tree (CART) modeling. I will provide a brief overview of different CART methodologies that are relevant to random forest, beginning with decision trees. If you’d like to brush up on your knowledge of CART modeling before beginning the tutorial, I highly recommend reading Chapter 8 of the book “An Introduction to Statistical Learning with Applications in R,” which can be downloaded [here](http://www-bcf.usc.edu/~gareth/ISL/).
+We will be using a famous data set from the UCI Machine Learning Repository, called the [Breast Cancer (Diagnostic)](https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29) data set which deals with binary classification. 
+
+Familiarity with Classification and Regression Tree (or CART) modeling is expected for this tutorial, a great resource for CART modeling can be found in Chapter 8 of this [book](http://www-bcf.usc.edu/~gareth/ISL/). I will give a brief overview of different CART methodologies culminating to the relevance and preference towards Random Forest, beginning with Decision Trees. 
 
 ## Decision Trees
 
-Decision trees are simple but intuitive models that utilize a top-down approach in which the root node creates binary splits until a certain criteria is met. This binary splitting of nodes provides a predicted value based on the interior nodes leading to the terminal (final) nodes. In a classification context, a decision tree will output a predicted target class for each terminal node produced.
+Decision trees are simple but intuitive models that utilize a top down approach where the root node then creates binary splits until a certain criteria is met. More information on its implementation can be found [here](http://scikit-learn.org/stable/modules/tree.html). 
 
-Although intuitive, decision trees have limitations that prevent them from being useful in machine learning applications. You can learn more about implementing a decision tree [here](http://scikit-learn.org/stable/modules/tree.html).
+The binary *splitting* of nodes will give an outcome of the predicted value based on the interior nodes leading to the terminal (final) nodes. In the classification context, it will output a predicted target class for each terminal node produced.
 
-### Limitations to Decision Trees
+Although intuitive, Decision trees do have limitations that prevent it from being a useful model in machine learning applications.
 
-Decision trees tend to have high variance when they utilize different training and test sets of the same data, since they tend to overfit on training data. This leads to poor performance on unseen data. Unfortunately, this limits the usage of decision trees in predictive modeling. However, using ensemble methods, we can create models that utilize underlying decision trees as a foundation for producing powerful results.
+### Limitations to Decision trees
+
+Decision trees tend to have high variance when utilizing different training and test sets of the same data, since they tend to over-fit on the training data leading to poorly performance on unseen data. This limits the usage of Decision trees in predictive modeling, but through ensemble methods we can create models that produce powerful results utilzing the underlying Decision Trees as a basis for the methodology behind ensembles. 
 
 ## Bootstrap Aggregating Trees
 
-Through a process known as bootstrap aggregating (or bagging), it’s possible to create an ensemble (forest) of trees where multiple training sets are generated with replacement, meaning data instances — or in the case of this tutorial, patients — can be repeated. Once the training sets are created, a CART model can be trained on each subsample.
+Through a process known as **B**ootstrap **Agg**regat**ing** (or Bagging), we create an ensemble (forest) of trees where multiple training sets are generated with replacement (meaning data instances or in our case patients can be repeated). Once the training sets are created a CART model is trained on each subsample. 
 
-This approach helps reduce variance by averaging the ensemble's results, creating a majority-votes model. Another important feature of bagging trees is that the resulting model uses the entire feature space when considering node splits. Bagging trees allow the trees to grow without pruning, reducing the tree-depth sizes and resulting in high variance but lower bias, which can help improve predictive power.
+This approach helps reduce variance by averaging the ensemble's results, creating a majority votes model. Another important feature of Bagging trees is that the model uses the entire feature space when considering node splits. Bagging trees allow the trees to grow without pruning (reducing the tree depth sizes. See [this article](https://www.displayr.com/machine-learning-pruning-decision-trees/) for more details) resulting in high variance but lower bias, which can help in improving predictive power. 
 
-However, a downside to this process is that the utilization of the entire feature space creates a risk of correlation between trees, increasing bias in the model.
+However, a downside to this process is utliziation of the entire feature space since there is a risk of having correlation between trees increasing bias in our model.
 
-### Limitations to Bagging Trees
+### Limitation to Bagging Trees
 
-The main limitation of bagging trees is that it uses the entire feature space when creating splits in the trees. If some variables within the feature space are indicative of certain predictions, you run the risk of having a forest of correlated trees, thereby increasing bias and reducing variance.
+As stated earlier since each new subsample can include repeated observations we can over-fit our model on the training set. 
 
-However, a simple tweak of the bagging trees methodology can prove advantageous to the model’s predictive power.
+The main limitation of Bagging Trees is the use of the entire feature space when creating splits in the trees. If some variables within our feature space are indicative of certain predictions we run the risk of having a forest of correlated trees, thereby increasing bias and reducing variance.  
+
+A simple tweak of Bagging Trees methodology proves advantageous to our models predictive power. 
 
 ## Random Forest
 
-Random forest aims to reduce the previously mentioned correlation issue by choosing only a subsample of the feature space at each split. Essentially, it aims to make the trees de-correlated and prune the trees by setting a stopping criteria for node splits, which I will cover in more detail later.
+Random Forest aims to reduce the previously mentioned correlation by choosing only a subsample of the feature space at each split. Essentially aiming to make the trees de-correlated, along with pruning of trees by setting a stopping criteria for node splits (more on this later). 
 
+The processes outlined in this project are typical of a machine learning project, so I've given an outline of what will be done throughout the tutorial. 
+
+After this tutorial you will be familiar with how to implement (in `python`):
+
++ Basic exploratory analysis
++ Training and test set creation
++ Model fitting using `sklearn` 
++ Hyperparamter optimization
++ Out of Bag Error Rate
++ Calculating Variable Importance 
++ Test Set calculations
++ Cross Validation
++ ROC Curve Estimation
+
+
+# Buisness Uses
+
+Random Forest can be used for a plethora of data circumstances including but not limited to:
+
++ Image Classification
++ Detecting Fraudulent cases in banking systems
++ Recommendation Engines
++ Feature Selection 
 
 
 # <a name="load_pack"></a>Load Packages
 
-We load our modules into our python environment. In my case I am employing a `Jupyter Notebook` while running inside a `virtualenv` environment (the `requirements.txt` file associated with this repo contains the module information for reproducibility). 
+We load our modules into our python environment. I am employing a `Jupyter Notebook` while running inside a `virtualenv` environment (the `requirements.txt` file associated with this repo contains the module information for reproducibility). 
 
 We will be primarily using the [SciPy](https://www.scipy.org/stackspec.html) stack focusing on `pandas`, `matplotlib`, `seaborn` and `sklearn` for this tutorial. 
 
@@ -75,21 +104,21 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestClassifier 
+from sklearn.metrics import confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.utils.validation import check_is_fitted
+from sklearn.exceptions import NotFittedError
 from urllib.request import urlopen 
 
 plt.style.use('ggplot')
 pd.set_option('display.max_columns', 500) 
 ```
 
-
 # <a name='load_data'></a>Load Data
-For this section, I'll load the data into a **Pandas** dataframe using `urlopen` from the `urllib.request` module. 
+For this section, I'll load the data into a `Pandas` dataframe using `urlopen` from the `urllib.request` module. 
 
-Instead of downloading a **csv**, I started implementing this method(Inspired by this [Python Tutorials](https://github.com/JasonFreeberg/PythonTutorials)) where I grab the data straight from the [UCI Machine Learning Database](https://archive.ics.uci.edu/ml/datasets.html) using an http request. 
+Instead of downloading a `csv`, I started implementing this method (inspired by this [Python Tutorials](https://github.com/JasonFreeberg/PythonTutorials)) where I grab the data straight from the [UCI Machine Learning Database](https://archive.ics.uci.edu/ml/datasets.html) using an http request. 
 
-
-**NOTE**: Original Data set can also be found [here](https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data)
 
 
 ```python
@@ -100,7 +129,7 @@ UCI_data_URL = 'https://archive.ics.uci.edu/ml/machine-learning-databases\
 
 I do recommend on keeping a static file for your dataset as well.
 
-Next, I created a list with the appropriate names and set them as the column names, once I load them unto a `pandas` data frame 
+Next, I created a list with the appropriate names and set them as the data frame's column names, then I load them unto a `pandas` data frame 
 
 
 ```python
@@ -143,17 +172,45 @@ Given context of the data set, I know that there is no missing data, but I ran a
 
 
 ```python
-for col in breast_cancer:
-    if ((breast_cancer[col].isnull().values.ravel().sum()) == 0):
-        pass
-    else:
-        print(col)
-        print((breast_cancer[col].isnull().values.ravel().sum()))
-print('Sanity Check! \nNo missing Values found!')
+breast_cancer.apply(lambda x: x.isnull().values.ravel().sum())
 ```
 
-    Sanity Check! 
-    No missing Values found!
+
+
+
+    diagnosis                  0
+    radius_mean                0
+    texture_mean               0
+    perimeter_mean             0
+    area_mean                  0
+    smoothness_mean            0
+    compactness_mean           0
+    concavity_mean             0
+    concave_points_mean        0
+    symmetry_mean              0
+    fractal_dimension_mean     0
+    radius_se                  0
+    texture_se                 0
+    perimeter_se               0
+    area_se                    0
+    smoothness_se              0
+    compactness_se             0
+    concavity_se               0
+    concave_points_se          0
+    symmetry_se                0
+    fractal_dimension_se       0
+    radius_worst               0
+    texture_worst              0
+    perimeter_worst            0
+    area_worst                 0
+    smoothness_worst           0
+    compactness_worst          0
+    concavity_worst            0
+    concave_points_worst       0
+    symmetry_worst             0
+    fractal_dimension_worst    0
+    dtype: int64
+
 
 
 This will be used for the random forest model, where the `id_number` won't be relevant. 
@@ -170,7 +227,10 @@ Let's preview the data set utilizing the `head()` function which will give the f
 ```python
 breast_cancer.head()
 ```
+
+
 <iframe width="798" height="280" frameborder="0" src='https://cdn.rawgit.com/raviolli77/7275dd3c9455f052171b22d3da5185b2/raw/fdc8c659fae9288f1ba1da01103265eb9403fc0b/head.html'></iframe>
+
 
 
 Next, we'll give the dimensions of the data set; where the first value is the number of patients and the second value is the number of features. 
@@ -236,14 +296,28 @@ We do so by creating a function that will output the distribution of the target 
 ```python
 def print_dx_perc(data_frame, col):
     """Function used to print class distribution for our data set"""
-    dx_vals = data_frame[col].value_counts()
-    dx_vals = dx_vals.reset_index()
-    # Create a function to output the percentage 
-    f = lambda x, y: 100 * (x / sum(y))
-    for i in range(0, len(dx)):
-        print('{0} accounts for {1:.2f}% of the diagnosis class'\
-              .format(dx[i], f(dx_vals[col].iloc[i], 
-                               dx_vals[col])))
+    try:
+        # Stores value counts
+        col_vals = data_frame[col].value_counts()
+        # Resets index to make index a column in data frame
+        col_vals = col_vals.reset_index()
+        # If the number of unique instances in column exceeds 20 print warning
+        if len(col_vals['index']) > 20:
+            print('Warning: values in column are more than 20 \nPlease try a column with lower value counts!')
+        # Else it calculates/prints percentage for each unique value in column
+        else:
+            # Create a function to output the percentage
+            f = lambda x, y: 100 * (x / sum(y))
+            for i in range(0, len(col_vals['index'])):
+                print('{0} accounts for {1:.2f}% of the {2} column'\
+                      .format(col_vals['index'][i],
+                              f(col_vals[col].iloc[i],
+                                col_vals[col]),
+                              col))
+    # try-except block goes here if it can't find the column in data frame
+    except KeyError as e:
+        print('{0}: Not found'.format(e))
+        print('Please choose the right column name!')
 ```
 
 
@@ -251,11 +325,11 @@ def print_dx_perc(data_frame, col):
 print_dx_perc(breast_cancer, 'diagnosis')
 ```
 
-    Benign accounts for 62.74% of the diagnosis class
-    Malignant accounts for 37.26% of the diagnosis class
+    0 accounts for 62.74% of the diagnosis column
+    1 accounts for 37.26% of the diagnosis column
 
 
-Fortunatly, this data set does not suffer from *class imbalance*. 
+Fortunately, this data set does not suffer from *class imbalance*. 
 
 Next we will use a useful function that gives us standard descriptive statistics for each feature including mean, standard deviation, minimum value, maximum value, and range intervals. 
 
@@ -272,11 +346,11 @@ We can see through the maximum row that our data varies in distribution, this wi
 *Standardization* is an important requirement for many classification models that should be considered when implementing pre-processing. Some models (like neural networks) can perform poorly if pre-processing isn't considered, so the `describe()` function can be a good indicator for *standardization*. Fortunately Random Forest does not require any pre-processing (for use of categorical data see [sklearn's Encoding Categorical Data](http://scikit-learn.org/stable/modules/preprocessing.html#encoding-categorical-features) section).
 
 
-# <a name='train_test'></a>Creating Training and Test Sets
+# <a name='train_test'></a>Creating Training and Test SetsTraining and Test Sets
 
 We split the data set into our *training* and *test sets* which will be (pseudo) randomly selected having a 80-20% splt. We will use the training set to train our model along with some optimization, and use our test set as the unseen data that will be a useful final metric to let us know how well our model does. 
 
-When using this method for machine learning always be weary of utilizing your test set when creating models. The issue of data leakage is a grave and serious issue that is common in practice and can result in over-fitting. More on data leakage can be found in this [Kaggle article](https://www.kaggle.com/wiki/Leakage)
+When using this method for machine learning always be weary of utilizing your test set when creating models. The issue of data leakage is a serious issue that is common in practice and can result in over-fitting. More on data leakage can be found in this [Kaggle article](https://www.kaggle.com/wiki/Leakage)
 
 
 ```python
@@ -284,11 +358,10 @@ feature_space = breast_cancer.iloc[:, breast_cancer.columns != 'diagnosis']
 feature_class = breast_cancer.iloc[:, breast_cancer.columns == 'diagnosis']
 
 
-training_set, test_set, \
-class_set, test_class_set = train_test_split(feature_space,
-											feature_class,
-                                            test_size = 0.20, 
-                                            random_state = 42)
+training_set, test_set, class_set, test_class_set = train_test_split(feature_space,
+                                                                    feature_class,
+                                                                    test_size = 0.20, 
+                                                                    random_state = 42)
 ```
 
 **NOTE**: What I mean when I say *pseudo-random* is that we would want everyone who replicates this project to get the same results. So we use a random seed generator and set it equal to a number of our choosing, this will then make the results the same for anyone who uses this generator, awesome for reproducibility.
@@ -300,10 +373,9 @@ class_set = class_set.values.ravel()
 test_class_set = test_class_set.values.ravel() 
 ```
 
-
 # <a name='fit_model'></a>Fitting Random Forest
 
-Now we will create the model stating no parameter tuning aside from the random seed generator. 
+Now we will create the model no parameter tuning aside from the random seed generator. 
 
 What I mean when I say parameter tuning is different machine learning models utilize various parameters which have to be tuned by the person implementing the algorithm. Here I'll give a brief overview of the parameters I will be tuning in this tutorial:
 
@@ -312,18 +384,19 @@ What I mean when I say parameter tuning is different machine learning models uti
 + max_features: the maximum number of features that will be used in the node splitting (the main difference previously mentioned between Bagging trees and Random Forest). Typically we want a value that is less than p, where p is all features in our dataset. 
 + criterion: this is the metric used to asses the stopping criteria for the Decision trees, more on this later 
 
+Once we've instantiated our model we will go ahead and tune our parameters. 
+
 
 ```python
 # Set the random state for reproducibility
 fit_rf = RandomForestClassifier(random_state=42)
 ```
-
 # <a name='hype_opt'></a>Hyperparameters Optimization 
 
-Utilizing the `GridSearchCV` functionality, I create a dictionary with parameters I am looking to optimize to create the best model for our data. Setting the `n_jobs` to 3 tells the grid search to run 3 jobs in parallel reducing the time the function will take to compute the best parameters. I included the timer to help see how long different jobs took, ultimately deciding on using 3. 
+Utilizing the `GridSearchCV` functionality, I create a dictionary with parameters I am looking to optimize to create the best model for our data. Setting the `n_jobs` to 3 tells the grid search to run 3 jobs in parallel reducing the time the function will take to compute the best parameters. I included the timer to help see how long different jobs took, ultimately deciding on using 3 parallel jobs. 
 
 
-This will help set parameters which I will then use to tune one more paramter; the number of trees. 
+This will help set parameters which I will then use to tune one final paramter; the number of trees in my forest. 
 
 
 ```python
@@ -347,13 +420,13 @@ print('Time taken in grid search: {0: .2f}'.format(end - start))
 ```
 
     Best Parameters using grid search: 
-     {'max_features': 'log2', 'criterion': 'gini', 'bootstrap': True, 'max_depth': 3}
-    Time taken in grid search:  9.71
+     {'bootstrap': True, 'criterion': 'gini', 'max_depth': 3, 'max_features': 'log2'}
+    Time taken in grid search:  8.56
 
 
-Once we are given the best parameters, we set the parameters to our model. 
+Once we are given the best parameter combination, we set the parameters to our model. 
 
-Notice how we didn't utilize the `bootstrap: True` parameter, this will be because of the following section. 
+Notice how we didn't utilize the `bootstrap: True` parameter, this will make sense in the following section. 
 
 
 ```python
@@ -373,11 +446,17 @@ fit_rf.set_params(criterion = 'gini',
                 n_estimators=10, n_jobs=1, oob_score=False, random_state=42,
                 verbose=0, warm_start=False)
 
+
+
 # <a name='oob'></a>Out of Bag Error Rate
 
-Another useful feature of Random Forest is the concept of Out of Bag Error Rate or OOB error rate. When creating the forest, typically only 2/3 of the data is used to train the trees, this gives us 1/3 of unseen data that we can then utilize in a way that is advantageos to our accuracy metrics withou being computationally expensive like cross validation. 
+Another useful feature of Random Forest is the concept of Out of Bag Error Rate or OOB error rate. When creating the forest, typically only 2/3 of the data is used to train each tree, this gives us 1/3 of unseen data that we can then utilize in a way that is advantageos to our accuracy metrics withou being computationally expensive like cross validation. 
 
 When calculating OOB, two parameters have to be changed as outlined below. Also utilizing a `for-loop` across a multitude of forest sizes, we can calculate the OOB Error rate and use this to asses how many trees are appropriate for our model!
+
+**NOTE**: When calculating the oob score, setting `bootstrap=True` will produce errors, but is necessary for oob_score calculation as stated on this [example](http://scikit-learn.org/stable/auto_examples/ensemble/plot_ensemble_oob.html)
+
+For the original analysis I compared *Kth Nearest Neighbor*, *Random Forest*, and *Neural Networks*, so most of the analysis was done to compare across different models. 
 
 
 ```python
@@ -418,15 +497,22 @@ plt.axhline(0.05,
             color='#875FDB',
            linestyle='--')
 plt.xlabel('n_estimators')
-plt.ylabel('OOB Error')
-plt.title('OOB Error Across Trees \n(From 15 to 1000 trees)')
+plt.ylabel('OOB Error Rate')
+plt.title('OOB Error Rate Across various Forest sizes \n(From 15 to 1000 trees)')
 ```
 
 
-<img src='https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/random_forest_36_1.png'>
 
 
-The OOB error starts to oscilate at around 400 trees, so I will go ahead and use my judgement to use 400 trees in my forest. Using the `pandas` series object I can easily find the OOB error rate for the estimator as follows:
+    <matplotlib.text.Text at 0x1058c3048>
+
+
+
+
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_36_1.png)
+
+
+The OOB error rate starts to oscilate at around 400 trees, so I will go ahead and use my judgement to use 400 trees in my forest. Using the `pandas` series object I can easily find the OOB error rate for the estimator as follows:
 
 
 ```python
@@ -436,7 +522,7 @@ print('OOB Error rate for 400 trees is: {0:.5f}'.format(oob_series[400]))
     OOB Error rate for 400 trees is: 0.04835
 
 
-Utilizing the OOB error rate that was created gives us an unbiased error rate. This can be helpful when cross validating and/or hyperparameter optimization prove to be too computationally expensive. 
+Utilizing the OOB error rate that was created with the model gives us an unbiased error rate. This can be helpful when cross validating and/or hyperparameter optimization prove to be too computationally expensive, since oob can be calculated with the model estimation. 
 
 For the sake of this tutorial I will go over the other traditional methods for machine learning including the training and test error route, along with cross validation metrics.
 
@@ -483,6 +569,7 @@ fit_rf.fit(training_set, class_set)
                 verbose=0, warm_start=False)
 
 
+
 # <a name='var_imp'></a>Variable Importance
 
 Once we have trained the model, we are able to assess this concept of variable importance. A downside to creating ensemble methods with Decision Trees is we lose the interpretability that a single tree gives. A single tree can outline for us important node splits along with variables that were important at each split. 
@@ -500,81 +587,119 @@ $$Entropy = \sum_i -p_i * \log_2 p_i$$
 
 where $p_i$ is defined as the proportion of subsamples that belong to a certain target class. 
 
-We are able to access the feature importance of the model and using a helper function output the importance of our variables in descending order. 
+Since we are utilizing the *Gini Impurity*, the impurity measure reaches 0 when all target class labels are the same. 
+
+We are able to access the feature importance of the model and using a helper function to output the importance of our variables in descending order. 
 
 
 ```python
-importances_rf = fit_rf.feature_importances_
-indices_rf = np.argsort(importances_rf)[::-1]
+def variable_importance(fit):
+    """
+    Purpose
+    ----------
+    Checks if model is fitted CART model then produces variable importance
+    and respective indices in dictionary.
+
+    Parameters
+    ----------
+    * fit:  Fitted model containing the attribute feature_importances_
+
+    Returns
+    ----------
+    Dictionary containing arrays with importance score and index of columns
+    ordered in descending order of importance.
+    """
+    try:
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
+        
+        # Captures whether the model has been trained
+        if not vars(fit)["estimators_"]:
+            return print("Model does not appear to be trained.")
+    except KeyError:
+        print("Model entered does not contain 'estimators_' attribute.")
+
+    importances = fit.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    return {'importance': importances,
+            'index': indices}
 ```
 
 
 ```python
-def variable_importance(importance, indices):
+var_imp_rf = variable_importance(fit_rf)
+
+importances_rf = var_imp_rf['importance']
+
+indices_rf = var_imp_rf['index']
+```
+
+
+```python
+def print_var_importance(importance, indices, name_index):
     """
-    Purpose:
+    Purpose
     ----------
     Prints dependent variable names ordered from largest to smallest
-    based on gini or information gain for CART model. 
-    
-    Parameters:
+    based on information gain for CART model.
+    Parameters
     ----------
-    names:      Name of columns included in model
-    importance: Array returned from feature_importances_ for CART
-                   models organized by dataframe index
-    indices:    Organized index of dataframe from largest to smallest
-                   based on feature_importances_
+    * importance: Array returned from feature_importances_ for CART
+                models organized by dataframe index
+    * indices: Organized index of dataframe from largest to smallest
+                based on feature_importances_
+    * name_index: Name of columns included in model
 
-    Returns:
+    Returns
     ----------
-    Print statement outputting variable importance in descending order
+    Prints feature importance in descending order
     """
     print("Feature ranking:")
-    
-    for f in range(len(names_index)):
+
+    for f in range(0, indices.shape[0]):
         i = f
-        print("%d. The feature '%s' \
-has a Mean Decrease in Gini of %f" % (f + 1, 
-                                         names_index[indices[i]], 
-                                         importance[indices[f]]))
+        print("{0}. The feature '{1}' has a Mean Decrease in Impurity of {2:.5f}"
+              .format(f + 1,
+                      names_index[indices[i]],
+                      importance[indices[f]]))
 ```
 
 
 ```python
-variable_importance(importances_rf, indices_rf)
+print_var_importance(importances_rf, indices_rf, names_index)
 ```
 
     Feature ranking:
-    1. The feature 'area_worst' has a Mean Decrease in Gini of 0.129856
-    2. The feature 'perimeter_worst' has a Mean Decrease in Gini of 0.120953
-    3. The feature 'concave_points_worst' has a Mean Decrease in Gini of 0.115548
-    4. The feature 'concave_points_mean' has a Mean Decrease in Gini of 0.100136
-    5. The feature 'radius_worst' has a Mean Decrease in Gini of 0.078047
-    6. The feature 'concavity_mean' has a Mean Decrease in Gini of 0.062143
-    7. The feature 'area_mean' has a Mean Decrease in Gini of 0.056556
-    8. The feature 'radius_mean' has a Mean Decrease in Gini of 0.054567
-    9. The feature 'perimeter_mean' has a Mean Decrease in Gini of 0.051745
-    10. The feature 'area_se' has a Mean Decrease in Gini of 0.043261
-    11. The feature 'concavity_worst' has a Mean Decrease in Gini of 0.038659
-    12. The feature 'compactness_worst' has a Mean Decrease in Gini of 0.020329
-    13. The feature 'compactness_mean' has a Mean Decrease in Gini of 0.016163
-    14. The feature 'texture_worst' has a Mean Decrease in Gini of 0.015542
-    15. The feature 'radius_se' has a Mean Decrease in Gini of 0.014521
-    16. The feature 'perimeter_se' has a Mean Decrease in Gini of 0.013084
-    17. The feature 'texture_mean' has a Mean Decrease in Gini of 0.012203
-    18. The feature 'symmetry_worst' has a Mean Decrease in Gini of 0.011750
-    19. The feature 'smoothness_worst' has a Mean Decrease in Gini of 0.009380
-    20. The feature 'concavity_se' has a Mean Decrease in Gini of 0.009105
-    21. The feature 'concave_points_se' has a Mean Decrease in Gini of 0.004449
-    22. The feature 'smoothness_mean' has a Mean Decrease in Gini of 0.003982
-    23. The feature 'fractal_dimension_se' has a Mean Decrease in Gini of 0.003953
-    24. The feature 'fractal_dimension_worst' has a Mean Decrease in Gini of 0.002672
-    25. The feature 'fractal_dimension_mean' has a Mean Decrease in Gini of 0.002210
-    26. The feature 'smoothness_se' has a Mean Decrease in Gini of 0.002169
-    27. The feature 'symmetry_mean' has a Mean Decrease in Gini of 0.002051
-    28. The feature 'texture_se' has a Mean Decrease in Gini of 0.002043
-    29. The feature 'symmetry_se' has a Mean Decrease in Gini of 0.001937
-    30. The feature 'compactness_se' has a Mean Decrease in Gini of 0.000987
+    1. The feature 'area_worst' has a Mean Decrease in Impurity of 0.12986
+    2. The feature 'perimeter_worst' has a Mean Decrease in Impurity of 0.12095
+    3. The feature 'concave_points_worst' has a Mean Decrease in Impurity of 0.11555
+    4. The feature 'concave_points_mean' has a Mean Decrease in Impurity of 0.10014
+    5. The feature 'radius_worst' has a Mean Decrease in Impurity of 0.07805
+    6. The feature 'concavity_mean' has a Mean Decrease in Impurity of 0.06214
+    7. The feature 'area_mean' has a Mean Decrease in Impurity of 0.05656
+    8. The feature 'radius_mean' has a Mean Decrease in Impurity of 0.05457
+    9. The feature 'perimeter_mean' has a Mean Decrease in Impurity of 0.05174
+    10. The feature 'area_se' has a Mean Decrease in Impurity of 0.04326
+    11. The feature 'concavity_worst' has a Mean Decrease in Impurity of 0.03866
+    12. The feature 'compactness_worst' has a Mean Decrease in Impurity of 0.02033
+    13. The feature 'compactness_mean' has a Mean Decrease in Impurity of 0.01616
+    14. The feature 'texture_worst' has a Mean Decrease in Impurity of 0.01554
+    15. The feature 'radius_se' has a Mean Decrease in Impurity of 0.01452
+    16. The feature 'perimeter_se' has a Mean Decrease in Impurity of 0.01308
+    17. The feature 'texture_mean' has a Mean Decrease in Impurity of 0.01220
+    18. The feature 'symmetry_worst' has a Mean Decrease in Impurity of 0.01175
+    19. The feature 'smoothness_worst' has a Mean Decrease in Impurity of 0.00938
+    20. The feature 'concavity_se' has a Mean Decrease in Impurity of 0.00910
+    21. The feature 'concave_points_se' has a Mean Decrease in Impurity of 0.00445
+    22. The feature 'smoothness_mean' has a Mean Decrease in Impurity of 0.00398
+    23. The feature 'fractal_dimension_se' has a Mean Decrease in Impurity of 0.00395
+    24. The feature 'fractal_dimension_worst' has a Mean Decrease in Impurity of 0.00267
+    25. The feature 'fractal_dimension_mean' has a Mean Decrease in Impurity of 0.00221
+    26. The feature 'smoothness_se' has a Mean Decrease in Impurity of 0.00217
+    27. The feature 'symmetry_mean' has a Mean Decrease in Impurity of 0.00205
+    28. The feature 'texture_se' has a Mean Decrease in Impurity of 0.00204
+    29. The feature 'symmetry_se' has a Mean Decrease in Impurity of 0.00194
+    30. The feature 'compactness_se' has a Mean Decrease in Impurity of 0.00099
 
 
 We can see here that our top 5 variables were `area_worst`, `perimeter_worst`, `concave_points_worst`, `concave_points_mean`, `radius_worst`. 
@@ -585,30 +710,31 @@ In our test case, this can help people in the medical field focus on the top var
 
 
 ```python
-def variable_importance_plot(importance, indices):
+def variable_importance_plot(importance, indices, name_index):
     """
     Purpose
     ----------
-    Prints bar chart detailing variable importance for CART model 
-    NOTE: feature_space list was created because the bar chart 
+    Prints bar chart detailing variable importance for CART model
+    NOTE: feature_space list was created because the bar chart
     was transposed and index would be in incorrect order.
 
     Parameters
     ----------
-    importance_desc: Array returned from feature_importances_ for CART
-                        models organized in descending order 
+    * importance: Array returned from feature_importances_ for CART
+                models organized by dataframe index
+    * indices: Organized index of dataframe from largest to smallest
+                based on feature_importances_
+    * name_index: Name of columns included in model
 
-    indices: Organized index of dataframe from largest to smallest
-                        based on feature_importances_ 
     Returns:
     ----------
     Returns variable importance plot in descending order
     """
     index = np.arange(len(names_index))
-    
-    importance_desc = sorted(importance) 
+
+    importance_desc = sorted(importance)
     feature_space = []
-    for i in range(29, -1, -1):
+    for i in range(indices.shape[0] - 1, -1, -1):
         feature_space.append(names_index[indices[i]])
 
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -616,29 +742,30 @@ def variable_importance_plot(importance, indices):
     ax.set_axis_bgcolor('#fafafa')
     plt.title('Feature importances for Random Forest Model\
     \nBreast Cancer (Diagnostic)')
-    plt.barh(index, 
+    plt.barh(index,
              importance_desc,
-             align="center", 
+             align="center",
              color = '#875FDB')
-    plt.yticks(index, 
+    plt.yticks(index,
                feature_space)
 
     plt.ylim(-1, 30)
-    plt.xlim(0, max(importance_desc))
-    plt.xlabel('Mean Decrease in Gini')
+    plt.xlim(0, max(importance_desc) + 0.01)
+    plt.xlabel('Mean Decrease in Impurity')
     plt.ylabel('Feature')
-    
+
     plt.show()
     plt.close()
 ```
 
 
 ```python
-variable_importance_plot(importances_rf, indices_rf)
+variable_importance_plot(importances_rf, indices_rf, names_index)
 ```
 
 
-<img src='https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/random_forest_49_0.png'>
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_50_0.png)
+
 
 The visual helps drive the point of variable importance, since you can clearly see the difference in importance of variables for the ensemble method. Certain cutoff points can be made to reduce the inclusion of features and can help in the accuracy of the model, since we'll be removing what is considered noise within our feature space.
 
@@ -658,7 +785,7 @@ Within a Random Forest context if your data set is significantly large one can c
 
 
 ```python
-def cross_val_metrics(fit, training_set, class_set, print_results = True):
+def cross_val_metrics(fit, training_set, class_set, estimator, print_results = True):
     """
     Purpose
     ----------
@@ -674,18 +801,39 @@ def cross_val_metrics(fit, training_set, class_set, print_results = True):
     print_results: Boolean, if true prints the metrics, else saves metrics as 
                       variables
 
-    Returnss
+    Returns
     ----------
     scores.mean(): Float representing cross validation score
     scores.std() / 2: Float representing the standard error (derived
                 from cross validation score's standard deviation)
     """
+    my_estimators = {
+    'rf': 'estimators_',
+    'nn': 'out_activation_',
+    'knn': '_fit_method'
+    }
+    try:
+        # Captures whether first parameter is a model
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
+        
+        # Captures whether the model has been trained
+        if not vars(fit)[my_estimators[estimator]]:
+            return print("Model does not appear to be trained.")
+        
+    except KeyError as e:
+        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
+        raise
+    
     n = KFold(n_splits=10)
     scores = cross_val_score(fit, 
                          training_set, 
                          class_set, 
                          cv = n)
     if print_results:
+        for i in range(0, len(scores)):
+            print("Cross validation run {0}: {1: 0.3f}".format(i, scores[i]))
         print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
               .format(scores.mean(), scores.std() / 2))
     else:
@@ -697,9 +845,20 @@ def cross_val_metrics(fit, training_set, class_set, print_results = True):
 cross_val_metrics(fit_rf, 
                   training_set, 
                   class_set, 
+                  'rf',
                   print_results = True)
 ```
 
+    Cross validation run 0:  1.000
+    Cross validation run 1:  0.957
+    Cross validation run 2:  0.935
+    Cross validation run 3:  0.935
+    Cross validation run 4:  0.957
+    Cross validation run 5:  0.978
+    Cross validation run 6:  0.933
+    Cross validation run 7:  0.889
+    Cross validation run 8:  1.000
+    Cross validation run 9:  0.889
     Accuracy:  0.947 (+/-  0.019)
 
 
@@ -710,70 +869,45 @@ We create a confusion matrix showcasing the following metrics:
 
 | n = Sample Size | Predicted Benign | Predicted Malignant | 
 |-----------------|------------------|---------------------|
-| Actual Benign | *True Positive* | *False Negative* | 
-| Actual Malignant | *False Positive* | *True Negative* | 
+| Actual Benign | *True Negative* | *False Positive* | 
+| Actual Malignant | *False Negative* | *True Positive* | 
 
 
 ```python
 predictions_rf = fit_rf.predict(test_set)
 ```
 
+## Confusion Matrix
+Here we create a confusion matrix visual with `seaborn` and transposing the matrix when creating the heatmap. 
+
 
 ```python
-test_crosstb = pd.crosstab(index = test_class_set,
-                           columns = predictions_rf)
-
-# More human readable 
-test_crosstb = test_crosstb.rename(columns= {0: 'Benign', 1: 'Malignant'})
-test_crosstb.index = ['Benign', 'Malignant']
-test_crosstb.columns.name = 'n = 114'
+def create_conf_mat(test_class_set, predictions):
+    """Function returns confusion matrix comparing two arrays"""
+    if (len(test_class_set.shape) != len(predictions.shape) == 1):
+        return print('Arrays entered are not 1-D.\nPlease enter the correctly sized sets.')
+    elif (test_class_set.shape != predictions.shape):
+        return print('Number of values inside the Arrays are not equal to each other.\nPlease make sure the array has the same number of instances.')
+    else:
+        # Set Metrics
+        test_crosstb_comp = pd.crosstab(index = test_class_set,
+                                        columns = predictions)
+        test_crosstb = test_crosstb_comp.as_matrix()
+        return test_crosstb
 ```
 
 
 ```python
-test_crosstb
+conf_mat = create_conf_mat(test_class_set, predictions_rf)
+sns.heatmap(conf_mat, annot=True, fmt='d', cbar=False)
+plt.xlabel('Predicted Values')
+plt.ylabel('Actual Values')
+plt.title('Actual vs. Predicted Confusion Matrix')
+plt.show()
 ```
 
 
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>n = 114</th>
-      <th>Benign</th>
-      <th>Malignant</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Benign</th>
-      <td>70</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>Malignant</th>
-      <td>3</td>
-      <td>40</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_58_0.png)
 
 
 
@@ -802,19 +936,24 @@ print("The test error rate for our model is:\n {0: .4f}"\
 
 As you can see we got a very similar error rate for our test set that we did for our OOB, which is a good sign for our model. 
 
-
 # <a name='roc_curve'></a>ROC Curve Metrics
 
 Receiver Operating Characteristc Curve, calculates the False Positive Rates and True Positive Rates across different thresholds . 
 
 We will now graph these calculations, and being located the top left corner of the plot indicates a really ideal model, i.e. a False Positive Rate of 0 and True Positive Rate of 1, whereas an ROC curve that is at a 45 degree is indicative of a model that is essentially randomly guessing. 
 
-We also calculated the Area under the Curve or AUC, the AUC is used as a metric to differentiate the predicion power for those with the disease and those without it. Typically a value closer to one means that our model was able to differentiate correctly from a random sample of the two target classes of two patients which had and which didn't have the disease.    
+We also calculated the Area under the Curve or AUC, the AUC is used as a metric to differentiate the predicion power for those with the disease and those without it. Typically a value closer to one means that our model was able to differentiate correctly from a random sample of the two target classes of two patients with and without the disease.    
 
 
 ```python
-fpr2, tpr2, _ = roc_curve(predictions_rf, 
-                          test_class_set)
+# We grab the second array from the output which corresponds to
+# to the predicted probabilites of positive classes 
+# Ordered wrt fit.classes_ in our case [0, 1] where 1 is our positive class
+predictions_prob = fit_rf.predict_proba(test_set)[:, 1]
+
+fpr2, tpr2, _ = roc_curve(test_class_set,
+                          predictions_prob,
+                          pos_label = 1)
 ```
 
 
@@ -824,50 +963,44 @@ auc_rf = auc(fpr2, tpr2)
 
 
 ```python
-def plot_roc_curve(fpr, tpr, auc, mod, xlim=None, ylim=None):
+def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
     """
     Purpose
     ----------
     Function creates ROC Curve for respective model given selected parameters.
-    Optional x and y limits to zoom into graph 
-    
+    Optional x and y limits to zoom into graph
+
     Parameters
     ----------
-    fpr:  Array returned from sklearn.metrics.roc_curve for increasing 
-             false positive rates
-    tpr:  Array returned from sklearn.metrics.roc_curve for increasing 
-             true positive rates
-    auc:  Float returned from sklearn.metrics.auc (Area under Curve)
-    mod:  String represenation of appropriate model, can only contain the 
-             following: ['knn', 'rf', 'nn']
-    xlim: Set upper and lower x-limits
-    ylim: Set upper and lower y-limits
-    
-    Returns:
-    ----------
-    Returns plot of Receiving Operating Curve for specific model. Allowing user to 
-    specify x and y-limits. 
+    * fpr: Array returned from sklearn.metrics.roc_curve for increasing
+            false positive rates
+    * tpr: Array returned from sklearn.metrics.roc_curve for increasing
+            true positive rates
+    * auc: Float returned from sklearn.metrics.auc (Area under Curve)
+    * estimator: String represenation of appropriate model, can only contain the
+    following: ['knn', 'rf', 'nn']
+    * xlim: Set upper and lower x-limits
+    * ylim: Set upper and lower y-limits
     """
-    mod_list = ['knn', 'rf', 'nn']
-    method = [('Kth Nearest Neighbor', 'deeppink'), 
-              ('Random Forest', 'red'), 
-              ('Neural Network', 'purple')]
+    my_estimators = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
+              'rf': ['Random Forest', 'red'],
+              'nn': ['Neural Network', 'purple']}
 
-    plot_title = ''
-    color_value = ''
-    for i in range(0, 3):
-        if mod_list[i] == mod:
-            plot_title = method[i][0]
-            color_value = method[i][1]
+    try:
+        plot_title = my_estimators[estimator][0]
+        color_value = my_estimators[estimator][1]
+    except KeyError as e:
+        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
+        raise
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_axis_bgcolor('#fafafa')
 
-    plt.plot(fpr, tpr, 
-             color=color_value, 
+    plt.plot(fpr, tpr,
+             color=color_value,
              linewidth=1)
-    plt.title('ROC Curve For {0} (AUC = {1: 0.3f}) \
-              \nBreast Cancer Diagnostic'\
+    plt.title('ROC Curve For {0} (AUC = {1: 0.3f})'\
               .format(plot_title, auc))
 
     plt.plot([0, 1], [0, 1], 'k--', lw=2) # Add Diagonal line
@@ -891,7 +1024,8 @@ plot_roc_curve(fpr2, tpr2, auc_rf, 'rf',
 ```
 
 
-<img src='https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/random_forest_63_0.png'>
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_65_0.png)
+
 
 Our model did exceptional with an AUC over .90, now we do a zoomed in view to showcase the closeness our ROC Curve is relative to the ideal ROC Curve. 
 
@@ -903,7 +1037,7 @@ plot_roc_curve(fpr2, tpr2, auc_rf, 'rf',
 ```
 
 
-<img src='https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/random_forest_65_0.png'>
+![png](https://raw.githubusercontent.com/raviolli77/machineLearning_breastCancer_Python/master/notebooks/random_forest_files/output_67_0.png)
 
 
 # <a name='class_rep'></a>Classification Report
@@ -958,16 +1092,17 @@ class_report = print_class_report(predictions_rf, 'Random Forest')
 
 ## Metrics for Random Forest
 
-Here I've accumulated the various metrics we used through this tutorial in a simple table! For the original analysis I compared *Kth Nearest Neighbor*, *Random Forest*, and *Neural Networks*, so most of the analysis was done to compare across different models. 
+Here I've accumulated the various metrics we used through this tutorial in a simple table! Showcasing the power and effectiveness of Random Forest Modeling. 
 
 | Model | OOB Error Rate | Test Error Rate | Cross Validation Score | AUC | 
 |-------|----------------|------------------------|-----------------|-----|
-| Random Forest | 0.04835 |  0.0351 | 0.947 (+/-  0.019) | 0.967 | 
-
-
+| Random Forest | 0.04835 |  0.0351 | 0.947 (+/-  0.019) | 0.996 | 
 
 # <a name='concl'></a>Conclusions
 
 For this tutorial we went through a number of metrics to assess the capabilites of our Random Forest, but this can be taken further when using background information of the data set. Feature engineering would be a powerful tool to extract and move forward into research regarding the important features. As well defining key metrics to utilize when optimizing model paramters. 
 
-There have been advancements with image classification in the past decade that utilize the images intead of extracted features from images, but this data set is a great resource to become with machine learning processes. Especially for those who are just beginning to learn machine learning concepts. If you have any suggestions, recommendations, or corrections please reach out to me.
+There have been advancements with image classification in the past decade that utilize the images intead of extracted features from images, but this data set is a great resource to become with machine learning processes. Especially for those who are just beginning to learn machine learning concepts. If you have any suggestions, recommendations, or corrections please reach out to me. 
+
+
+
