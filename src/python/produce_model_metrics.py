@@ -1,8 +1,6 @@
 import sys
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
-from sklearn.utils.validation import check_is_fitted
-from sklearn.exceptions import NotFittedError
 
 # Function for All Models to produce Metrics ---------------------
 
@@ -31,24 +29,31 @@ def produce_model_metrics(fit, test_set, test_class_set, estimator):
         'knn': '_fit_method'
     }
     try:
-        my_estimator = my_estimators[estimator]
+        # Captures whether first parameter is a model
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
+        
+        # Captures whether the model has been trained
+        if not vars(fit)[my_estimators[estimator]]:
+            return print("Model does not appear to be trained.")
+        
     except KeyError as e:
-        print('Model specified not found in dictionary.\nAvailable options are: {0}'
-              .format(list(my_estimators)))
-        raise KeyError(estimator)
-    try:
-        check_is_fitted(fit, my_estimator)
-    except (NotFittedError, TypeError) as e:
-        print(e)
-        raise e
+        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
+        raise
+        
     # Outputting predictions and prediction probability
     # for test set
     predictions = fit.predict(test_set)
     accuracy = fit.score(test_set, test_class_set)
+    # We grab the second array from the output which corresponds to
+    # to the predicted probabilites of positive classes 
+    # Ordered wrt fit.classes_ in our case [0, 1] where 1 is our positive class
     predictions_prob = fit.predict_proba(test_set)[:, 1]
     # ROC Curve stuff
     fpr, tpr, _ = roc_curve(test_class_set,
-            predictions_prob)
+            predictions_prob,
+            pos_label = 1)
     auc_fit = auc(fpr, tpr)
     return {'predictions': predictions,
     'accuracy': accuracy,

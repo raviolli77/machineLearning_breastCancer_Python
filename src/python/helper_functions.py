@@ -20,8 +20,6 @@ import seaborn as sns
 from data_extraction import names_index
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
-from sklearn.utils.validation import check_is_fitted
-from sklearn.exceptions import NotFittedError
 
 
 def print_dx_perc(data_frame, col):
@@ -48,7 +46,6 @@ def print_dx_perc(data_frame, col):
     except KeyError as e:
         print('{0}: Not found'.format(e))
         print('Please choose the right column name!')
-        raise e(col)
 
 def plot_box_plot(data_frame, data_set, xlim=None):
     """
@@ -119,7 +116,7 @@ def variable_importance(fit):
 
     Parameters
     ----------
-    * fit: 	Fitted model containing the attribute feature_importances_
+    * fit:  Fitted model containing the attribute feature_importances_
 
     Returns
     ----------
@@ -127,10 +124,15 @@ def variable_importance(fit):
     ordered in descending order of importance.
     """
     try:
-        check_is_fitted(fit, 'feature_importances_')
-    except (NotFittedError, TypeError) as e:
-        print(e)
-        raise e
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
+        
+        # Captures whether the model has been trained
+        if not vars(fit)["estimators_"]:
+            return print("Model does not appear to be trained.")
+    except KeyError:
+        print("Model entered does not contain 'estimators_' attribute.")
+
     importances = fit.feature_importances_
     indices = np.argsort(importances)[::-1]
     return {'importance': importances,
@@ -238,9 +240,9 @@ def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
         plot_title = my_estimators[estimator][0]
         color_value = my_estimators[estimator][1]
     except KeyError as e:
-        print('Model specified not found in dictionary.\nAvailable options are: {0}'
-              .format(list(my_estimators)))
-        raise KeyError(estimator)
+        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
+        raise
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_axis_bgcolor('#fafafa')
@@ -267,25 +269,23 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     """
     Purpose
     ----------
-    Function helps automate cross validation processes while including
+    Function helps automate cross validation processes while including 
     option to print metrics or store in variable
-
+    
     Parameters
     ----------
-    * fit:	Fitted model
-    * training_set: 	Dataframe containing 80% of original dataframe
-    * class_set: 	Dataframe containing the respective target vaues
-    for the training_set
-    * estimator: 	String represenation of appropriate model, can only contain the
-    following: ['knn', 'rf', 'nn']
-    * print_results:	If true prints the metrics, else saves metrics as
-    variables
+    fit: Fitted model 
+    training_set:  Data_frame containing 80% of original dataframe
+    class_set:     data_frame containing the respective target vaues 
+                      for the training_set
+    print_results: Boolean, if true prints the metrics, else saves metrics as 
+                      variables
 
     Returns
     ----------
-    * scores.mean(): 	Float representing cross validation score
-    * scores.std() / 2: 	Float representing the standard error (derived
-    from cross validation score's standard deviation)
+    scores.mean(): Float representing cross validation score
+    scores.std() / 2: Float representing the standard error (derived
+                from cross validation score's standard deviation)
     """
     my_estimators = {
     'rf': 'estimators_',
@@ -293,16 +293,27 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     'knn': '_fit_method'
     }
     try:
-        check_is_fitted(fit, my_estimators[estimator])
-    except NotFittedError as e:
-        return print(e)
-
+        # Captures whether first parameter is a model
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
+        
+        # Captures whether the model has been trained
+        if not vars(fit)[my_estimators[estimator]]:
+            return print("Model does not appear to be trained.")
+        
+    except KeyError as e:
+        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
+        raise
+    
     n = KFold(n_splits=10)
-    scores = cross_val_score(fit,
-                             training_set,
-                             class_set,
-                             cv = n)
+    scores = cross_val_score(fit, 
+                         training_set, 
+                         class_set, 
+                         cv = n)
     if print_results:
+        for i in range(0, len(scores)):
+            print("Cross validation run {0}: {1: 0.3f}".format(i, scores[i]))
         print("Accuracy: {0: 0.3f} (+/- {1: 0.3f})"\
               .format(scores.mean(), scores.std() / 2))
     else:
