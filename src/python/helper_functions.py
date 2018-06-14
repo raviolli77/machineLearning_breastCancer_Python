@@ -125,8 +125,8 @@ def variable_importance(fit):
     """
     try:
         if not hasattr(fit, 'fit'):
-            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
-        
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
         # Captures whether the model has been trained
         if not vars(fit)["estimators_"]:
             return print("Model does not appear to be trained.")
@@ -146,11 +146,11 @@ def print_var_importance(importance, indices, name_index):
     based on information gain for CART model.
     Parameters
     ----------
-    * importance: 	Array returned from feature_importances_ for CART
-    					models organized by dataframe index
-    * indices: 	Organized index of dataframe from largest to smallest
-    				based on feature_importances_
-    * name_index: 	Name of columns included in model
+    * importance: Array returned from feature_importances_ for CART
+                    models organized by dataframe index
+    * indices: Organized index of dataframe from largest to smallest
+                    based on feature_importances_
+    * name_index: Name of columns included in model
 
     Returns
     ----------
@@ -165,7 +165,6 @@ def print_var_importance(importance, indices, name_index):
                       names_index[indices[i]],
                       importance[indices[f]]))
 
-
 def variable_importance_plot(importance, indices, name_index):
     """
     Purpose
@@ -176,11 +175,11 @@ def variable_importance_plot(importance, indices, name_index):
 
     Parameters
     ----------
-    * importance: 	Array returned from feature_importances_ for CART
-    					models organized by dataframe index
+    * importance: Array returned from feature_importances_ for CART
+                    models organized by dataframe index
     * indices: 	Organized index of dataframe from largest to smallest
-    				based on feature_importances_
-    * name_index: 	Name of columns included in model
+                    based on feature_importances_
+    * name_index: Name of columns included in model
 
     Returns:
     ----------
@@ -190,7 +189,7 @@ def variable_importance_plot(importance, indices, name_index):
 
     importance_desc = sorted(importance)
     feature_space = []
-    for i in range(indices.shape[0], -1, -1):
+    for i in range(indices.shape[0] - 1, -1, -1):
         feature_space.append(names_index[indices[i]])
 
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -205,7 +204,7 @@ def variable_importance_plot(importance, indices, name_index):
     plt.yticks(index,
                feature_space)
 
-    plt.ylim(-1, 30)
+    plt.ylim(-1, indices.shape[0])
     plt.xlim(0, max(importance_desc) + 0.01)
     plt.xlabel('Mean Decrease in Impurity')
     plt.ylabel('Feature')
@@ -222,15 +221,15 @@ def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
 
     Parameters
     ----------
-    * fpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    * fpr: Array returned from sklearn.metrics.roc_curve for increasing
     false positive rates
-    * tpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    * tpr: Array returned from sklearn.metrics.roc_curve for increasing
     true positive rates
-    * auc:	Float returned from sklearn.metrics.auc (Area under Curve)
-    * estimator: 	String represenation of appropriate model, can only contain the
+    * auc: Float returned from sklearn.metrics.auc (Area under Curve)
+    * estimator: String represenation of appropriate model, can only contain the
     following: ['knn', 'rf', 'nn']
-    * xlim:		Set upper and lower x-limits
-    * ylim:		Set upper and lower y-limits
+    * xlim: Set upper and lower x-limits
+    * ylim: Set upper and lower y-limits
     """
     my_estimators = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
               'rf': ['Random Forest', 'red'],
@@ -269,16 +268,16 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     """
     Purpose
     ----------
-    Function helps automate cross validation processes while including 
+    Function helps automate cross validation processes while including
     option to print metrics or store in variable
-    
+
     Parameters
     ----------
-    fit: Fitted model 
+    fit: Fitted model
     training_set:  Data_frame containing 80% of original dataframe
-    class_set:     data_frame containing the respective target vaues 
+    class_set:     data_frame containing the respective target vaues
                       for the training_set
-    print_results: Boolean, if true prints the metrics, else saves metrics as 
+    print_results: Boolean, if true prints the metrics, else saves metrics as
                       variables
 
     Returns
@@ -295,21 +294,21 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     try:
         # Captures whether first parameter is a model
         if not hasattr(fit, 'fit'):
-            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
-        
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
         # Captures whether the model has been trained
         if not vars(fit)[my_estimators[estimator]]:
             return print("Model does not appear to be trained.")
-        
+
     except KeyError as e:
         print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
 \nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
         raise
-    
+
     n = KFold(n_splits=10)
-    scores = cross_val_score(fit, 
-                         training_set, 
-                         class_set, 
+    scores = cross_val_score(fit,
+                         training_set,
+                         class_set,
                          cv = n)
     if print_results:
         for i in range(0, len(scores)):
