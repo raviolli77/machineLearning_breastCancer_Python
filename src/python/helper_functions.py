@@ -148,11 +148,11 @@ def print_var_importance(importance, indices, name_index):
     based on information gain for CART model.
     Parameters
     ----------
-    * importance: 	Array returned from feature_importances_ for CART
-    					models organized by dataframe index
-    * indices: 	Organized index of dataframe from largest to smallest
-    				based on feature_importances_
-    * name_index: 	Name of columns included in model
+    * importance: Array returned from feature_importances_ for CART
+                    models organized by dataframe index
+    * indices: Organized index of dataframe from largest to smallest
+                    based on feature_importances_
+    * name_index: Name of columns included in model
 
     Returns
     ----------
@@ -189,7 +189,7 @@ def variable_importance(fit):
         if not vars(fit)["estimators_"].all():
             return print("Model does not appear to be trained.")
     except KeyError:
-        print("Model entered does not contain 'estimators_' attribute.")
+        raise KeyError("Model entered does not contain 'estimators_' attribute.")
 
     importances = fit.feature_importances_
     indices = np.argsort(importances)[::-1]
@@ -236,6 +236,7 @@ def variable_importance_plot(importance, indices, name_index):
     * indices: 	Organized index of dataframe from largest to smallest
                     based on feature_importances_
     * name_index: Name of columns included in model
+
     Returns:
     ----------
     Returns variable importance plot in descending order
@@ -245,7 +246,8 @@ def variable_importance_plot(importance, indices, name_index):
     importance_desc = sorted(importance)
     feature_space = []
     for i in range(indices.shape[0] - 1, -1, -1):
-        feature_space.append(name_index[indices[i]])
+
+    feature_space.append(name_index[indices[i]])
 
     fig, ax = plt.subplots(figsize=(10, 10))
 
@@ -277,15 +279,15 @@ def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
 
     Parameters
     ----------
-    * fpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    * fpr: Array returned from sklearn.metrics.roc_curve for increasing
     false positive rates
-    * tpr: 	Array returned from sklearn.metrics.roc_curve for increasing
+    * tpr: Array returned from sklearn.metrics.roc_curve for increasing
     true positive rates
-    * auc:	Float returned from sklearn.metrics.auc (Area under Curve)
-    * estimator: 	String represenation of appropriate model, can only contain the
+    * auc: Float returned from sklearn.metrics.auc (Area under Curve)
+    * estimator: String represenation of appropriate model, can only contain the
     following: ['knn', 'rf', 'nn']
-    * xlim:		Set upper and lower x-limits
-    * ylim:		Set upper and lower y-limits
+    * xlim: Set upper and lower x-limits
+    * ylim: Set upper and lower y-limits
     """
     my_estimators = {'knn': ['Kth Nearest Neighbor', 'deeppink'],
               'rf': ['Random Forest', 'red'],
@@ -356,7 +358,7 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
             return print("Model does not appear to be trained.")
 
     except KeyError as e:
-        raise("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+        raise KeyError("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
               Please refer to function to check `my_estimators` dictionary.".format(estimator))
 
     n = KFold(n_splits=10)
