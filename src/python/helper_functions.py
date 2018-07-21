@@ -21,7 +21,6 @@ from data_extraction import names_index
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
-
 def print_target_perc(data_frame, col):
     """Function used to print class distribution for our data set"""
     try:
