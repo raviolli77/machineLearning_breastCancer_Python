@@ -55,7 +55,7 @@ if __name__=='__main__':
     fit_dict_rf = produce_model_metrics(fit_rf,
                                         test_set,
                                         test_class_set,
-                                        'rf') 
+                                        'rf')
 
     # Extract each piece from dictionary
     predictions_rf = fit_dict_rf['predictions']
@@ -114,3 +114,5 @@ if __name__=='__main__':
 
     print("The test error rate for our model is:\n {0: .3f}"\
         .format(test_error_rate_rf))
+    import pdb
+    pdb.set_trace()

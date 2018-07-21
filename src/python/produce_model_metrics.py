@@ -31,23 +31,23 @@ def produce_model_metrics(fit, test_set, test_class_set, estimator):
     try:
         # Captures whether first parameter is a model
         if not hasattr(fit, 'fit'):
-            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
-        
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
         # Captures whether the model has been trained
         if not vars(fit)[my_estimators[estimator]]:
             return print("Model does not appear to be trained.")
-        
+
     except KeyError as e:
-        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
-\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
-        raise
-        
+        raise KeyError("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+              Please refer to function to check `my_estimators` dictionary.".format(estimator))
+
+
     # Outputting predictions and prediction probability
     # for test set
     predictions = fit.predict(test_set)
     accuracy = fit.score(test_set, test_class_set)
     # We grab the second array from the output which corresponds to
-    # to the predicted probabilites of positive classes 
+    # to the predicted probabilites of positive classes
     # Ordered wrt fit.classes_ in our case [0, 1] where 1 is our positive class
     predictions_prob = fit.predict_proba(test_set)[:, 1]
     # ROC Curve stuff

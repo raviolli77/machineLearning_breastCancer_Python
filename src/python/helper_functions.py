@@ -22,30 +22,31 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 
 
-def print_dx_perc(data_frame, col):
+def print_target_perc(data_frame, col):
     """Function used to print class distribution for our data set"""
     try:
+        # If the number of unique instances in column exceeds 20 print warning
+        if data_frame[col].nunique() > 20:
+            return print('Warning: there are {0} values in `{1}` column which exceed the max of 20 for this function. \
+                         Please try a column with lower value counts!'
+                         .format(data_frame[col].nunique(), col))
         # Stores value counts
-        col_vals = data_frame[col].value_counts()
+        col_vals = data_frame[col].value_counts().sort_values(ascending=False)
         # Resets index to make index a column in data frame
         col_vals = col_vals.reset_index()
-        # If the number of unique instances in column exceeds 20 print warning
-        if len(col_vals['index']) > 20:
-            print('Warning: values in column are more than 20 \nPlease try a column with lower value counts!')
-        # Else it calculates/prints percentage for each unique value in column
-        else:
-            # Create a function to output the percentage
-            f = lambda x, y: 100 * (x / sum(y))
-            for i in range(0, len(col_vals['index'])):
-                print('{0} accounts for {1:.2f}% of the {2} column'\
-                      .format(col_vals['index'][i],
-                              f(col_vals[col].iloc[i],
-                                col_vals[col]),
-                              col))
+
+        # Create a function to output the percentage
+        f = lambda x, y: 100 * (x / sum(y))
+        for i in range(0, len(col_vals['index'])):
+            print('`{0}` accounts for {1:.2f}% of the {2} column'\
+                  .format(col_vals['index'][i],
+                          f(
+                              col_vals[col].iloc[i],
+                              col_vals[col]),
+                          col))
     # try-except block goes here if it can't find the column in data frame
     except KeyError as e:
-        print('{0}: Not found'.format(e))
-        print('Please choose the right column name!')
+        raise KeyError('{0}: Not found. Please choose the right column name!'.format(e))
 
 def plot_box_plot(data_frame, data_set, xlim=None):
     """
@@ -107,6 +108,7 @@ def normalize_data_frame(data_frame):
     return data_frame_norm
 
 
+
 def variable_importance(fit):
     """
     Purpose
@@ -125,13 +127,13 @@ def variable_importance(fit):
     """
     try:
         if not hasattr(fit, 'fit'):
-            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
-        
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
         # Captures whether the model has been trained
         if not vars(fit)["estimators_"]:
             return print("Model does not appear to be trained.")
     except KeyError:
-        print("Model entered does not contain 'estimators_' attribute.")
+        KeyError("Model entered does not contain 'estimators_' attribute.")
 
     importances = fit.feature_importances_
     indices = np.argsort(importances)[::-1]
@@ -165,6 +167,60 @@ def print_var_importance(importance, indices, name_index):
                       names_index[indices[i]],
                       importance[indices[f]]))
 
+def variable_importance(fit):
+    """
+    Purpose
+    ----------
+    Checks if model is fitted CART model then produces variable importance
+    and respective indices in dictionary.
+    Parameters
+    ----------
+    * fit:  Fitted model containing the attribute feature_importances_
+    Returns
+    ----------
+    Dictionary containing arrays with importance score and index of columns
+    ordered in descending order of importance.
+    """
+    try:
+        if not hasattr(fit, 'fit'):
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
+        # Captures whether the model has been trained
+        if not vars(fit)["estimators_"].all():
+            return print("Model does not appear to be trained.")
+    except KeyError:
+        print("Model entered does not contain 'estimators_' attribute.")
+
+    importances = fit.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    return {'importance': importances,
+            'index': indices}
+
+def print_var_importance(importance, indices, name_index):
+    """
+    Purpose
+    ----------
+    Prints dependent variable names ordered from largest to smallest
+    based on information gain for CART model.
+    Parameters
+    ----------
+    * importance: Array returned from feature_importances_ for CART
+                    models organized by dataframe index
+    * indices: Organized index of dataframe from largest to smallest
+                    based on feature_importances_
+    * name_index: Name of columns included in model
+    Returns
+    ----------
+    Prints feature importance in descending order
+    """
+    print("Feature ranking:")
+
+    for f in range(0, indices.shape[0]):
+        i = f
+        print("{0}. The feature '{1}' has a Mean Decrease in Impurity of {2:.5f}"
+              .format(f + 1,
+                      name_index[indices[i]],
+                      importance[indices[f]]))
 
 def variable_importance_plot(importance, indices, name_index):
     """
@@ -173,31 +229,29 @@ def variable_importance_plot(importance, indices, name_index):
     Prints bar chart detailing variable importance for CART model
     NOTE: feature_space list was created because the bar chart
     was transposed and index would be in incorrect order.
-
     Parameters
     ----------
-    * importance: 	Array returned from feature_importances_ for CART
-    					models organized by dataframe index
+    * importance: Array returned from feature_importances_ for CART
+                    models organized by dataframe index
     * indices: 	Organized index of dataframe from largest to smallest
-    				based on feature_importances_
-    * name_index: 	Name of columns included in model
-
+                    based on feature_importances_
+    * name_index: Name of columns included in model
     Returns:
     ----------
     Returns variable importance plot in descending order
     """
-    index = np.arange(len(names_index))
+    index = np.arange(len(name_index))
 
     importance_desc = sorted(importance)
     feature_space = []
-    for i in range(indices.shape[0], -1, -1):
-        feature_space.append(names_index[indices[i]])
+    for i in range(indices.shape[0] - 1, -1, -1):
+        feature_space.append(name_index[indices[i]])
 
     fig, ax = plt.subplots(figsize=(10, 10))
 
-    ax.set_axis_bgcolor('#fafafa')
-    plt.title('Feature importances for Random Forest Model\
-    \nBreast Cancer (Diagnostic)')
+    ax.set_facecolor('#fafafa')
+    plt.title('Feature importances for Gradient Boosting Model\
+    \nCustomer Churn')
     plt.barh(index,
              importance_desc,
              align="center",
@@ -205,13 +259,14 @@ def variable_importance_plot(importance, indices, name_index):
     plt.yticks(index,
                feature_space)
 
-    plt.ylim(-1, 30)
+    plt.ylim(-1, indices.shape[0])
     plt.xlim(0, max(importance_desc) + 0.01)
     plt.xlabel('Mean Decrease in Impurity')
     plt.ylabel('Feature')
 
     plt.show()
     plt.close()
+
 
 def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
     """
@@ -240,9 +295,8 @@ def plot_roc_curve(fpr, tpr, auc, estimator, xlim=None, ylim=None):
         plot_title = my_estimators[estimator][0]
         color_value = my_estimators[estimator][1]
     except KeyError as e:
-        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
-\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
-        raise
+        raise("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+              Please refer to function to check `my_estimators` dictionary.".format(estimator))
 
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.set_axis_bgcolor('#fafafa')
@@ -269,16 +323,16 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     """
     Purpose
     ----------
-    Function helps automate cross validation processes while including 
+    Function helps automate cross validation processes while including
     option to print metrics or store in variable
-    
+
     Parameters
     ----------
-    fit: Fitted model 
+    fit: Fitted model
     training_set:  Data_frame containing 80% of original dataframe
-    class_set:     data_frame containing the respective target vaues 
+    class_set:     data_frame containing the respective target vaues
                       for the training_set
-    print_results: Boolean, if true prints the metrics, else saves metrics as 
+    print_results: Boolean, if true prints the metrics, else saves metrics as
                       variables
 
     Returns
@@ -295,21 +349,20 @@ def cross_val_metrics(fit, training_set, class_set, estimator, print_results = T
     try:
         # Captures whether first parameter is a model
         if not hasattr(fit, 'fit'):
-            return print("'{0}' is not an instantiated model from scikit-learn".format(fit)) 
-        
+            return print("'{0}' is not an instantiated model from scikit-learn".format(fit))
+
         # Captures whether the model has been trained
         if not vars(fit)[my_estimators[estimator]]:
             return print("Model does not appear to be trained.")
-        
+
     except KeyError as e:
-        print("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
-\nPlease refer to function to check `my_estimators` dictionary.".format(estimator))
-        raise
-    
+        raise("'{0}' does not correspond with the appropriate key inside the estimators dictionary. \
+              Please refer to function to check `my_estimators` dictionary.".format(estimator))
+
     n = KFold(n_splits=10)
-    scores = cross_val_score(fit, 
-                         training_set, 
-                         class_set, 
+    scores = cross_val_score(fit,
+                         training_set,
+                         class_set,
                          cv = n)
     if print_results:
         for i in range(0, len(scores)):
@@ -330,5 +383,5 @@ def create_conf_mat(test_class_set, predictions):
         # Set Metrics
         test_crosstb_comp = pd.crosstab(index = test_class_set,
                                         columns = predictions)
-        test_crosstb = test_crosstb_comp.as_matrix()
+        test_crosstb = test_crosstb_comp.values
         return test_crosstb

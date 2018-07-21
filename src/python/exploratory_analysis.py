@@ -7,7 +7,7 @@
 # Project by Raul Eulogio
 #
 # Project found at: https://www.inertia7.com/projects/3
-#
+# NOTE: Better in jupyter notebook format
 
 """
 Exploratory Analysis
@@ -38,14 +38,11 @@ print('''
 ##########################################
 ''')
 
-# Let's look at the count of the new representations of our Dx's
-print("Count of the Dx:\n", breast_cancer['diagnosis']\
-	.value_counts())
-
 # Next let's use the helper function to show distribution
 # of our data frame
-hf.print_dx_perc(breast_cancer, 'diagnosis')
-
+hf.print_target_perc(breast_cancer, 'diagnosis')
+import pdb
+pdb.set_trace()
 # Scatterplot Matrix
 # Variables chosen from Random Forest modeling.
 
