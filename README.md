@@ -19,7 +19,7 @@ The repository includes the *scripts* folder which contains scripts for these pr
 
 This repo is primarily concerned with the *python* iteration.
 
-The multiple *python* script is broken into 5 sections (done by creating a scipt for each section) in the following order:
+The multiple *python* script is broken into 5 sections (done by creating a script for each section) in the following order:
 + **Exploratory Analysis**
 + **Kth Nearest Neighbors**
 + **Random Forest**
