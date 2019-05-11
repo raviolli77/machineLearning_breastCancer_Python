@@ -75,5 +75,5 @@ The ROC Curves are more telling of **Random Forest** being a better model for pr
 Any feedback is welcomed!
 
 Things to do:
-+ Create **Jupter Notebook** for *KNN* and *NN* (1/25/2018)
++ Create **Jupyter Notebook** for *KNN* and *NN* (1/25/2018)
 + Unit test scripts 
