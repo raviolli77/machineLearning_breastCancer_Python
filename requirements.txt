@@ -11,7 +11,7 @@ dash-html-components==0.8.0
 dash-renderer==0.11.1
 decorator==4.2.1
 entrypoints==0.2.2
-Flask==0.12.2
+Flask==1.0
 Flask-Compress==1.4.0
 html5lib==0.999999999
 idna==2.6
