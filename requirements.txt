@@ -16,7 +16,7 @@ Flask-Compress==1.4.0
 html5lib==0.999999999
 idna==2.6
 ipykernel==4.6.1
-ipython==6.0.0
+ipython==7.16.3
 ipython-genutils==0.2.0
 ipywidgets==6.0.0
 itsdangerous==0.24
